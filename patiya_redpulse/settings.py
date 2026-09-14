@@ -123,3 +123,11 @@ EMAIL_USE_TLS = True
 # Render-এর Environment Variables থেকে তথ্যগুলো আসবে
 EMAIL_HOST_USER = os.environ.get('EMAIL_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASS')
+
+# Database Configuration for Vercel
+DATABASES = {
+    'default': dj_database_url.config(
+        default='sqlite:////tmp/db.sqlite3',
+        conn_max_age=600
+    )
+}
