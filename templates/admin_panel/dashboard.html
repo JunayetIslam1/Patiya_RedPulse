@@ -1,0 +1,1010 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Admin Dashboard" %} — Patiya RedPulse{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* ================================================================
+       PATIYA REDPULSE — PREMIUM ADMIN DASHBOARD 2026
+       ================================================================ */
+
+    .admin-page {
+        --admin-red: var(--rp-red, #d90429);
+        --admin-text: var(--rp-text, #0f172a);
+        --admin-muted: var(--rp-subtext, #64748b);
+        --admin-surface: var(--rp-surface, rgba(255,255,255,.82));
+        --admin-border: var(--rp-border, rgba(15,23,42,.09));
+    }
+
+    .admin-hero {
+        position: relative;
+        isolation: isolate;
+        overflow: hidden;
+        padding: clamp(1.5rem, 4vw, 2.7rem);
+        border: 1px solid rgba(217,4,41,.22);
+        border-radius: 30px;
+        color: #fff;
+        background:
+            radial-gradient(circle at 90% 10%, rgba(255,255,255,.27), transparent 27%),
+            linear-gradient(125deg, #850017 0%, #d90429 50%, #ff3659 100%);
+        box-shadow:
+            0 30px 70px -30px rgba(217,4,41,.68),
+            inset 0 1px 0 rgba(255,255,255,.4),
+            inset 0 -18px 35px rgba(83,0,13,.23);
+    }
+
+    .admin-hero::before {
+        content: "";
+        position: absolute;
+        z-index: -1;
+        width: 350px;
+        height: 350px;
+        top: -190px;
+        right: -70px;
+        border: 56px solid rgba(255,255,255,.08);
+        border-radius: 50%;
+        animation: adminOrbit 18s linear infinite;
+    }
+
+    .admin-hero::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -2;
+        opacity: .13;
+        background-image:
+            linear-gradient(rgba(255,255,255,.7) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,.7) 1px, transparent 1px);
+        background-size: 42px 42px;
+        -webkit-mask-image: linear-gradient(90deg, transparent, #000);
+        mask-image: linear-gradient(90deg, transparent, #000);
+    }
+
+    @keyframes adminOrbit {
+        to { transform: rotate(360deg); }
+    }
+
+    .admin-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: .5rem;
+        margin-bottom: .9rem;
+        padding: .42rem .8rem;
+        border: 1px solid rgba(255,255,255,.25);
+        border-radius: 999px;
+        background: rgba(255,255,255,.12);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.3);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        font-size: .7rem;
+        font-weight: 800;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+    }
+
+    .admin-live-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #9dffca;
+        box-shadow: 0 0 0 0 rgba(157,255,202,.7);
+        animation: adminPulse 1.8s infinite;
+    }
+
+    @keyframes adminPulse {
+        70% { box-shadow: 0 0 0 9px rgba(157,255,202,0); }
+    }
+
+    .admin-hero-title {
+        margin: 0 0 .55rem;
+        color: #fff;
+        font-family: 'Sora', 'Noto Sans Bengali', sans-serif;
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        font-weight: 800;
+        line-height: 1.08;
+        letter-spacing: -.055em;
+        text-shadow: 0 8px 24px rgba(83,0,14,.25);
+    }
+
+    .admin-hero-text {
+        max-width: 680px;
+        margin: 0;
+        color: rgba(255,255,255,.84);
+        font-size: clamp(.9rem, 2vw, 1rem);
+        line-height: 1.8;
+    }
+
+    .admin-hero-badge {
+        position: absolute;
+        right: clamp(1.2rem, 4vw, 2.7rem);
+        bottom: clamp(1.2rem, 4vw, 2.2rem);
+        display: flex;
+        align-items: center;
+        gap: .7rem;
+        padding: .85rem 1rem;
+        border: 1px solid rgba(255,255,255,.25);
+        border-radius: 18px;
+        background: rgba(76,0,14,.25);
+        box-shadow:
+            0 18px 34px -18px rgba(0,0,0,.55),
+            inset 0 1px 0 rgba(255,255,255,.25);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+    }
+
+    .admin-hero-badge-icon {
+        width: 43px;
+        height: 43px;
+        display: grid;
+        place-items: center;
+        border-radius: 14px;
+        color: var(--admin-red);
+        background: #fff;
+        box-shadow: 0 10px 20px -12px rgba(0,0,0,.5);
+    }
+
+    .admin-hero-badge strong {
+        display: block;
+        font-size: .82rem;
+        font-weight: 800;
+    }
+
+    .admin-hero-badge small {
+        display: block;
+        margin-top: .18rem;
+        color: rgba(255,255,255,.7);
+        font-size: .68rem;
+        font-weight: 600;
+    }
+
+    .admin-main {
+        position: relative;
+        z-index: 3;
+        margin-top: -32px;
+    }
+
+    /* ----------------------------- Top actions ------------------------- */
+
+    .admin-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1.3rem;
+        padding: .8rem 1rem;
+        border: 1px solid var(--admin-border);
+        border-radius: 20px;
+        background: var(--admin-surface);
+        box-shadow:
+            0 20px 45px -30px rgba(15,23,42,.45),
+            inset 0 1px 0 rgba(255,255,255,.55);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+    }
+
+    .admin-toolbar-title {
+        display: flex;
+        align-items: center;
+        gap: .7rem;
+        color: var(--admin-text);
+        font-size: .83rem;
+        font-weight: 800;
+    }
+
+    .admin-toolbar-title i {
+        color: var(--admin-red);
+    }
+
+    .admin-toolbar-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .55rem;
+    }
+
+    .admin-action-btn {
+        min-height: 40px;
+        display: inline-flex;
+        align-items: center;
+        gap: .45rem;
+        padding: .55rem .8rem;
+        border: 1px solid var(--admin-border);
+        border-radius: 12px;
+        color: var(--admin-text);
+        background: var(--admin-surface);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.45);
+        font-size: .72rem;
+        font-weight: 800;
+        transition: all .28s cubic-bezier(.34,1.56,.64,1);
+    }
+
+    .admin-action-btn:hover {
+        color: var(--admin-red);
+        border-color: rgba(217,4,41,.28);
+        transform: translateY(-2px);
+        box-shadow: 0 11px 21px -15px rgba(15,23,42,.65);
+    }
+
+    /* ----------------------------- Stat cards -------------------------- */
+
+    .admin-stat-card {
+        position: relative;
+        overflow: hidden;
+        min-height: 155px;
+        padding: 1.2rem;
+        border: 1px solid var(--admin-border);
+        border-radius: 23px;
+        background: var(--admin-surface);
+        box-shadow:
+            0 20px 45px -30px rgba(15,23,42,.52),
+            inset 0 1px 0 rgba(255,255,255,.55);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        transition: transform .4s cubic-bezier(.34,1.56,.64,1), box-shadow .3s ease;
+    }
+
+    .admin-stat-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--stat-color, var(--admin-red));
+    }
+
+    .admin-stat-card::after {
+        content: "";
+        position: absolute;
+        width: 150px;
+        height: 150px;
+        top: -75px;
+        right: -65px;
+        border-radius: 50%;
+        background: var(--stat-color, var(--admin-red));
+        opacity: .1;
+        filter: blur(8px);
+    }
+
+    .admin-stat-card:hover {
+        transform: translateY(-8px) rotateX(3deg);
+        box-shadow: 0 27px 55px -28px rgba(15,23,42,.65);
+    }
+
+    .admin-stat-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: .5rem;
+    }
+
+    .admin-stat-icon {
+        width: 45px;
+        height: 45px;
+        display: grid;
+        place-items: center;
+        border-radius: 15px;
+        color: var(--stat-color, var(--admin-red));
+        background: color-mix(in srgb, var(--stat-color, var(--admin-red)) 12%, transparent);
+        box-shadow:
+            inset 0 1px 0 rgba(255,255,255,.5),
+            0 10px 19px -14px rgba(15,23,42,.6);
+    }
+
+    .admin-stat-trend {
+        display: inline-flex;
+        align-items: center;
+        gap: .25rem;
+        padding: .28rem .45rem;
+        border-radius: 999px;
+        color: #059669;
+        background: rgba(16,185,129,.1);
+        font-size: .62rem;
+        font-weight: 800;
+    }
+
+    .admin-stat-number {
+        margin-top: 1rem;
+        color: var(--admin-text);
+        font-family: 'Sora', sans-serif;
+        font-size: 2rem;
+        font-weight: 800;
+        line-height: 1;
+        letter-spacing: -.05em;
+    }
+
+    .admin-stat-label {
+        margin-top: .45rem;
+        color: var(--admin-muted);
+        font-size: .7rem;
+        font-weight: 800;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+    }
+
+    .stat-donors { --stat-color: #2563eb; }
+    .stat-available { --stat-color: #10b981; }
+    .stat-requests { --stat-color: #f59e0b; }
+    .stat-emergency { --stat-color: #d90429; }
+
+    /* ------------------------------ Data cards ------------------------- */
+
+    .admin-data-card,
+    .admin-quick-card {
+        overflow: hidden;
+        border: 1px solid var(--admin-border);
+        border-radius: 24px;
+        background: var(--admin-surface);
+        box-shadow:
+            0 21px 48px -32px rgba(15,23,42,.48),
+            inset 0 1px 0 rgba(255,255,255,.55);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+    }
+
+    .admin-card-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: .8rem;
+        padding: 1rem 1.15rem;
+        border-bottom: 1px solid var(--admin-border);
+        background: linear-gradient(90deg, rgba(217,4,41,.07), transparent 60%);
+    }
+
+    .admin-heading-left {
+        display: flex;
+        align-items: center;
+        gap: .65rem;
+    }
+
+    .admin-heading-icon {
+        width: 37px;
+        height: 37px;
+        display: grid;
+        place-items: center;
+        border-radius: 12px;
+        color: var(--admin-red);
+        background: rgba(217,4,41,.09);
+        border: 1px solid rgba(217,4,41,.15);
+    }
+
+    .admin-card-heading h2 {
+        margin: 0;
+        color: var(--admin-text);
+        font-family: 'Sora', 'Noto Sans Bengali', sans-serif;
+        font-size: .92rem;
+        font-weight: 800;
+    }
+
+    .admin-card-heading small {
+        color: var(--admin-muted);
+        font-size: .68rem;
+        font-weight: 600;
+    }
+
+    .admin-view-all {
+        display: inline-flex;
+        align-items: center;
+        gap: .35rem;
+        color: var(--admin-red);
+        font-size: .7rem;
+        font-weight: 800;
+        transition: transform .25s ease;
+    }
+
+    .admin-view-all:hover {
+        color: var(--admin-red);
+        transform: translateX(3px);
+    }
+
+    .admin-card-body {
+        padding: 1rem;
+    }
+
+    .admin-table-scroll {
+        overflow-x: auto;
+    }
+
+    .admin-table {
+        min-width: 470px;
+        margin: 0;
+        color: var(--admin-text);
+        vertical-align: middle;
+    }
+
+    .admin-table th {
+        padding: .75rem .7rem;
+        border: 0;
+        border-bottom: 1px solid var(--admin-border);
+        color: var(--admin-muted);
+        background: rgba(217,4,41,.035);
+        font-size: .64rem;
+        font-weight: 800;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .admin-table td {
+        padding: .8rem .7rem;
+        border: 0;
+        border-bottom: 1px solid var(--admin-border);
+        color: var(--admin-text);
+        font-size: .76rem;
+        font-weight: 650;
+    }
+
+    .admin-table tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .admin-table tbody tr {
+        transition: background .25s ease, transform .25s ease;
+    }
+
+    .admin-table tbody tr:hover {
+        background: rgba(217,4,41,.04);
+        transform: translateX(3px);
+    }
+
+    .admin-person {
+        display: flex;
+        align-items: center;
+        gap: .6rem;
+        min-width: 145px;
+    }
+
+    .admin-person-avatar {
+        width: 33px;
+        height: 33px;
+        display: grid;
+        place-items: center;
+        flex: 0 0 33px;
+        border-radius: 11px;
+        color: var(--admin-red);
+        background: rgba(217,4,41,.1);
+        font-size: .72rem;
+    }
+
+    .admin-person-name {
+        color: var(--admin-text);
+        font-size: .76rem;
+        font-weight: 800;
+    }
+
+    .admin-blood-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 42px;
+        padding: .38rem .5rem;
+        border-radius: 10px 10px 10px 4px;
+        color: #fff;
+        background: linear-gradient(145deg, #ff4666, #d90429 60%, #8f0018);
+        box-shadow:
+            0 8px 15px -10px rgba(217,4,41,.7),
+            inset 0 1px 0 rgba(255,255,255,.4);
+        font-family: 'Sora', sans-serif;
+        font-size: .68rem;
+        font-weight: 800;
+    }
+
+    .admin-status,
+    .admin-priority {
+        display: inline-flex;
+        align-items: center;
+        gap: .32rem;
+        padding: .35rem .55rem;
+        border-radius: 999px;
+        font-size: .62rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .admin-status.active {
+        color: #047857;
+        border: 1px solid rgba(16,185,129,.2);
+        background: rgba(16,185,129,.1);
+    }
+
+    .admin-status.blocked {
+        color: #dc2626;
+        border: 1px solid rgba(220,38,38,.2);
+        background: rgba(220,38,38,.09);
+    }
+
+    .admin-priority.emergency {
+        color: #fff;
+        background: linear-gradient(145deg, #ff3659, #d90429);
+        box-shadow: 0 7px 14px -9px rgba(217,4,41,.75);
+    }
+
+    .admin-priority.normal {
+        color: var(--admin-muted);
+        border: 1px solid var(--admin-border);
+        background: var(--rp-surface-2, rgba(255,255,255,.45));
+    }
+
+    .admin-empty {
+        padding: 2rem 1rem;
+        color: var(--admin-muted);
+        text-align: center;
+        font-size: .8rem;
+        font-weight: 650;
+    }
+
+    .admin-empty i {
+        display: block;
+        margin-bottom: .65rem;
+        color: var(--admin-red);
+        font-size: 1.7rem;
+        opacity: .65;
+    }
+
+    /* ----------------------------- Quick actions ----------------------- */
+
+    .admin-quick-action {
+        min-height: 105px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: .55rem;
+        padding: .8rem;
+        border: 1px solid var(--admin-border);
+        border-radius: 17px;
+        color: var(--admin-text);
+        background: var(--rp-surface-2, rgba(255,255,255,.4));
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.45);
+        text-align: center;
+        font-size: .7rem;
+        font-weight: 800;
+        transition: all .3s cubic-bezier(.34,1.56,.64,1);
+    }
+
+    .admin-quick-action i {
+        width: 37px;
+        height: 37px;
+        display: grid;
+        place-items: center;
+        border-radius: 12px;
+        color: var(--admin-red);
+        background: rgba(217,4,41,.09);
+    }
+
+    .admin-quick-action:hover {
+        color: var(--admin-red);
+        border-color: rgba(217,4,41,.25);
+        background: rgba(217,4,41,.06);
+        transform: translateY(-5px);
+        box-shadow: 0 15px 28px -19px rgba(217,4,41,.6);
+    }
+
+    @media (max-width: 991.98px) {
+        .admin-hero-badge {
+            position: static;
+            width: max-content;
+            max-width: 100%;
+            margin-top: 1.35rem;
+        }
+
+        .admin-toolbar {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .admin-toolbar-actions {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 767.98px) {
+        .admin-hero {
+            padding: 1.45rem 1.15rem;
+            border-radius: 25px;
+        }
+
+        .admin-hero-title {
+            font-size: clamp(1.85rem, 9vw, 2.5rem);
+        }
+
+        .admin-main {
+            margin-top: -27px;
+        }
+
+        .admin-toolbar-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            width: 100%;
+        }
+
+        .admin-action-btn {
+            justify-content: center;
+        }
+
+        .admin-stat-card {
+            min-height: 135px;
+            padding: 1rem;
+        }
+
+        .admin-stat-number {
+            font-size: 1.65rem;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .admin-hero::before,
+        .admin-live-dot {
+            animation: none !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-page">
+
+    <!-- Admin Hero -->
+    <section class="admin-hero reveal" aria-labelledby="adminDashboardTitle">
+        <div class="admin-eyebrow">
+            <span class="admin-live-dot"></span>
+            {% trans "Administration Center" %}
+        </div>
+
+        <h1 class="admin-hero-title" id="adminDashboardTitle">
+            {% trans "Welcome to your command center." %}
+        </h1>
+
+        <p class="admin-hero-text">
+            {% trans "Monitor donors, manage blood requests and keep the Patiya RedPulse network responsive and reliable." %}
+        </p>
+
+        <div class="admin-hero-badge">
+            <span class="admin-hero-badge-icon">
+                <i class="fas fa-shield-halved"></i>
+            </span>
+            <div>
+                <strong>{% trans "System protected" %}</strong>
+                <small>{% trans "Administrator access active" %}</small>
+            </div>
+        </div>
+    </section>
+
+    <div class="admin-main">
+
+        <!-- Toolbar -->
+        <div class="admin-toolbar reveal">
+            <div class="admin-toolbar-title">
+                <i class="fas fa-chart-line"></i>
+                {% trans "Network Overview" %}
+            </div>
+
+            <div class="admin-toolbar-actions">
+                <a href="{% url 'manage_donors' %}" class="admin-action-btn">
+                    <i class="fas fa-users"></i>
+                    {% trans "Manage Donors" %}
+                </a>
+
+                <a href="{% url 'manage_requests' %}" class="admin-action-btn">
+                    <i class="fas fa-list-check"></i>
+                    {% trans "Manage Requests" %}
+                </a>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-xl-3">
+                <div class="admin-stat-card stat-donors reveal">
+                    <div class="admin-stat-top">
+                        <span class="admin-stat-icon">
+                            <i class="fas fa-users"></i>
+                        </span>
+                        <span class="admin-stat-trend">
+                            <i class="fas fa-arrow-up"></i>
+                            {% trans "Network" %}
+                        </span>
+                    </div>
+
+                    <div class="admin-stat-number">{{ total_donors }}</div>
+                    <div class="admin-stat-label">{% trans "Total Donors" %}</div>
+                </div>
+            </div>
+
+            <div class="col-6 col-xl-3">
+                <div class="admin-stat-card stat-available reveal">
+                    <div class="admin-stat-top">
+                        <span class="admin-stat-icon">
+                            <i class="fas fa-heart-circle-check"></i>
+                        </span>
+                        <span class="admin-stat-trend">
+                            <i class="fas fa-circle"></i>
+                            {% trans "Ready" %}
+                        </span>
+                    </div>
+
+                    <div class="admin-stat-number">{{ available_donors }}</div>
+                    <div class="admin-stat-label">{% trans "Available Donors" %}</div>
+                </div>
+            </div>
+
+            <div class="col-6 col-xl-3">
+                <div class="admin-stat-card stat-requests reveal">
+                    <div class="admin-stat-top">
+                        <span class="admin-stat-icon">
+                            <i class="fas fa-notes-medical"></i>
+                        </span>
+                        <span class="admin-stat-trend">
+                            <i class="fas fa-activity"></i>
+                            {% trans "Active" %}
+                        </span>
+                    </div>
+
+                    <div class="admin-stat-number">{{ total_requests }}</div>
+                    <div class="admin-stat-label">{% trans "Total Requests" %}</div>
+                </div>
+            </div>
+
+            <div class="col-6 col-xl-3">
+                <div class="admin-stat-card stat-emergency reveal">
+                    <div class="admin-stat-top">
+                        <span class="admin-stat-icon">
+                            <i class="fas fa-triangle-exclamation"></i>
+                        </span>
+                        <span class="admin-stat-trend" style="color:#dc2626;background:rgba(220,38,38,.1);">
+                            <i class="fas fa-bolt"></i>
+                            {% trans "Priority" %}
+                        </span>
+                    </div>
+
+                    <div class="admin-stat-number">{{ emergency_requests }}</div>
+                    <div class="admin-stat-label">{% trans "Emergency Requests" %}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Data -->
+        <div class="row g-4">
+
+            <!-- Recent Donors -->
+            <div class="col-lg-6">
+                <section class="admin-data-card reveal">
+                    <div class="admin-card-heading">
+                        <div class="admin-heading-left">
+                            <span class="admin-heading-icon">
+                                <i class="fas fa-user-group"></i>
+                            </span>
+                            <div>
+                                <h2>{% trans "Recent Donors" %}</h2>
+                                <small>{% trans "Latest donor registrations" %}</small>
+                            </div>
+                        </div>
+
+                        <a href="{% url 'manage_donors' %}" class="admin-view-all">
+                            {% trans "View All" %}
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+
+                    <div class="admin-card-body">
+                        {% if recent_donors %}
+                            <div class="admin-table-scroll">
+                                <table class="table admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>{% trans "Donor" %}</th>
+                                            <th>{% trans "Blood Group" %}</th>
+                                            <th>{% trans "Status" %}</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        {% for donor in recent_donors %}
+                                            <tr>
+                                                <td>
+                                                    <div class="admin-person">
+                                                        <span class="admin-person-avatar">
+                                                            <i class="fas fa-user"></i>
+                                                        </span>
+                                                        <span class="admin-person-name">
+                                                            {{ donor.full_name }}
+                                                        </span>
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <span class="admin-blood-badge">
+                                                        {{ donor.blood_group }}
+                                                    </span>
+                                                </td>
+
+                                                <td>
+                                                    {% if donor.is_active %}
+                                                        <span class="admin-status active">
+                                                            <i class="fas fa-circle-check"></i>
+                                                            {% trans "Active" %}
+                                                        </span>
+                                                    {% else %}
+                                                        <span class="admin-status blocked">
+                                                            <i class="fas fa-ban"></i>
+                                                            {% trans "Blocked" %}
+                                                        </span>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="admin-empty">
+                                <i class="fas fa-users-slash"></i>
+                                {% trans "No recent donors found" %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </section>
+            </div>
+
+            <!-- Recent Requests -->
+            <div class="col-lg-6">
+                <section class="admin-data-card reveal">
+                    <div class="admin-card-heading">
+                        <div class="admin-heading-left">
+                            <span class="admin-heading-icon">
+                                <i class="fas fa-notes-medical"></i>
+                            </span>
+                            <div>
+                                <h2>{% trans "Recent Requests" %}</h2>
+                                <small>{% trans "Latest blood requirements" %}</small>
+                            </div>
+                        </div>
+
+                        <a href="{% url 'manage_requests' %}" class="admin-view-all">
+                            {% trans "View All" %}
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+
+                    <div class="admin-card-body">
+                        {% if recent_requests %}
+                            <div class="admin-table-scroll">
+                                <table class="table admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>{% trans "Patient" %}</th>
+                                            <th>{% trans "Blood Group" %}</th>
+                                            <th>{% trans "Priority" %}</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        {% for request in recent_requests %}
+                                            <tr>
+                                                <td>
+                                                    <div class="admin-person">
+                                                        <span class="admin-person-avatar">
+                                                            <i class="fas fa-user-injured"></i>
+                                                        </span>
+                                                        <span class="admin-person-name">
+                                                            {{ request.patient_name }}
+                                                        </span>
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <span class="admin-blood-badge">
+                                                        {{ request.required_blood_group }}
+                                                    </span>
+                                                </td>
+
+                                                <td>
+                                                    {% if request.is_emergency %}
+                                                        <span class="admin-priority emergency">
+                                                            <i class="fas fa-bolt"></i>
+                                                            {% trans "Emergency" %}
+                                                        </span>
+                                                    {% else %}
+                                                        <span class="admin-priority normal">
+                                                            <i class="fas fa-minus"></i>
+                                                            {% trans "Normal" %}
+                                                        </span>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="admin-empty">
+                                <i class="fas fa-clipboard-check"></i>
+                                {% trans "No recent requests found" %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <section class="admin-quick-card mt-4 reveal">
+            <div class="admin-card-heading">
+                <div class="admin-heading-left">
+                    <span class="admin-heading-icon">
+                        <i class="fas fa-bolt"></i>
+                    </span>
+                    <div>
+                        <h2>{% trans "Quick Actions" %}</h2>
+                        <small>{% trans "Frequently used administration tools" %}</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-card-body">
+                <div class="row g-3">
+                    <div class="col-6 col-md-3">
+                        <a href="{% url 'manage_donors' %}" class="admin-quick-action">
+                            <i class="fas fa-users"></i>
+                            <span>{% trans "Manage Donors" %}</span>
+                        </a>
+                    </div>
+
+                    <div class="col-6 col-md-3">
+                        <a href="{% url 'manage_requests' %}" class="admin-quick-action">
+                            <i class="fas fa-list-check"></i>
+                            <span>{% trans "Manage Requests" %}</span>
+                        </a>
+                    </div>
+
+                    <div class="col-6 col-md-3">
+                        <a href="/admin/" class="admin-quick-action">
+                            <i class="fas fa-database"></i>
+                            <span>{% trans "Django Admin" %}</span>
+                        </a>
+                    </div>
+
+                    <div class="col-6 col-md-3">
+                        <a href="{% url 'donor_list' %}" class="admin-quick-action">
+                            <i class="fas fa-magnifying-glass"></i>
+                            <span>{% trans "View Donor List" %}</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    (function () {
+        'use strict';
+
+        if (!window.matchMedia('(hover:hover) and (min-width:992px)').matches) {
+            return;
+        }
+
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            return;
+        }
+
+        document.querySelectorAll('.admin-stat-card').forEach(function (card) {
+            card.addEventListener('mousemove', function (event) {
+                var rect = card.getBoundingClientRect();
+                var x = ((event.clientX - rect.left) / rect.width) - 0.5;
+                var y = ((event.clientY - rect.top) / rect.height) - 0.5;
+
+                card.style.transform =
+                    'translateY(-8px) rotateX(' + (-y * 5) + 'deg) rotateY(' + (x * 7) + 'deg)';
+            });
+
+            card.addEventListener('mouseleave', function () {
+                card.style.transform = '';
+            });
+        });
+    })();
+</script>
+{% endblock %}

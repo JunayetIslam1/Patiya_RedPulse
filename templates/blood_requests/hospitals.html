@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Emergency Contacts & Hospitals" %} — Patiya RedPulse{% endblock %}
+
+{% block content %}
+
+<div class="rp-page-hero">
+    <span class="rph-icon"><i class="fas fa-hospital"></i></span>
+    <div>
+        <h1>{% trans "Emergency Contacts & Hospitals" %}</h1>
+        <p>
+            {% trans "If you can't reach a donor in time, these numbers are a verified fallback. This list is intentionally short — only officially-sourced numbers are included by default." %}
+        </p>
+    </div>
+</div>
+
+<div class="rp-card mb-4" style="padding:0;">
+    <div class="card-header">
+        <h4><i class="fas fa-list-check"></i> {% trans "Verified Numbers" %}</h4>
+    </div>
+    <div class="card-body">
+
+        {% if hospitals %}
+            {% for h in hospitals %}
+                <div class="rp-list-row reveal">
+                    <div class="rlr-main">
+                        <span class="rlr-icon"><i class="fas fa-hospital"></i></span>
+                        <div class="rlr-body">
+                            <div class="rlr-name">
+                                {{ h.name }}
+                                {% if h.is_24_7 %}<span class="badge bg-success"><i class="fas fa-clock me-1"></i>24/7</span>{% endif %}
+                                {% if h.has_blood_bank %}<span class="badge bg-info"><i class="fas fa-droplet me-1"></i>{% trans "Blood Bank" %}</span>{% endif %}
+                            </div>
+                            <div class="rlr-meta">
+                                {% if h.address %}<i class="fas fa-location-dot me-1"></i>{{ h.address }}<br>{% endif %}
+                                {% if h.notes %}<i class="fas fa-circle-info me-1"></i>{{ h.notes }}{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <a href="tel:{{ h.phone }}" class="rp-call-btn rp-ripple-host">
+                        <i class="fas fa-phone"></i> {{ h.phone }}
+                    </a>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="rp-empty-state">
+                <i class="fas fa-hospital-user"></i>
+                <p class="mb-0 fw-semibold">{% trans "No hospitals listed yet." %}</p>
+                <p class="small">{% trans "Check back soon — verified emergency contacts will appear here." %}</p>
+            </div>
+        {% endif %}
+
+    </div>
+</div>
+
+<div class="rp-alert alert-warning" role="note">
+    <span class="a-ico"><i class="fas fa-triangle-exclamation"></i></span>
+    <div class="pt-1" style="font-size:.9rem;">
+        <strong style="display:block;margin-bottom:.15rem;">{% trans "For true emergencies, call the nearest hospital directly." %}</strong>
+        {% trans "This platform helps connect you with donors, but it is not a substitute for professional emergency medical services." %}
+    </div>
+</div>
+
+{% endblock %}

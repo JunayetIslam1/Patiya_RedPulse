@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Offline" %} — Patiya RedPulse{% endblock %}
+
+{% block content %}
+<div class="text-center py-5 reveal">
+    <i class="fas fa-wifi fa-3x text-muted mb-3"></i>
+    <h4>{% trans "You're offline" %}</h4>
+    <p class="text-muted">{% trans "Check your internet connection and try again." %}</p>
+</div>
+{% endblock %}

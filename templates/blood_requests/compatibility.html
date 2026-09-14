@@ -1,0 +1,566 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Blood Compatibility Checker" %} — Patiya RedPulse{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* ================================================================
+       PATIYA REDPULSE — COMPATIBILITY LAB 2026
+       ================================================================ */
+    .cp-page{
+        --cp-red: var(--rp-red, #d90429);
+        --cp-text: var(--rp-text, #0f172a);
+        --cp-muted: var(--rp-subtext, #64748b);
+        --cp-surface: var(--rp-surface, rgba(255,255,255,.82));
+        --cp-border: var(--rp-border, rgba(15,23,42,.09));
+        --cp-soft: var(--rp-surface-2, rgba(255,255,255,.5));
+        --cp-solid: var(--rp-surface-solid, #fff);
+        --cp-spring: cubic-bezier(.34,1.56,.64,1);
+        --cp-ease: cubic-bezier(.22,1,.36,1);
+    }
+
+    /* ------------------------------ Hero ------------------------------ */
+    .cp-hero{
+        position:relative; isolation:isolate; overflow:hidden;
+        min-height: 250px;
+        padding: clamp(1.4rem, 4vw, 2.6rem);
+        border:1px solid rgba(255,255,255,.12);
+        border-radius: 32px;
+        color:#fff;
+        background:
+            radial-gradient(circle at 90% 10%, rgba(255,255,255,.22), transparent 28%),
+            linear-gradient(128deg, #0f172a 0%, #7f0018 42%, #d90429 78%, #ff3659 100%);
+        box-shadow:
+            0 32px 70px -28px rgba(217,4,41,.58),
+            inset 0 1px 0 rgba(255,255,255,.3),
+            inset 0 -18px 36px rgba(15,23,42,.3);
+    }
+    .cp-hero::before{
+        content:""; position:absolute; z-index:-1;
+        width:340px; height:340px; top:-190px; right:-80px;
+        border:54px solid rgba(255,255,255,.08); border-radius:50%;
+        animation: cpOrbit 18s linear infinite;
+    }
+    .cp-hero::after{
+        content:""; position:absolute; z-index:-1;
+        width:440px; height:440px; right:7%; bottom:-380px;
+        border:66px solid rgba(255,255,255,.05); border-radius:50%;
+    }
+    @keyframes cpOrbit{ to{ transform:rotate(360deg); } }
+
+    .cp-hero-grid{
+        position:absolute; inset:0; z-index:-2; opacity:.13;
+        background-image:
+            linear-gradient(rgba(255,255,255,.55) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,.55) 1px, transparent 1px);
+        background-size:42px 42px;
+        -webkit-mask-image: linear-gradient(90deg, transparent, #000 42%);
+        mask-image: linear-gradient(90deg, transparent, #000 42%);
+    }
+    .cp-hero-content{ position:relative; z-index:2; max-width:740px; }
+
+    .cp-eyebrow{
+        display:inline-flex; align-items:center; gap:.5rem;
+        padding:.42rem .85rem; margin-bottom:1rem;
+        border:1px solid rgba(255,255,255,.24); border-radius:999px;
+        background:rgba(255,255,255,.12);
+        box-shadow:inset 0 1px 0 rgba(255,255,255,.28);
+        backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+        font-size:.72rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase;
+    }
+    .cp-live{
+        width:8px; height:8px; border-radius:50%; background:#9dffca;
+        box-shadow:0 0 0 0 rgba(157,255,202,.65);
+        animation: cpPing 1.8s infinite;
+    }
+    @keyframes cpPing{ 70%{ box-shadow:0 0 0 9px rgba(157,255,202,0); } }
+
+    .cp-hero-title{
+        margin:0 0 .7rem; max-width:700px; color:#fff;
+        font-family:'Sora','Noto Sans Bengali',sans-serif;
+        font-size:clamp(1.75rem, 4.6vw, 3rem);
+        font-weight:800; line-height:1.08; letter-spacing:-.05em;
+    }
+    .cp-hero-text{
+        max-width:640px; margin:0;
+        color:rgba(255,255,255,.86);
+        font-size:clamp(.88rem, 2vw, 1rem);
+        font-weight:500; line-height:1.75;
+    }
+
+    /* --------------------------- Lab panel ---------------------------- */
+    .cp-lab{
+        position:relative; z-index:4;
+        margin:-38px clamp(.4rem, 2vw, 1.5rem) 0;
+        overflow:hidden;
+        border:1px solid var(--cp-border);
+        border-radius:28px;
+        background: var(--cp-surface);
+        box-shadow:
+            0 28px 65px -32px rgba(15,23,42,.42),
+            inset 0 1px 0 rgba(255,255,255,.55);
+        backdrop-filter:blur(24px) saturate(170%);
+        -webkit-backdrop-filter:blur(24px) saturate(170%);
+    }
+    .cp-lab-head{
+        display:flex; align-items:flex-start; justify-content:space-between; gap:1rem;
+        padding:1.2rem 1.35rem;
+        border-bottom:1px solid var(--cp-border);
+        background: linear-gradient(90deg, rgba(217,4,41,.08), transparent 55%);
+    }
+    .cp-lab-left{ display:flex; align-items:flex-start; gap:.85rem; }
+    .cp-head-ico{
+        width:46px; height:46px; flex:0 0 46px;
+        display:grid; place-items:center;
+        border-radius:15px; color:#fff;
+        background: linear-gradient(145deg, #ff3659, #d90429 60%, #920019);
+        box-shadow:
+            0 12px 24px -10px rgba(217,4,41,.65),
+            inset 0 1px 0 rgba(255,255,255,.45),
+            inset 0 -6px 12px rgba(90,0,16,.22);
+        font-size:1.05rem;
+    }
+    .cp-lab-title{
+        margin:0;
+        color: var(--cp-text);
+        font-family:'Sora','Noto Sans Bengali',sans-serif;
+        font-size:1.15rem; font-weight:800; letter-spacing:-.03em;
+    }
+    .cp-lab-sub{
+        margin:.35rem 0 0; max-width:640px;
+        color: var(--cp-muted);
+        font-size:.82rem; font-weight:600; line-height:1.7;
+    }
+    .cp-chip-note{
+        display:inline-flex; align-items:center; gap:.4rem;
+        padding:.4rem .75rem;
+        border:1px solid rgba(245,158,11,.25); border-radius:999px;
+        color:#b45309; background:rgba(245,158,11,.1);
+        font-size:.68rem; font-weight:800; white-space:nowrap;
+    }
+
+    .cp-lab-body{ padding:1.25rem 1.35rem 1.45rem; }
+
+    .cp-select-label{
+        display:flex; align-items:center; gap:.45rem;
+        margin-bottom:.85rem;
+        color: var(--cp-text);
+        font-size:.78rem; font-weight:800; letter-spacing:.04em; text-transform:uppercase;
+    }
+    .cp-select-label i{ color: var(--cp-red); }
+
+    .compat-grid{
+        display:grid;
+        grid-template-columns: repeat(8, minmax(0,1fr));
+        gap:.65rem;
+    }
+    .compat-chip{
+        position:relative; isolation:isolate; overflow:hidden;
+        min-height:72px;
+        display:grid; place-items:center;
+        border:1px solid var(--cp-border);
+        border-radius:18px;
+        color: var(--cp-text);
+        background: var(--cp-soft);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.45), 0 10px 18px -16px rgba(15,23,42,.5);
+        font-family:'Sora',sans-serif;
+        font-size:1.05rem; font-weight:800;
+        cursor:pointer;
+        transition: transform .3s var(--cp-spring), box-shadow .25s ease, border-color .25s ease, color .25s ease, background .25s ease;
+    }
+    .compat-chip::after{
+        content:""; position:absolute; inset:0 0 50%;
+        background:linear-gradient(180deg, rgba(255,255,255,.22), transparent);
+        pointer-events:none;
+    }
+    .compat-chip:hover{
+        transform:translateY(-4px) rotateX(4deg);
+        border-color:rgba(217,4,41,.3);
+        box-shadow:0 16px 28px -16px rgba(217,4,41,.45);
+        color: var(--cp-red);
+    }
+    .compat-chip.is-active{
+        color:#fff;
+        border-color:transparent;
+        background: linear-gradient(145deg, #ff4666, #d90429 58%, #8f0018);
+        box-shadow:
+            0 16px 30px -12px rgba(217,4,41,.7),
+            inset 0 1px 0 rgba(255,255,255,.45),
+            inset 0 -6px 12px rgba(70,0,12,.25);
+        transform:translateY(-4px) scale(1.03);
+    }
+
+    /* Results */
+    .cp-result-wrap{ margin-top:1.15rem; }
+    .compat-result-col{
+        height:100%;
+        padding:1.1rem 1.15rem 1.2rem;
+        border:1px solid var(--cp-border);
+        border-radius:20px;
+        background: var(--cp-soft);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.35);
+    }
+    .compat-result-col.give{
+        background: linear-gradient(180deg, rgba(217,4,41,.07), var(--cp-soft) 40%);
+        border-color: rgba(217,4,41,.16);
+    }
+    .compat-result-col.take{
+        background: linear-gradient(180deg, rgba(37,99,235,.08), var(--cp-soft) 40%);
+        border-color: rgba(37,99,235,.16);
+    }
+    .cp-col-head{
+        display:flex; align-items:center; gap:.7rem;
+        margin-bottom:.9rem;
+    }
+    .cp-col-ico{
+        width:38px; height:38px; flex:0 0 38px;
+        display:grid; place-items:center;
+        border-radius:12px; color:#fff; font-size:.85rem;
+    }
+    .cp-col-ico.give{ background:linear-gradient(145deg,#ff3659,#d90429); box-shadow:0 10px 18px -10px rgba(217,4,41,.6); }
+    .cp-col-ico.take{ background:linear-gradient(145deg,#4384ff,#2563eb); box-shadow:0 10px 18px -10px rgba(37,99,235,.55); }
+    .compat-result-col h6{
+        margin:0;
+        color: var(--cp-text);
+        font-family:'Sora','Noto Sans Bengali',sans-serif;
+        font-size:.92rem; font-weight:800;
+    }
+    .cp-col-hint{
+        margin:.15rem 0 0;
+        color: var(--cp-muted);
+        font-size:.7rem; font-weight:600;
+    }
+
+    .compat-pill,
+    #donateToList .compat-pill,
+    #receiveFromList .compat-pill{
+        display:inline-flex; align-items:center; justify-content:center;
+        min-width:52px; height:36px; padding:0 .7rem; margin:0 .4rem .45rem 0;
+        border-radius:12px 12px 12px 5px;
+        color:#fff;
+        background: linear-gradient(145deg, #ff4666, #d90429 60%, #8f0018);
+        box-shadow:
+            0 10px 18px -10px rgba(217,4,41,.65),
+            inset 0 1px 0 rgba(255,255,255,.4);
+        font-family:'Sora',sans-serif;
+        font-size:.82rem; font-weight:800;
+        animation: cpPillIn .35s var(--cp-spring) both;
+    }
+    #receiveFromList .compat-pill{
+        background: linear-gradient(145deg, #4384ff, #2563eb 60%, #1e40af);
+        box-shadow: 0 10px 18px -10px rgba(37,99,235,.6), inset 0 1px 0 rgba(255,255,255,.4);
+    }
+    @keyframes cpPillIn{
+        from{ opacity:0; transform:translateY(8px) scale(.9); }
+        to{ opacity:1; transform:none; }
+    }
+
+    .cp-hint{
+        display:flex; align-items:center; gap:.75rem;
+        margin-top:1.1rem;
+        padding:.95rem 1.05rem;
+        border:1px dashed var(--cp-border);
+        border-radius:16px;
+        background: var(--cp-soft);
+        color: var(--cp-muted);
+        font-size:.84rem; font-weight:650;
+    }
+    .cp-hint i{
+        width:34px; height:34px; flex:0 0 34px;
+        display:grid; place-items:center;
+        border-radius:11px;
+        color: var(--cp-red);
+        background:rgba(217,4,41,.08);
+        border:1px solid rgba(217,4,41,.12);
+    }
+
+    .cp-disclaimer{
+        display:flex; gap:.75rem; align-items:flex-start;
+        margin-top:1rem;
+        padding:.9rem 1rem;
+        border:1px solid rgba(245,158,11,.22);
+        border-radius:16px;
+        background:rgba(245,158,11,.08);
+        color: var(--cp-muted);
+        font-size:.76rem; line-height:1.65; font-weight:600;
+    }
+    .cp-disclaimer i{ color:#d97706; margin-top:.15rem; }
+
+    /* Universal cards */
+    .cp-facts{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:1rem;
+        margin:1.25rem clamp(.4rem, 2vw, 1.5rem) 0;
+    }
+    .cp-fact{
+        position:relative; overflow:hidden;
+        padding:1.2rem 1.2rem 1.25rem;
+        border:1px solid var(--cp-border);
+        border-radius:22px;
+        background: var(--cp-surface);
+        box-shadow: 0 18px 40px -28px rgba(15,23,42,.4), inset 0 1px 0 rgba(255,255,255,.5);
+        backdrop-filter:blur(18px);
+    }
+    .cp-fact::before{
+        content:""; position:absolute; top:0; left:0; right:0; height:4px;
+        background: var(--fact-accent, var(--cp-red));
+    }
+    .cp-fact-top{ display:flex; align-items:center; gap:.75rem; margin-bottom:.7rem; }
+    .cp-fact-badge{
+        min-width:54px; height:42px; padding:0 .55rem;
+        display:grid; place-items:center;
+        border-radius:13px 13px 13px 5px; color:#fff;
+        background:linear-gradient(145deg,#ff4666,#d90429 60%,#8f0018);
+        box-shadow:0 10px 18px -10px rgba(217,4,41,.65), inset 0 1px 0 rgba(255,255,255,.4);
+        font-family:'Sora',sans-serif; font-size:.95rem; font-weight:800;
+    }
+    .cp-fact.take .cp-fact-badge{
+        background:linear-gradient(145deg,#fbbf24,#d97706);
+        box-shadow:0 10px 18px -10px rgba(217,119,6,.55), inset 0 1px 0 rgba(255,255,255,.4);
+    }
+    .cp-fact h3{
+        margin:0;
+        color: var(--cp-text);
+        font-family:'Sora','Noto Sans Bengali',sans-serif;
+        font-size:.95rem; font-weight:800;
+    }
+    .cp-fact p{
+        margin:0;
+        color: var(--cp-muted);
+        font-size:.8rem; line-height:1.7; font-weight:600;
+    }
+    .cp-fact.give{ --fact-accent:#d90429; }
+    .cp-fact.take{ --fact-accent:#f59e0b; }
+
+    .cp-cta{
+        display:flex; flex-wrap:wrap; gap:.7rem;
+        margin:1.25rem clamp(.4rem, 2vw, 1.5rem) 0;
+        padding:1.1rem 1.2rem;
+        border:1px solid var(--cp-border);
+        border-radius:20px;
+        background: var(--cp-surface);
+        box-shadow: 0 16px 36px -28px rgba(15,23,42,.35);
+        align-items:center; justify-content:space-between;
+    }
+    .cp-cta p{
+        margin:0;
+        color: var(--cp-text);
+        font-size:.88rem; font-weight:700;
+    }
+    .cp-cta span{ display:block; margin-top:.2rem; color: var(--cp-muted); font-size:.76rem; font-weight:600; }
+    .cp-cta-btn{
+        display:inline-flex; align-items:center; gap:.5rem;
+        min-height:44px; padding:.6rem 1.1rem;
+        border-radius:13px; color:#fff !important; text-decoration:none;
+        background:linear-gradient(145deg,#ff3659,#d90429);
+        box-shadow:0 12px 22px -12px rgba(217,4,41,.65), inset 0 1px 0 rgba(255,255,255,.4);
+        font-size:.8rem; font-weight:800;
+        transition: transform .28s var(--cp-spring);
+    }
+    .cp-cta-btn:hover{ color:#fff; transform:translateY(-3px); }
+
+    [data-theme="dark"] .compat-chip.is-active{ color:#fff; }
+
+    @media (max-width: 991.98px){
+        .compat-grid{ grid-template-columns: repeat(4, minmax(0,1fr)); }
+    }
+    @media (max-width: 767.98px){
+        .cp-hero{ min-height:auto; padding:1.3rem 1.1rem 3.8rem; border-radius:25px; }
+        .cp-lab{ margin-left:.25rem; margin-right:.25rem; border-radius:22px; }
+        .cp-lab-head, .cp-lab-body{ padding:1rem; }
+        .cp-chip-note{ display:none; }
+        .compat-grid{ grid-template-columns: repeat(4, minmax(0,1fr)); }
+        .cp-facts, .cp-cta{ margin-left:.25rem; margin-right:.25rem; }
+        .cp-facts{ grid-template-columns:1fr; }
+        .cp-cta{ flex-direction:column; align-items:stretch; }
+        .cp-cta-btn{ justify-content:center; }
+    }
+    @media (max-width: 420px){
+        .compat-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+    @media (prefers-reduced-motion: reduce){
+        .cp-hero::before, .cp-live, .compat-pill{ animation:none !important; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cp-page">
+
+    <section class="cp-hero reveal" aria-labelledby="cpHeroTitle">
+        <div class="cp-hero-grid" aria-hidden="true"></div>
+        <div class="cp-hero-content">
+            <div class="cp-eyebrow">
+                <span class="cp-live"></span>
+                {% trans "ABO / Rh Lab" %}
+            </div>
+            <h1 class="cp-hero-title" id="cpHeroTitle">
+                {% trans "Blood Compatibility Checker" %}
+            </h1>
+            <p class="cp-hero-text">
+                {% blocktrans %}Tap a blood group to instantly see who it can donate to and who it can safely receive from. This is a general ABO/Rh reference only — a hospital or blood bank must always confirm compatibility with a cross-match test before any transfusion.{% endblocktrans %}
+            </p>
+        </div>
+    </section>
+
+    <section class="cp-lab reveal" aria-labelledby="cpLabTitle">
+        <div class="cp-lab-head">
+            <div class="cp-lab-left">
+                <span class="cp-head-ico"><i class="fas fa-dna"></i></span>
+                <div>
+                    <h2 class="cp-lab-title" id="cpLabTitle">{% trans "Interactive matcher" %}</h2>
+                    <p class="cp-lab-sub">
+                        {% trans "Select any group. Matches update instantly for donation (who you can help) and reception (who can help you)." %}
+                    </p>
+                </div>
+            </div>
+            <span class="cp-chip-note">
+                <i class="fas fa-flask"></i> {% trans "Reference only" %}
+            </span>
+        </div>
+
+        <div class="cp-lab-body">
+            <div class="cp-select-label">
+                <i class="fas fa-droplet"></i>
+                {% trans "Choose a blood group" %}
+            </div>
+
+            <div class="compat-grid mb-1" id="compatGrid">
+                {% for bg in blood_groups %}
+                    <button type="button" class="compat-chip" data-group="{{ bg }}">{{ bg }}</button>
+                {% endfor %}
+            </div>
+
+            <div class="row g-3 cp-result-wrap" id="compatResult" style="display:none;">
+                <div class="col-md-6">
+                    <div class="compat-result-col give">
+                        <div class="cp-col-head">
+                            <span class="cp-col-ico give"><i class="fas fa-arrow-up"></i></span>
+                            <div>
+                                <h6>{% trans "Can donate to" %}</h6>
+                                <p class="cp-col-hint">{% trans "Patients who can receive this group" %}</p>
+                            </div>
+                        </div>
+                        <div id="donateToList"></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="compat-result-col take">
+                        <div class="cp-col-head">
+                            <span class="cp-col-ico take"><i class="fas fa-arrow-down"></i></span>
+                            <div>
+                                <h6>{% trans "Can receive from" %}</h6>
+                                <p class="cp-col-hint">{% trans "Donors this group can safely take from" %}</p>
+                            </div>
+                        </div>
+                        <div id="receiveFromList"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cp-hint" id="compatHint">
+                <i class="fas fa-hand-pointer"></i>
+                <span>{% trans "Select a blood group above to see its matches." %}</span>
+            </div>
+
+            <div class="cp-disclaimer">
+                <i class="fas fa-triangle-exclamation"></i>
+                <span>{% trans "Never use this chart as a substitute for a laboratory cross-match. Emergency O− use still requires clinical judgement at the hospital." %}</span>
+            </div>
+        </div>
+    </section>
+
+    <div class="cp-facts">
+        <article class="cp-fact give reveal">
+            <div class="cp-fact-top">
+                <span class="cp-fact-badge">O−</span>
+                <h3><i class="fas fa-star me-1" style="color:#f59e0b;"></i> {% trans "Universal Donor" %}</h3>
+            </div>
+            <p>{% blocktrans %}O− has no A, B, or Rh antigens, so it can be given to patients of any blood group in an emergency when there's no time to match.{% endblocktrans %}</p>
+        </article>
+
+        <article class="cp-fact take reveal">
+            <div class="cp-fact-top">
+                <span class="cp-fact-badge">AB+</span>
+                <h3><i class="fas fa-star me-1" style="color:#f59e0b;"></i> {% trans "Universal Recipient" %}</h3>
+            </div>
+            <p>{% blocktrans %}AB+ patients already carry A, B, and Rh antigens, so they can safely receive red cells from any blood group.{% endblocktrans %}</p>
+        </article>
+    </div>
+
+    <div class="cp-cta reveal">
+        <div>
+            <p>{% trans "Need a matching donor in Patiya?" %}</p>
+            <span>{% trans "Search the live directory or post an emergency request." %}</span>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <a href="{% url 'donor_list' %}" class="cp-cta-btn">
+                <i class="fas fa-user-group"></i> {% trans "Find Donors" %}
+            </a>
+            <a href="{% url 'submit_blood_request' %}" class="cp-cta-btn" style="background:linear-gradient(145deg,#4384ff,#2563eb);box-shadow:0 12px 22px -12px rgba(37,99,235,.6);">
+                <i class="fas fa-paper-plane"></i> {% trans "Request Blood" %}
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+    var donateTo = {
+        'O-':  ['O-', 'O+', 'A-', 'A+', 'B-', 'B+', 'AB-', 'AB+'],
+        'O+':  ['O+', 'A+', 'B+', 'AB+'],
+        'A-':  ['A-', 'A+', 'AB-', 'AB+'],
+        'A+':  ['A+', 'AB+'],
+        'B-':  ['B-', 'B+', 'AB-', 'AB+'],
+        'B+':  ['B+', 'AB+'],
+        'AB-': ['AB-', 'AB+'],
+        'AB+': ['AB+']
+    };
+    var receiveFrom = {
+        'O-':  ['O-'],
+        'O+':  ['O-', 'O+'],
+        'A-':  ['O-', 'A-'],
+        'A+':  ['O-', 'O+', 'A-', 'A+'],
+        'B-':  ['O-', 'B-'],
+        'B+':  ['O-', 'O+', 'B-', 'B+'],
+        'AB-': ['O-', 'A-', 'B-', 'AB-'],
+        'AB+': ['O-', 'O+', 'A-', 'A+', 'B-', 'B+', 'AB-', 'AB+']
+    };
+
+    function pills(container, groups) {
+        container.innerHTML = '';
+        groups.forEach(function (g, i) {
+            var span = document.createElement('span');
+            span.className = 'compat-pill';
+            span.textContent = g;
+            span.style.animationDelay = (i * 0.04) + 's';
+            container.appendChild(span);
+        });
+    }
+
+    var grid = document.getElementById('compatGrid');
+    var result = document.getElementById('compatResult');
+    var hint = document.getElementById('compatHint');
+    if (!grid) return;
+
+    grid.addEventListener('click', function (e) {
+        var btn = e.target.closest('.compat-chip');
+        if (!btn) return;
+
+        grid.querySelectorAll('.compat-chip').forEach(function (c) { c.classList.remove('is-active'); });
+        btn.classList.add('is-active');
+
+        var group = btn.getAttribute('data-group');
+        pills(document.getElementById('donateToList'), donateTo[group] || []);
+        pills(document.getElementById('receiveFromList'), receiveFrom[group] || []);
+
+        result.style.display = 'flex';
+        if (hint) hint.style.display = 'none';
+    });
+})();
+</script>
+{% endblock %}

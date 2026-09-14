@@ -1,0 +1,1089 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Submit Blood Request" %} — Patiya RedPulse{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* ================================================================
+       PATIYA REDPULSE — PREMIUM BLOOD REQUEST FORM 2026
+       ================================================================ */
+
+    .request-page {
+        --request-red: var(--rp-red, #d90429);
+        --request-text: var(--rp-text, #0f172a);
+        --request-muted: var(--rp-subtext, #64748b);
+        --request-surface: var(--rp-surface, rgba(255, 255, 255, .82));
+        --request-border: var(--rp-border, rgba(15, 23, 42, .09));
+    }
+
+    /* ------------------------------- Hero ------------------------------ */
+
+    .request-hero {
+        position: relative;
+        isolation: isolate;
+        overflow: hidden;
+        padding: clamp(1.6rem, 4vw, 2.8rem);
+        border: 1px solid rgba(217, 4, 41, .22);
+        border-radius: 30px;
+        color: #fff;
+        background:
+            radial-gradient(circle at 92% 8%, rgba(255,255,255,.28), transparent 27%),
+            linear-gradient(125deg, #850017 0%, #d90429 50%, #ff3659 100%);
+        box-shadow:
+            0 30px 70px -30px rgba(217, 4, 41, .7),
+            inset 0 1px 0 rgba(255,255,255,.4),
+            inset 0 -18px 35px rgba(83, 0, 13, .23);
+    }
+
+    .request-hero::before {
+        content: "";
+        position: absolute;
+        z-index: -1;
+        width: 330px;
+        height: 330px;
+        top: -180px;
+        right: -70px;
+        border: 52px solid rgba(255,255,255,.09);
+        border-radius: 50%;
+        animation: requestOrbit 18s linear infinite;
+    }
+
+    .request-hero::after {
+        content: "";
+        position: absolute;
+        z-index: -1;
+        right: 11%;
+        bottom: -365px;
+        width: 450px;
+        height: 450px;
+        border: 65px solid rgba(255,255,255,.06);
+        border-radius: 50%;
+    }
+
+    @keyframes requestOrbit {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    .request-hero-grid {
+        position: absolute;
+        inset: 0;
+        z-index: -2;
+        opacity: .13;
+        background-image:
+            linear-gradient(rgba(255,255,255,.7) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,.7) 1px, transparent 1px);
+        background-size: 42px 42px;
+        -webkit-mask-image: linear-gradient(90deg, transparent, #000);
+        mask-image: linear-gradient(90deg, transparent, #000);
+    }
+
+    .request-hero-content {
+        max-width: 720px;
+    }
+
+    .request-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: .55rem;
+        margin-bottom: 1rem;
+        padding: .45rem .85rem;
+        border: 1px solid rgba(255,255,255,.27);
+        border-radius: 999px;
+        color: #fff;
+        background: rgba(255,255,255,.12);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.3);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        font-size: .72rem;
+        font-weight: 800;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+    }
+
+    .request-live-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #9dffca;
+        box-shadow: 0 0 0 0 rgba(157,255,202,.7);
+        animation: requestLivePulse 1.8s infinite;
+    }
+
+    @keyframes requestLivePulse {
+        70% {
+            box-shadow: 0 0 0 9px rgba(157,255,202,0);
+        }
+    }
+
+    .request-hero-title {
+        margin: 0 0 .75rem;
+        color: #fff;
+        font-family: 'Sora', 'Noto Sans Bengali', sans-serif;
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        font-weight: 800;
+        line-height: 1.08;
+        letter-spacing: -.055em;
+        text-shadow: 0 8px 24px rgba(83,0,14,.26);
+    }
+
+    .request-hero-text {
+        max-width: 650px;
+        margin: 0;
+        color: rgba(255,255,255,.84);
+        font-size: clamp(.9rem, 2vw, 1rem);
+        font-weight: 500;
+        line-height: 1.8;
+    }
+
+    .request-hero-badge {
+        position: absolute;
+        right: clamp(1.3rem, 4vw, 2.8rem);
+        bottom: clamp(1.3rem, 4vw, 2.2rem);
+        display: flex;
+        align-items: center;
+        gap: .7rem;
+        padding: .85rem 1rem;
+        border: 1px solid rgba(255,255,255,.26);
+        border-radius: 18px;
+        background: rgba(76,0,14,.25);
+        box-shadow:
+            0 18px 34px -18px rgba(0,0,0,.55),
+            inset 0 1px 0 rgba(255,255,255,.25);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+    }
+
+    .request-hero-badge-icon {
+        width: 43px;
+        height: 43px;
+        display: grid;
+        place-items: center;
+        border-radius: 14px;
+        color: var(--request-red);
+        background: #fff;
+        box-shadow: 0 10px 20px -12px rgba(0,0,0,.5);
+    }
+
+    .request-hero-badge strong {
+        display: block;
+        font-size: .82rem;
+        font-weight: 800;
+    }
+
+    .request-hero-badge small {
+        display: block;
+        margin-top: .18rem;
+        color: rgba(255,255,255,.7);
+        font-size: .68rem;
+        font-weight: 600;
+    }
+
+    /* ---------------------------- Main layout -------------------------- */
+
+    .request-layout {
+        position: relative;
+        z-index: 3;
+        margin-top: -34px;
+    }
+
+    .request-form-card {
+        overflow: hidden;
+        border: 1px solid var(--request-border);
+        border-radius: 28px;
+        background: var(--request-surface);
+        box-shadow:
+            0 28px 65px -34px rgba(15,23,42,.48),
+            inset 0 1px 0 rgba(255,255,255,.6);
+        backdrop-filter: blur(24px) saturate(170%);
+        -webkit-backdrop-filter: blur(24px) saturate(170%);
+    }
+
+    .request-card-header {
+        display: flex;
+        align-items: center;
+        gap: .85rem;
+        padding: 1.25rem 1.4rem;
+        border-bottom: 1px solid var(--request-border);
+        background: linear-gradient(90deg, rgba(217,4,41,.08), transparent 55%);
+    }
+
+    .request-card-icon {
+        width: 46px;
+        height: 46px;
+        display: grid;
+        place-items: center;
+        flex: 0 0 46px;
+        border-radius: 15px;
+        color: #fff;
+        background: linear-gradient(145deg, #ff3659, #d90429 60%, #8f0018);
+        box-shadow:
+            0 12px 23px -10px rgba(217,4,41,.68),
+            inset 0 1px 0 rgba(255,255,255,.45),
+            inset 0 -5px 10px rgba(80,0,15,.22);
+    }
+
+    .request-card-title {
+        margin: 0;
+        color: var(--request-text);
+        font-family: 'Sora', 'Noto Sans Bengali', sans-serif;
+        font-size: 1.1rem;
+        font-weight: 800;
+        letter-spacing: -.03em;
+    }
+
+    .request-card-subtitle {
+        margin: .2rem 0 0;
+        color: var(--request-muted);
+        font-size: .75rem;
+        font-weight: 600;
+    }
+
+    .request-form-body {
+        padding: clamp(1rem, 3vw, 1.6rem);
+    }
+
+    .form-section {
+        margin-bottom: 1.4rem;
+        padding: 1.15rem;
+        border: 1px solid var(--request-border);
+        border-radius: 21px;
+        background: var(--rp-surface-2, rgba(255,255,255,.38));
+    }
+
+    .form-section:last-of-type {
+        margin-bottom: 1rem;
+    }
+
+    .form-section-heading {
+        display: flex;
+        align-items: center;
+        gap: .65rem;
+        margin-bottom: 1rem;
+        padding-bottom: .8rem;
+        border-bottom: 1px dashed var(--request-border);
+    }
+
+    .form-section-heading-icon {
+        width: 34px;
+        height: 34px;
+        display: grid;
+        place-items: center;
+        border-radius: 11px;
+        color: var(--request-red);
+        background: rgba(217,4,41,.09);
+        border: 1px solid rgba(217,4,41,.16);
+    }
+
+    .form-section-heading h3 {
+        margin: 0;
+        color: var(--request-text);
+        font-family: 'Sora', 'Noto Sans Bengali', sans-serif;
+        font-size: .9rem;
+        font-weight: 800;
+    }
+
+    .form-section-heading p {
+        margin: .15rem 0 0;
+        color: var(--request-muted);
+        font-size: .7rem;
+        font-weight: 600;
+    }
+
+    .request-field {
+        margin-bottom: 1rem;
+    }
+
+    .request-field:last-child {
+        margin-bottom: 0;
+    }
+
+    .request-label {
+        display: flex;
+        align-items: center;
+        gap: .42rem;
+        margin-bottom: .5rem;
+        color: var(--request-text);
+        font-size: .78rem;
+        font-weight: 800;
+    }
+
+    .request-label i {
+        color: var(--request-red);
+        font-size: .76rem;
+    }
+
+    .required-mark {
+        color: var(--request-red);
+        font-weight: 900;
+    }
+
+    .request-form input:not([type="hidden"]),
+    .request-form select,
+    .request-form textarea {
+        width: 100%;
+        min-height: 50px;
+        padding: .72rem .9rem;
+        border: 1px solid var(--request-border);
+        border-radius: 14px;
+        outline: none;
+        color: var(--request-text);
+        background: var(--rp-surface-2, rgba(255,255,255,.55));
+        box-shadow:
+            inset 0 1px 0 rgba(255,255,255,.45),
+            0 7px 16px -14px rgba(15,23,42,.5);
+        font-size: .87rem;
+        font-weight: 600;
+        transition:
+            border-color .25s ease,
+            box-shadow .25s ease,
+            background .25s ease,
+            transform .25s ease;
+    }
+
+    .request-form textarea {
+        min-height: 120px;
+        resize: vertical;
+        line-height: 1.65;
+    }
+
+    .request-form input:not([type="hidden"])::placeholder,
+    .request-form textarea::placeholder {
+        color: var(--request-muted);
+        opacity: .72;
+    }
+
+    .request-form input:not([type="hidden"]):focus,
+    .request-form select:focus,
+    .request-form textarea:focus {
+        border-color: rgba(217,4,41,.55);
+        background: var(--rp-surface-solid, #fff);
+        box-shadow:
+            0 0 0 4px rgba(217,4,41,.1),
+            0 13px 24px -18px rgba(217,4,41,.45);
+        transform: translateY(-1px);
+    }
+
+    .request-form select {
+        cursor: pointer;
+        appearance: auto;
+    }
+
+    .field-error {
+        display: flex;
+        align-items: flex-start;
+        gap: .4rem;
+        margin-top: .45rem;
+        color: #dc2626;
+        font-size: .7rem;
+        font-weight: 700;
+    }
+
+    .field-error::before {
+        content: "\f06a";
+        padding-top: 1px;
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+    }
+
+    .global-form-errors {
+        margin-bottom: 1.15rem;
+        padding: .9rem 1rem;
+        border: 1px solid rgba(220,38,38,.2);
+        border-radius: 15px;
+        color: #b91c1c;
+        background: rgba(220,38,38,.08);
+        font-size: .8rem;
+        font-weight: 700;
+    }
+
+    /* -------------------------- Emergency notice ---------------------- */
+
+    .emergency-notice {
+        position: relative;
+        overflow: hidden;
+        margin: 1.35rem 0;
+        padding: 1.1rem 1.15rem;
+        border: 1px solid rgba(245,158,11,.25);
+        border-radius: 19px;
+        background:
+            linear-gradient(135deg, rgba(245,158,11,.13), rgba(217,4,41,.06));
+        box-shadow:
+            0 12px 25px -20px rgba(245,158,11,.7),
+            inset 0 1px 0 rgba(255,255,255,.45);
+    }
+
+    .emergency-notice::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 4px;
+        background: linear-gradient(180deg, #fbbf24, #d97706);
+    }
+
+    .emergency-notice-heading {
+        display: flex;
+        align-items: center;
+        gap: .6rem;
+        margin-bottom: .65rem;
+        color: #b45309;
+        font-size: .86rem;
+        font-weight: 800;
+    }
+
+    .emergency-notice ul {
+        margin: 0;
+        padding-left: 1.3rem;
+        color: var(--request-muted);
+        font-size: .75rem;
+        font-weight: 600;
+        line-height: 1.8;
+    }
+
+    .emergency-notice li::marker {
+        color: #d97706;
+    }
+
+    /* ------------------------------- Actions --------------------------- */
+
+    .request-actions {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: .7rem;
+        margin-top: 1.3rem;
+    }
+
+    .request-submit-btn,
+    .request-secondary-btn {
+        min-height: 50px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: .55rem;
+        padding: .72rem 1.25rem;
+        border-radius: 14px;
+        font-size: .82rem;
+        font-weight: 800;
+        transition: all .3s cubic-bezier(.34,1.56,.64,1);
+    }
+
+    .request-submit-btn {
+        position: relative;
+        overflow: hidden;
+        border: 0;
+        color: #fff;
+        background: linear-gradient(145deg, #ff3659, #d90429 60%, #8f0018);
+        box-shadow:
+            0 14px 26px -11px rgba(217,4,41,.7),
+            inset 0 1px 0 rgba(255,255,255,.45),
+            inset 0 -5px 10px rgba(84,0,16,.22);
+    }
+
+    .request-submit-btn::before {
+        content: "";
+        position: absolute;
+        inset: 0 0 55%;
+        background: linear-gradient(180deg, rgba(255,255,255,.27), transparent);
+        pointer-events: none;
+    }
+
+    .request-submit-btn:hover {
+        color: #fff;
+        transform: translateY(-3px);
+        box-shadow:
+            0 19px 35px -11px rgba(217,4,41,.77),
+            inset 0 1px 0 rgba(255,255,255,.5);
+    }
+
+    .request-submit-btn:active {
+        transform: translateY(0) scale(.98);
+    }
+
+    .request-secondary-btn {
+        border: 1px solid var(--request-border);
+        color: var(--request-text);
+        background: var(--request-surface);
+        box-shadow:
+            0 10px 20px -16px rgba(15,23,42,.5),
+            inset 0 1px 0 rgba(255,255,255,.55);
+    }
+
+    .request-secondary-btn:hover {
+        color: var(--request-red);
+        border-color: rgba(217,4,41,.28);
+        transform: translateY(-3px);
+        box-shadow: 0 14px 26px -16px rgba(15,23,42,.65);
+    }
+
+    /* ------------------------------- Side info ------------------------- */
+
+    .request-side-card {
+        position: sticky;
+        top: 95px;
+        overflow: hidden;
+        border: 1px solid var(--request-border);
+        border-radius: 25px;
+        background: var(--request-surface);
+        box-shadow:
+            0 22px 50px -32px rgba(15,23,42,.45),
+            inset 0 1px 0 rgba(255,255,255,.55);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+    }
+
+    .side-card-heading {
+        display: flex;
+        align-items: center;
+        gap: .7rem;
+        padding: 1.1rem 1.15rem;
+        border-bottom: 1px solid var(--request-border);
+        background: linear-gradient(90deg, rgba(217,4,41,.075), transparent);
+    }
+
+    .side-card-heading-icon {
+        width: 38px;
+        height: 38px;
+        display: grid;
+        place-items: center;
+        border-radius: 12px;
+        color: var(--request-red);
+        background: rgba(217,4,41,.09);
+    }
+
+    .side-card-heading h2 {
+        margin: 0;
+        color: var(--request-text);
+        font-family: 'Sora', 'Noto Sans Bengali', sans-serif;
+        font-size: .9rem;
+        font-weight: 800;
+    }
+
+    .side-card-body {
+        padding: 1rem;
+    }
+
+    .side-feature {
+        display: flex;
+        align-items: flex-start;
+        gap: .7rem;
+        padding: .8rem 0;
+        border-bottom: 1px solid var(--request-border);
+    }
+
+    .side-feature:last-child {
+        border-bottom: 0;
+    }
+
+    .side-feature-icon {
+        width: 33px;
+        height: 33px;
+        display: grid;
+        place-items: center;
+        flex: 0 0 33px;
+        border-radius: 11px;
+        color: #fff;
+        background: linear-gradient(145deg, #ff3659, #d90429);
+        box-shadow: 0 8px 15px -9px rgba(217,4,41,.7);
+        font-size: .72rem;
+    }
+
+    .side-feature strong {
+        display: block;
+        color: var(--request-text);
+        font-size: .76rem;
+        font-weight: 800;
+    }
+
+    .side-feature span {
+        display: block;
+        margin-top: .18rem;
+        color: var(--request-muted);
+        font-size: .7rem;
+        font-weight: 600;
+        line-height: 1.55;
+    }
+
+    .side-emergency-box {
+        margin-top: .8rem;
+        padding: .85rem;
+        border: 1px solid rgba(217,4,41,.18);
+        border-radius: 15px;
+        color: var(--request-muted);
+        background: rgba(217,4,41,.065);
+        font-size: .7rem;
+        font-weight: 600;
+        line-height: 1.6;
+    }
+
+    .side-emergency-box strong {
+        color: var(--request-red);
+    }
+
+    /* ----------------------------- Responsive ------------------------- */
+
+    @media (max-width: 991.98px) {
+        .request-hero-badge {
+            position: static;
+            width: max-content;
+            max-width: 100%;
+            margin-top: 1.35rem;
+        }
+
+        .request-side-card {
+            position: static;
+            margin-top: 1rem;
+        }
+    }
+
+    @media (max-width: 767.98px) {
+        .request-hero {
+            padding: 1.45rem 1.15rem 1.4rem;
+            border-radius: 25px;
+        }
+
+        .request-hero-title {
+            font-size: clamp(1.85rem, 9vw, 2.55rem);
+        }
+
+        .request-layout {
+            margin-top: -28px;
+        }
+
+        .request-card-header,
+        .request-form-body {
+            padding: 1rem;
+        }
+
+        .form-section {
+            padding: .9rem;
+            border-radius: 18px;
+        }
+
+        .request-actions {
+            flex-direction: column;
+        }
+
+        .request-submit-btn,
+        .request-secondary-btn {
+            width: 100%;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .request-hero::before,
+        .request-live-dot {
+            animation: none !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="request-page">
+
+    <!-- Premium Hero -->
+    <section class="request-hero reveal" aria-labelledby="requestPageTitle">
+        <div class="request-hero-grid" aria-hidden="true"></div>
+
+        <div class="request-hero-content">
+            <div class="request-eyebrow">
+                <span class="request-live-dot"></span>
+                {% trans "Emergency Blood Support" %}
+            </div>
+
+            <h1 class="request-hero-title" id="requestPageTitle">
+                {% trans "Request blood. Reach the right donors faster." %}
+            </h1>
+
+            <p class="request-hero-text">
+                {% trans "Share accurate patient and hospital details so eligible donors can respond quickly and help when it matters most." %}
+            </p>
+        </div>
+
+        <div class="request-hero-badge">
+            <span class="request-hero-badge-icon">
+                <i class="fas fa-heart-pulse"></i>
+            </span>
+            <div>
+                <strong>{% trans "Every request matters" %}</strong>
+                <small>{% trans "Your information helps save lives" %}</small>
+            </div>
+        </div>
+    </section>
+
+    <div class="row g-4 request-layout justify-content-center">
+
+        <!-- Main Form -->
+        <div class="col-lg-8">
+            <section class="request-form-card reveal">
+                <div class="request-card-header">
+                    <span class="request-card-icon">
+                        <i class="fas fa-hand-holding-medical"></i>
+                    </span>
+                    <div>
+                        <h2 class="request-card-title">
+                            {% trans "Submit Blood Request" %}
+                        </h2>
+                        <p class="request-card-subtitle">
+                            {% trans "Complete the form with clear and accurate information" %}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="request-form-body">
+                    <form method="post" class="request-form" id="bloodRequestForm">
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                            <div class="global-form-errors">
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
+
+                        <!-- Patient Information -->
+                        <div class="form-section">
+                            <div class="form-section-heading">
+                                <span class="form-section-heading-icon">
+                                    <i class="fas fa-user-injured"></i>
+                                </span>
+                                <div>
+                                    <h3>{% trans "Patient Information" %}</h3>
+                                    <p>{% trans "Tell us about the patient and blood requirement" %}</p>
+                                </div>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="request-field">
+                                        <label for="{{ form.patient_name.id_for_label }}" class="request-label">
+                                            <i class="fas fa-user"></i>
+                                            {% trans "Patient Name" %}
+                                            <span class="required-mark">*</span>
+                                        </label>
+
+                                        {{ form.patient_name }}
+
+                                        {% if form.patient_name.errors %}
+                                            <div class="field-error">{{ form.patient_name.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="request-field">
+                                        <label for="{{ form.required_blood_group.id_for_label }}" class="request-label">
+                                            <i class="fas fa-droplet"></i>
+                                            {% trans "Required Blood Group" %}
+                                            <span class="required-mark">*</span>
+                                        </label>
+
+                                        {{ form.required_blood_group }}
+
+                                        {% if form.required_blood_group.errors %}
+                                            <div class="field-error">{{ form.required_blood_group.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="request-field">
+                                        <label for="{{ form.number_of_bags.id_for_label }}" class="request-label">
+                                            <i class="fas fa-layer-group"></i>
+                                            {% trans "Number of Bags" %}
+                                            <span class="required-mark">*</span>
+                                        </label>
+
+                                        {{ form.number_of_bags }}
+
+                                        {% if form.number_of_bags.errors %}
+                                            <div class="field-error">{{ form.number_of_bags.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="request-field">
+                                        <label for="{{ form.patient_condition.id_for_label }}" class="request-label">
+                                            <i class="fas fa-heart-circle-exclamation"></i>
+                                            {% trans "Patient Condition" %}
+                                            <span class="required-mark">*</span>
+                                        </label>
+
+                                        {{ form.patient_condition }}
+
+                                        {% if form.patient_condition.errors %}
+                                            <div class="field-error">{{ form.patient_condition.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Emergency Information -->
+                        <div class="form-section">
+                            <div class="form-section-heading">
+                                <span class="form-section-heading-icon">
+                                    <i class="fas fa-triangle-exclamation"></i>
+                                </span>
+                                <div>
+                                    <h3>{% trans "Emergency Details" %}</h3>
+                                    <p>{% trans "Help donors understand how urgent this request is" %}</p>
+                                </div>
+                            </div>
+
+                            <div class="request-field">
+                                <label for="{{ form.emergency_level.id_for_label }}" class="request-label">
+                                    <i class="fas fa-bolt"></i>
+                                    {% trans "Emergency Level" %}
+                                    <span class="required-mark">*</span>
+                                </label>
+
+                                {{ form.emergency_level }}
+
+                                {% if form.emergency_level.errors %}
+                                    <div class="field-error">{{ form.emergency_level.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="request-field">
+                                <label for="{{ form.required_date.id_for_label }}" class="request-label">
+                                    <i class="fas fa-calendar-days"></i>
+                                    {% trans "Required Date" %}
+                                    <span class="required-mark">*</span>
+                                </label>
+
+                                {{ form.required_date }}
+
+                                {% if form.required_date.errors %}
+                                    <div class="field-error">{{ form.required_date.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Hospital Information -->
+                        <div class="form-section">
+                            <div class="form-section-heading">
+                                <span class="form-section-heading-icon">
+                                    <i class="fas fa-hospital"></i>
+                                </span>
+                                <div>
+                                    <h3>{% trans "Hospital Information" %}</h3>
+                                    <p>{% trans "Provide the location where blood is needed" %}</p>
+                                </div>
+                            </div>
+
+                            <div class="request-field">
+                                <label for="{{ form.hospital_name.id_for_label }}" class="request-label">
+                                    <i class="fas fa-hospital-user"></i>
+                                    {% trans "Hospital Name" %}
+                                    <span class="required-mark">*</span>
+                                </label>
+
+                                {{ form.hospital_name }}
+
+                                {% if form.hospital_name.errors %}
+                                    <div class="field-error">{{ form.hospital_name.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="request-field">
+                                <label for="{{ form.hospital_address.id_for_label }}" class="request-label">
+                                    <i class="fas fa-location-dot"></i>
+                                    {% trans "Hospital Address" %}
+                                    <span class="required-mark">*</span>
+                                </label>
+
+                                {{ form.hospital_address }}
+
+                                {% if form.hospital_address.errors %}
+                                    <div class="field-error">{{ form.hospital_address.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Contact Information -->
+                        <div class="form-section">
+                            <div class="form-section-heading">
+                                <span class="form-section-heading-icon">
+                                    <i class="fas fa-phone-volume"></i>
+                                </span>
+                                <div>
+                                    <h3>{% trans "Contact Information" %}</h3>
+                                    <p>{% trans "Donors may use this number to contact you" %}</p>
+                                </div>
+                            </div>
+
+                            <div class="request-field">
+                                <label for="{{ form.contact_phone.id_for_label }}" class="request-label">
+                                    <i class="fas fa-phone"></i>
+                                    {% trans "Contact Phone" %}
+                                    <span class="required-mark">*</span>
+                                </label>
+
+                                {{ form.contact_phone }}
+
+                                {% if form.contact_phone.errors %}
+                                    <div class="field-error">{{ form.contact_phone.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="request-field">
+                                <label for="{{ form.additional_info.id_for_label }}" class="request-label">
+                                    <i class="fas fa-message"></i>
+                                    {% trans "Additional Information" %}
+                                    <span class="text-muted fw-normal">({% trans "Optional" %})</span>
+                                </label>
+
+                                {{ form.additional_info }}
+
+                                {% if form.additional_info.errors %}
+                                    <div class="field-error">{{ form.additional_info.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Important Notice -->
+                        <div class="emergency-notice">
+                            <div class="emergency-notice-heading">
+                                <i class="fas fa-shield-heart"></i>
+                                {% trans "Important Notice" %}
+                            </div>
+
+                            <ul>
+                                <li>{% trans "This request will be visible to the public." %}</li>
+                                <li>{% trans "Emergency requests will be highlighted for faster attention." %}</li>
+                                <li>{% trans "Please provide accurate patient, hospital and contact information." %}</li>
+                                <li>{% trans "For immediate life-threatening emergencies, contact the hospital directly." %}</li>
+                            </ul>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="request-actions">
+                            <button type="submit" class="request-submit-btn" id="submitRequestButton">
+                                <i class="fas fa-paper-plane"></i>
+                                <span>{% trans "Submit Request" %}</span>
+                            </button>
+
+                            <a href="{% url 'blood_requests_list' %}" class="request-secondary-btn">
+                                <i class="fas fa-list-check"></i>
+                                {% trans "View Requests" %}
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </div>
+
+        <!-- Side Information -->
+        <div class="col-lg-4">
+            <aside class="request-side-card reveal">
+                <div class="side-card-heading">
+                    <span class="side-card-heading-icon">
+                        <i class="fas fa-circle-info"></i>
+                    </span>
+                    <h2>{% trans "How It Works" %}</h2>
+                </div>
+
+                <div class="side-card-body">
+                    <div class="side-feature">
+                        <span class="side-feature-icon">
+                            <i class="fas fa-pen-to-square"></i>
+                        </span>
+                        <div>
+                            <strong>{% trans "1. Submit details" %}</strong>
+                            <span>{% trans "Fill in the patient, blood group and hospital information." %}</span>
+                        </div>
+                    </div>
+
+                    <div class="side-feature">
+                        <span class="side-feature-icon">
+                            <i class="fas fa-users-viewfinder"></i>
+                        </span>
+                        <div>
+                            <strong>{% trans "2. Donors can see it" %}</strong>
+                            <span>{% trans "Your request becomes visible to eligible donors in the network." %}</span>
+                        </div>
+                    </div>
+
+                    <div class="side-feature">
+                        <span class="side-feature-icon">
+                            <i class="fas fa-phone-volume"></i>
+                        </span>
+                        <div>
+                            <strong>{% trans "3. Connect directly" %}</strong>
+                            <span>{% trans "Available donors can contact you using the provided phone number." %}</span>
+                        </div>
+                    </div>
+
+                    <div class="side-feature">
+                        <span class="side-feature-icon">
+                            <i class="fas fa-heart-pulse"></i>
+                        </span>
+                        <div>
+                            <strong>{% trans "4. Save a life" %}</strong>
+                            <span>{% trans "Coordinate safely with the donor and hospital to complete the donation." %}</span>
+                        </div>
+                    </div>
+
+                    <div class="side-emergency-box">
+                        <strong>
+                            <i class="fas fa-triangle-exclamation me-1"></i>
+                            {% trans "Emergency reminder:" %}
+                        </strong>
+                        {% trans "RedPulse helps connect people, but it does not replace emergency medical services." %}
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    (function () {
+        'use strict';
+
+        var form = document.getElementById('bloodRequestForm');
+        var submitButton = document.getElementById('submitRequestButton');
+
+        if (!form || !submitButton) return;
+
+        form.addEventListener('submit', function () {
+            submitButton.disabled = true;
+            submitButton.setAttribute('aria-busy', 'true');
+            submitButton.innerHTML =
+                '<i class="fas fa-spinner fa-spin"></i>' +
+                '<span>{% trans "Submitting…" %}</span>';
+        });
+
+        /* Add useful browser attributes without changing Django form logic */
+        var phoneInput = form.querySelector('[name="contact_phone"]');
+        if (phoneInput) {
+            phoneInput.setAttribute('inputmode', 'tel');
+            phoneInput.setAttribute('autocomplete', 'tel');
+        }
+
+        var dateInput = form.querySelector('[name="required_date"]');
+        if (dateInput && dateInput.type === 'date') {
+            var today = new Date().toISOString().split('T')[0];
+            dateInput.setAttribute('min', today);
+        }
+
+        var patientInput = form.querySelector('[name="patient_name"]');
+        if (patientInput) {
+            patientInput.setAttribute('autocomplete', 'name');
+        }
+
+        var hospitalInput = form.querySelector('[name="hospital_name"]');
+        if (hospitalInput) {
+            hospitalInput.setAttribute('autocomplete', 'organization');
+        }
+    })();
+</script>
+{% endblock %}

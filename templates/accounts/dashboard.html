@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Dashboard" %} — Patiya RedPulse{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card reveal">
+            <div class="card-body text-center p-4">
+                {% if donor.photo %}
+                    <img src="{{ donor.photo.url }}" alt="{{ donor.full_name }}" class="donor-avatar mb-3" style="width: 80px; height: 80px;">
+                {% endif %}
+                <span class="blood-group-badge d-inline-block mb-3" style="font-size: 1.1rem; padding: 0.6rem 1.1rem;">
+                    {{ donor.blood_group }}
+                </span>
+                <h4>{{ donor.full_name }}</h4>
+                <p class="text-muted small mb-3">{{ donor.district }}, {{ donor.upazila }}</p>
+
+                <span class="lifesaver-badge tier-{{ donor.lifesaver_tier }}">
+                    <i class="fas fa-award"></i>
+                    {% if donor.lifesaver_tier == 'gold' %}{% trans "Gold Life-Saver" %}
+                    {% elif donor.lifesaver_tier == 'silver' %}{% trans "Silver Life-Saver" %}
+                    {% elif donor.lifesaver_tier == 'bronze' %}{% trans "Bronze Life-Saver" %}
+                    {% else %}{% trans "New Donor" %}{% endif %}
+                </span>
+                <p class="text-muted small mt-2 mb-0">
+                    {% blocktrans count counter=donor.donation_count %}{{ counter }} recorded donation{% plural %}{{ counter }} recorded donations{% endblocktrans %}
+                </p>
+
+                <hr>
+
+                {% if donor.is_eligible %}
+                    <div class="alert alert-success py-2 mb-0">
+                        <i class="fas fa-check-circle"></i> {% trans "You are Eligible to Donate!" %}
+                    </div>
+                {% else %}
+                    <div class="alert alert-warning py-2 mb-0">
+                        <i class="fas fa-clock"></i> {% trans "Next Donation In:" %}
+                        <h3 class="mb-0">{{ donor.days_until_eligible }} {% trans "Days" %}</h3>
+                    </div>
+                {% endif %}
+
+                <a href="{% url 'emergency_card' %}" class="btn btn-outline-primary w-100 mt-3">
+                    <i class="fas fa-id-card"></i> {% trans "My Emergency Card" %}
+                </a>
+            </div>
+        </div>
+
+        <div class="card mt-4 reveal">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-user-plus"></i> {% trans "Refer a Friend" %}</h6>
+            </div>
+            <div class="card-body referral-card">
+                <p class="small mb-2">{% trans "Share your link — every friend who registers through it grows the donor pool, and counts toward your recognition." %}</p>
+                <div class="referral-link-box mb-2">
+                    <span class="flex-grow-1">{{ referral_link }}</span>
+                    <button type="button" class="copy-btn" data-copy="{{ referral_link }}" data-copied-label="{% trans 'Copied' %}" style="white-space: nowrap;">
+                        <i class="far fa-copy"></i> {% trans "Copy" %}
+                    </button>
+                </div>
+                <a href="https://wa.me/?text=আসসালামু আলাইকুম! Patiya RedPulse-এ একজন রক্তদাতা হিসেবে নিবন্ধন করুন, প্রয়োজনে কাউকে সাহায্য করতে পারবেন: {{ referral_link }}"
+                   target="_blank" rel="noopener" class="whatsapp-btn w-100 justify-content-center mb-2">
+                    <i class="fab fa-whatsapp"></i> {% trans "Share on WhatsApp" %}
+                </a>
+                <div class="d-flex justify-content-between align-items-center mt-2">
+                    <span class="small text-muted">{% trans "Friends referred:" %} <strong>{{ donor.referral_count }}</strong></span>
+                    {% if donor.referral_tier != 'none' %}
+                        <span class="referral-tier-badge">
+                            <i class="fas fa-users"></i>
+                            {% if donor.referral_tier == 'champion' %}{% trans "Community Champion" %}{% else %}{% trans "Community Builder" %}{% endif %}
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card mb-4 reveal">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-plus-circle"></i> {% trans "Log a Donation" %}</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" class="row g-3">
+                    {% csrf_token %}
+                    <div class="col-md-4">
+                        <label class="form-label">{% trans "Date" %}</label>
+                        {{ log_form.donation_date }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">{% trans "Hospital" %}</label>
+                        {{ log_form.hospital_name }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">{% trans "Note" %}</label>
+                        {{ log_form.note }}
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-check"></i> {% trans "Log This Donation" %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card reveal">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-history"></i> {% trans "Donation History" %}</h5>
+            </div>
+            <div class="card-body">
+                {% if donations %}
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover">
+                            <thead>
+                                <tr>
+                                    <th>{% trans "Date" %}</th>
+                                    <th>{% trans "Hospital" %}</th>
+                                    <th>{% trans "Note" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for donation in donations %}
+                                    <tr>
+                                        <td>{{ donation.donation_date }}</td>
+                                        <td>{{ donation.hospital_name }}</td>
+                                        <td>{{ donation.note }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-center text-muted py-4">{% trans "No donation records found." %}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

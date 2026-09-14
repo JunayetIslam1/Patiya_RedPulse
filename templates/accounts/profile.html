@@ -1,0 +1,1337 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Profile" %} — Patiya RedPulse{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* ================================================================
+       PATIYA REDPULSE — PREMIUM PROFILE PAGE 2026
+       ================================================================ */
+
+    .profile-page {
+        --profile-red: var(--rp-red, #d90429);
+        --profile-text: var(--rp-text, #0f172a);
+        --profile-muted: var(--rp-subtext, #64748b);
+        --profile-surface: var(--rp-surface, rgba(255,255,255,.82));
+        --profile-border: var(--rp-border, rgba(15,23,42,.09));
+    }
+
+    /* ------------------------------- Hero ------------------------------ */
+
+    .profile-hero {
+        position: relative;
+        isolation: isolate;
+        overflow: hidden;
+        padding: clamp(1.5rem, 4vw, 2.7rem);
+        border: 1px solid rgba(217,4,41,.22);
+        border-radius: 30px;
+        color: #fff;
+        background:
+            radial-gradient(circle at 92% 8%, rgba(255,255,255,.27), transparent 27%),
+            linear-gradient(125deg, #850017 0%, #d90429 50%, #ff3659 100%);
+        box-shadow:
+            0 30px 70px -30px rgba(217,4,41,.7),
+            inset 0 1px 0 rgba(255,255,255,.4),
+            inset 0 -18px 35px rgba(83,0,13,.23);
+    }
+
+    .profile-hero::before {
+        content: "";
+        position: absolute;
+        z-index: -1;
+        width: 340px;
+        height: 340px;
+        top: -190px;
+        right: -75px;
+        border: 55px solid rgba(255,255,255,.08);
+        border-radius: 50%;
+        animation: profileOrbit 18s linear infinite;
+    }
+
+    .profile-hero::after {
+        content: "";
+        position: absolute;
+        z-index: -2;
+        inset: 0;
+        opacity: .13;
+        background-image:
+            linear-gradient(rgba(255,255,255,.7) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,.7) 1px, transparent 1px);
+        background-size: 42px 42px;
+        -webkit-mask-image: linear-gradient(90deg, transparent, #000);
+        mask-image: linear-gradient(90deg, transparent, #000);
+    }
+
+    @keyframes profileOrbit {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    .profile-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: .5rem;
+        margin-bottom: .9rem;
+        padding: .42rem .8rem;
+        border: 1px solid rgba(255,255,255,.25);
+        border-radius: 999px;
+        background: rgba(255,255,255,.12);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.3);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        font-size: .72rem;
+        font-weight: 800;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+    }
+
+    .profile-pulse-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #9dffca;
+        box-shadow: 0 0 0 0 rgba(157,255,202,.7);
+        animation: profilePulse 1.8s infinite;
+    }
+
+    @keyframes profilePulse {
+        70% {
+            box-shadow: 0 0 0 9px rgba(157,255,202,0);
+        }
+    }
+
+    .profile-hero-title {
+        margin: 0 0 .55rem;
+        color: #fff;
+        font-family: 'Sora', 'Noto Sans Bengali', sans-serif;
+        font-size: clamp(2rem, 5vw, 3.45rem);
+        font-weight: 800;
+        line-height: 1.08;
+        letter-spacing: -.055em;
+        text-shadow: 0 8px 24px rgba(83,0,14,.25);
+    }
+
+    .profile-hero-text {
+        max-width: 650px;
+        margin: 0;
+        color: rgba(255,255,255,.84);
+        font-size: clamp(.9rem, 2vw, 1rem);
+        font-weight: 500;
+        line-height: 1.8;
+    }
+
+    .profile-hero-badge {
+        position: absolute;
+        right: clamp(1.3rem, 4vw, 2.7rem);
+        bottom: clamp(1.3rem, 4vw, 2.2rem);
+        display: flex;
+        align-items: center;
+        gap: .7rem;
+        padding: .85rem 1rem;
+        border: 1px solid rgba(255,255,255,.25);
+        border-radius: 18px;
+        background: rgba(76,0,14,.25);
+        box-shadow:
+            0 18px 34px -18px rgba(0,0,0,.55),
+            inset 0 1px 0 rgba(255,255,255,.25);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+    }
+
+    .profile-hero-badge-icon {
+        width: 43px;
+        height: 43px;
+        display: grid;
+        place-items: center;
+        border-radius: 14px;
+        color: var(--profile-red);
+        background: #fff;
+        box-shadow: 0 10px 20px -12px rgba(0,0,0,.5);
+    }
+
+    .profile-hero-badge strong {
+        display: block;
+        font-size: .82rem;
+        font-weight: 800;
+    }
+
+    .profile-hero-badge small {
+        display: block;
+        margin-top: .18rem;
+        color: rgba(255,255,255,.7);
+        font-size: .68rem;
+        font-weight: 600;
+    }
+
+    /* ---------------------------- Main layout -------------------------- */
+
+    .profile-layout {
+        position: relative;
+        z-index: 3;
+        margin-top: -34px;
+    }
+
+    .profile-card,
+    .profile-edit-card {
+        overflow: hidden;
+        border: 1px solid var(--profile-border);
+        border-radius: 27px;
+        background: var(--profile-surface);
+        box-shadow:
+            0 27px 62px -34px rgba(15,23,42,.46),
+            inset 0 1px 0 rgba(255,255,255,.6);
+        backdrop-filter: blur(22px) saturate(170%);
+        -webkit-backdrop-filter: blur(22px) saturate(170%);
+    }
+
+    .profile-card {
+        position: sticky;
+        top: 92px;
+    }
+
+    .profile-card-header,
+    .edit-card-header {
+        display: flex;
+        align-items: center;
+        gap: .8rem;
+        padding: 1.15rem 1.25rem;
+        border-bottom: 1px solid var(--profile-border);
+        background: linear-gradient(90deg, rgba(217,4,41,.08), transparent 60%);
+    }
+
+    .profile-header-icon {
+        width: 42px;
+        height: 42px;
+        display: grid;
+        place-items: center;
+        border-radius: 14px;
+        color: #fff;
+        background: linear-gradient(145deg, #ff3659, #d90429 60%, #8f0018);
+        box-shadow:
+            0 11px 22px -10px rgba(217,4,41,.65),
+            inset 0 1px 0 rgba(255,255,255,.45);
+    }
+
+    .profile-card-title {
+        margin: 0;
+        color: var(--profile-text);
+        font-family: 'Sora', 'Noto Sans Bengali', sans-serif;
+        font-size: 1rem;
+        font-weight: 800;
+    }
+
+    .profile-card-subtitle {
+        margin: .15rem 0 0;
+        color: var(--profile-muted);
+        font-size: .72rem;
+        font-weight: 600;
+    }
+
+    .profile-card-body,
+    .edit-card-body {
+        padding: 1.25rem;
+    }
+
+    /* --------------------------- Profile summary ---------------------- */
+
+    .profile-summary-top {
+        text-align: center;
+        padding-bottom: 1.1rem;
+        border-bottom: 1px solid var(--profile-border);
+    }
+
+    .profile-avatar {
+        position: relative;
+        width: 105px;
+        height: 105px;
+        margin: 0 auto 1rem;
+    }
+
+    .profile-avatar img,
+    .profile-avatar-placeholder {
+        width: 105px;
+        height: 105px;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        border: 5px solid var(--rp-surface-solid, #fff);
+        border-radius: 31px;
+        color: var(--profile-red);
+        background:
+            linear-gradient(145deg, rgba(255,54,89,.2), rgba(217,4,41,.07));
+        box-shadow:
+            0 18px 34px -18px rgba(15,23,42,.65),
+            0 0 0 1px rgba(217,4,41,.13);
+        object-fit: cover;
+    }
+
+    .profile-avatar-placeholder {
+        font-size: 2rem;
+    }
+
+    .profile-avatar-status {
+        position: absolute;
+        right: -2px;
+        bottom: -2px;
+        width: 25px;
+        height: 25px;
+        display: grid;
+        place-items: center;
+        border: 4px solid var(--rp-surface-solid, #fff);
+        border-radius: 50%;
+        color: #fff;
+        background: #10b981;
+        font-size: .62rem;
+        box-shadow: 0 5px 12px rgba(16,185,129,.45);
+    }
+
+    .profile-avatar-status.not-ready {
+        background: #f59e0b;
+        box-shadow: 0 5px 12px rgba(245,158,11,.45);
+    }
+
+    .profile-name {
+        margin: 0 0 .35rem;
+        color: var(--profile-text);
+        font-family: 'Sora', 'Noto Sans Bengali', sans-serif;
+        font-size: 1.25rem;
+        font-weight: 800;
+        letter-spacing: -.04em;
+    }
+
+    .profile-basic-info {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: .55rem;
+        color: var(--profile-muted);
+        font-size: .78rem;
+        font-weight: 650;
+    }
+
+    .profile-basic-info i {
+        color: var(--profile-red);
+    }
+
+    .profile-blood-badge {
+        position: relative;
+        width: 76px;
+        height: 76px;
+        display: grid;
+        place-items: center;
+        margin: 0 auto 1rem;
+        border-radius: 25px 25px 25px 8px;
+        color: #fff;
+        background: linear-gradient(145deg, #ff4666, #d90429 60%, #8f0018);
+        box-shadow:
+            0 16px 28px -14px rgba(217,4,41,.72),
+            inset 0 1px 0 rgba(255,255,255,.48),
+            inset 0 -7px 12px rgba(74,0,13,.25);
+        font-family: 'Sora', sans-serif;
+        font-size: 1.55rem;
+        font-weight: 800;
+        transform: perspective(500px) rotateY(-5deg);
+    }
+
+    .profile-blood-badge::before {
+        content: "";
+        position: absolute;
+        inset: 0 0 52%;
+        border-radius: inherit;
+        background: linear-gradient(180deg, rgba(255,255,255,.27), transparent);
+    }
+
+    .lifesaver-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: .4rem;
+        padding: .48rem .75rem;
+        border: 1px solid var(--profile-border);
+        border-radius: 999px;
+        font-size: .7rem;
+        font-weight: 800;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.45);
+    }
+
+    .lifesaver-badge.tier-gold {
+        color: #a16207;
+        border-color: rgba(245,158,11,.25);
+        background: rgba(245,158,11,.12);
+    }
+
+    .lifesaver-badge.tier-silver {
+        color: #64748b;
+        border-color: rgba(100,116,139,.22);
+        background: rgba(148,163,184,.12);
+    }
+
+    .lifesaver-badge.tier-bronze {
+        color: #b45309;
+        border-color: rgba(180,83,9,.22);
+        background: rgba(180,83,9,.1);
+    }
+
+    .lifesaver-badge.tier-new {
+        color: #2563eb;
+        border-color: rgba(37,99,235,.2);
+        background: rgba(37,99,235,.09);
+    }
+
+    .profile-info-list {
+        display: grid;
+        gap: .65rem;
+        margin-top: 1.1rem;
+    }
+
+    .profile-info-item {
+        display: flex;
+        align-items: flex-start;
+        gap: .7rem;
+        padding: .75rem;
+        border: 1px solid var(--profile-border);
+        border-radius: 15px;
+        background: var(--rp-surface-2, rgba(255,255,255,.4));
+    }
+
+    .profile-info-icon {
+        width: 32px;
+        height: 32px;
+        display: grid;
+        place-items: center;
+        flex: 0 0 32px;
+        border-radius: 10px;
+        color: var(--profile-red);
+        background: rgba(217,4,41,.09);
+        font-size: .72rem;
+    }
+
+    .profile-info-label {
+        display: block;
+        margin-bottom: .15rem;
+        color: var(--profile-muted);
+        font-size: .62rem;
+        font-weight: 800;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+    }
+
+    .profile-info-value {
+        display: block;
+        color: var(--profile-text);
+        font-size: .76rem;
+        font-weight: 750;
+        word-break: break-word;
+    }
+
+    .profile-status-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: .65rem;
+        margin-top: 1rem;
+    }
+
+    .profile-status-box {
+        padding: .8rem .65rem;
+        border: 1px solid var(--profile-border);
+        border-radius: 15px;
+        text-align: center;
+        background: var(--rp-surface-2, rgba(255,255,255,.4));
+    }
+
+    .profile-status-box strong {
+        display: block;
+        color: var(--profile-text);
+        font-size: .8rem;
+        font-weight: 800;
+    }
+
+    .profile-status-box small {
+        display: block;
+        margin-top: .28rem;
+        color: var(--profile-muted);
+        font-size: .63rem;
+        font-weight: 650;
+        line-height: 1.35;
+    }
+
+    .eligible-badge,
+    .not-eligible-badge,
+    .availability-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: .35rem;
+        padding: .4rem .6rem;
+        border-radius: 999px;
+        font-size: .66rem;
+        font-weight: 800;
+    }
+
+    .eligible-badge {
+        color: #047857;
+        border: 1px solid rgba(16,185,129,.22);
+        background: rgba(16,185,129,.1);
+    }
+
+    .not-eligible-badge {
+        color: #b45309;
+        border: 1px solid rgba(245,158,11,.22);
+        background: rgba(245,158,11,.1);
+    }
+
+    .availability-badge.available {
+        color: #047857;
+        border: 1px solid rgba(16,185,129,.22);
+        background: rgba(16,185,129,.1);
+    }
+
+    .availability-badge.unavailable {
+        color: #dc2626;
+        border: 1px solid rgba(220,38,38,.2);
+        background: rgba(220,38,38,.09);
+    }
+
+    /* ------------------------------ Edit form -------------------------- */
+
+    .form-section {
+        margin-bottom: 1.25rem;
+        padding: 1.1rem;
+        border: 1px solid var(--profile-border);
+        border-radius: 21px;
+        background: var(--rp-surface-2, rgba(255,255,255,.38));
+    }
+
+    .form-section:last-of-type {
+        margin-bottom: 0;
+    }
+
+    .form-section-heading {
+        display: flex;
+        align-items: center;
+        gap: .65rem;
+        margin-bottom: 1rem;
+        padding-bottom: .75rem;
+        border-bottom: 1px dashed var(--profile-border);
+    }
+
+    .form-section-icon {
+        width: 35px;
+        height: 35px;
+        display: grid;
+        place-items: center;
+        border-radius: 11px;
+        color: var(--profile-red);
+        background: rgba(217,4,41,.09);
+        border: 1px solid rgba(217,4,41,.15);
+    }
+
+    .form-section-heading h3 {
+        margin: 0;
+        color: var(--profile-text);
+        font-family: 'Sora', 'Noto Sans Bengali', sans-serif;
+        font-size: .9rem;
+        font-weight: 800;
+    }
+
+    .form-section-heading p {
+        margin: .15rem 0 0;
+        color: var(--profile-muted);
+        font-size: .69rem;
+        font-weight: 600;
+    }
+
+    .profile-form-field {
+        margin-bottom: 1rem;
+    }
+
+    .profile-form-field:last-child {
+        margin-bottom: 0;
+    }
+
+    .profile-label {
+        display: flex;
+        align-items: center;
+        gap: .42rem;
+        margin-bottom: .5rem;
+        color: var(--profile-text);
+        font-size: .77rem;
+        font-weight: 800;
+    }
+
+    .profile-label i {
+        color: var(--profile-red);
+        font-size: .75rem;
+    }
+
+    .profile-form input:not([type="hidden"]):not([type="file"]),
+    .profile-form select,
+    .profile-form textarea {
+        width: 100%;
+        min-height: 49px;
+        padding: .7rem .85rem;
+        border: 1px solid var(--profile-border);
+        border-radius: 14px;
+        outline: none;
+        color: var(--profile-text);
+        background: var(--rp-surface-2, rgba(255,255,255,.55));
+        box-shadow:
+            inset 0 1px 0 rgba(255,255,255,.45),
+            0 7px 16px -14px rgba(15,23,42,.5);
+        font-size: .85rem;
+        font-weight: 600;
+        transition: all .25s ease;
+    }
+
+    .profile-form textarea {
+        min-height: 110px;
+        resize: vertical;
+    }
+
+    .profile-form input:not([type="hidden"]):not([type="file"]):focus,
+    .profile-form select:focus,
+    .profile-form textarea:focus {
+        border-color: rgba(217,4,41,.55);
+        background: var(--rp-surface-solid, #fff);
+        box-shadow:
+            0 0 0 4px rgba(217,4,41,.1),
+            0 13px 24px -18px rgba(217,4,41,.45);
+        transform: translateY(-1px);
+    }
+
+    .profile-form input[type="file"] {
+        width: 100%;
+        padding: .65rem;
+        border: 1px dashed rgba(217,4,41,.32);
+        border-radius: 14px;
+        color: var(--profile-muted);
+        background: rgba(217,4,41,.045);
+        font-size: .78rem;
+        font-weight: 600;
+    }
+
+    .profile-form input[type="file"]::file-selector-button {
+        margin-right: .7rem;
+        padding: .5rem .75rem;
+        border: 0;
+        border-radius: 10px;
+        color: #fff;
+        background: linear-gradient(145deg, #ff3659, #d90429);
+        font-size: .72rem;
+        font-weight: 800;
+        cursor: pointer;
+    }
+
+    .form-help-text {
+        display: block;
+        margin-top: .45rem;
+        color: var(--profile-muted);
+        font-size: .68rem;
+        font-weight: 600;
+        line-height: 1.5;
+    }
+
+    .field-error {
+        display: flex;
+        align-items: flex-start;
+        gap: .4rem;
+        margin-top: .45rem;
+        color: #dc2626;
+        font-size: .69rem;
+        font-weight: 700;
+    }
+
+    .field-error::before {
+        content: "\f06a";
+        padding-top: 1px;
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+    }
+
+    .location-action {
+        width: 100%;
+        min-height: 47px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: .55rem;
+        padding: .65rem 1rem;
+        border: 1px solid rgba(37,99,235,.22);
+        border-radius: 14px;
+        color: #2563eb;
+        background: rgba(37,99,235,.08);
+        font-size: .77rem;
+        font-weight: 800;
+        transition: all .28s cubic-bezier(.34,1.56,.64,1);
+    }
+
+    .location-action:hover {
+        color: #fff;
+        border-color: transparent;
+        background: linear-gradient(145deg, #4384ff, #2563eb);
+        box-shadow: 0 13px 25px -12px rgba(37,99,235,.7);
+        transform: translateY(-2px);
+    }
+
+    .location-action.is-set {
+        color: #047857;
+        border-color: rgba(16,185,129,.22);
+        background: rgba(16,185,129,.09);
+    }
+
+    .profile-photo-preview {
+        width: 76px;
+        height: 76px;
+        display: block;
+        margin-bottom: .7rem;
+        border: 4px solid var(--rp-surface-solid, #fff);
+        border-radius: 21px;
+        object-fit: cover;
+        box-shadow:
+            0 12px 22px -15px rgba(15,23,42,.65),
+            0 0 0 1px rgba(217,4,41,.14);
+    }
+
+    .profile-actions {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: .7rem;
+        margin-top: 1.25rem;
+    }
+
+    .profile-submit-btn,
+    .profile-back-btn {
+        min-height: 50px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: .55rem;
+        padding: .7rem 1.2rem;
+        border-radius: 14px;
+        font-size: .8rem;
+        font-weight: 800;
+        transition: all .3s cubic-bezier(.34,1.56,.64,1);
+    }
+
+    .profile-submit-btn {
+        border: 0;
+        color: #fff;
+        background: linear-gradient(145deg, #ff3659, #d90429 60%, #8f0018);
+        box-shadow:
+            0 14px 27px -11px rgba(217,4,41,.7),
+            inset 0 1px 0 rgba(255,255,255,.45);
+    }
+
+    .profile-submit-btn:hover {
+        color: #fff;
+        transform: translateY(-3px);
+        box-shadow: 0 19px 35px -12px rgba(217,4,41,.78);
+    }
+
+    .profile-back-btn {
+        border: 1px solid var(--profile-border);
+        color: var(--profile-text);
+        background: var(--profile-surface);
+        box-shadow:
+            0 10px 20px -16px rgba(15,23,42,.5),
+            inset 0 1px 0 rgba(255,255,255,.5);
+    }
+
+    .profile-back-btn:hover {
+        color: var(--profile-red);
+        border-color: rgba(217,4,41,.28);
+        transform: translateY(-3px);
+    }
+
+    /* ----------------------------- Responsive ------------------------- */
+
+    @media (max-width: 991.98px) {
+        .profile-hero-badge {
+            position: static;
+            width: max-content;
+            max-width: 100%;
+            margin-top: 1.35rem;
+        }
+
+        .profile-card {
+            position: static;
+        }
+    }
+
+    @media (max-width: 767.98px) {
+        .profile-hero {
+            padding: 1.45rem 1.15rem;
+            border-radius: 25px;
+        }
+
+        .profile-hero-title {
+            font-size: clamp(1.85rem, 9vw, 2.5rem);
+        }
+
+        .profile-layout {
+            margin-top: -27px;
+        }
+
+        .profile-card-header,
+        .edit-card-header,
+        .profile-card-body,
+        .edit-card-body {
+            padding: 1rem;
+        }
+
+        .form-section {
+            padding: .9rem;
+            border-radius: 18px;
+        }
+
+        .profile-actions {
+            flex-direction: column;
+        }
+
+        .profile-submit-btn,
+        .profile-back-btn {
+            width: 100%;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .profile-hero::before,
+        .profile-pulse-dot {
+            animation: none !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-page">
+
+    <datalist id="patiyaUnions">
+        <option value="Kolagaon">
+        <option value="Kashiaish">
+        <option value="Asia">
+        <option value="Kusumpura">
+        <option value="Jiri">
+        <option value="Junglekhain">
+        <option value="Baralia">
+        <option value="Dhalghat">
+        <option value="Habilasdwip">
+        <option value="Haidgaon">
+        <option value="Kelishahar">
+        <option value="Kachuai">
+        <option value="Kharena">
+        <option value="Shovandandi">
+        <option value="Bhatikhain">
+        <option value="Chhonhara">
+        <option value="Dakshin Bhurshi">
+    </datalist>
+
+    <!-- Profile Hero -->
+    <section class="profile-hero reveal" aria-labelledby="profilePageTitle">
+        <div class="profile-eyebrow">
+            <span class="profile-pulse-dot"></span>
+            {% trans "Your Donor Profile" %}
+        </div>
+
+        <h1 class="profile-hero-title" id="profilePageTitle">
+            {% trans "Manage your life-saving profile." %}
+        </h1>
+
+        <p class="profile-hero-text">
+            {% trans "Keep your contact, location and availability information updated so people can reach you when your blood group is needed." %}
+        </p>
+
+        <div class="profile-hero-badge">
+            <span class="profile-hero-badge-icon">
+                <i class="fas fa-shield-heart"></i>
+            </span>
+            <div>
+                <strong>{% trans "Every update matters" %}</strong>
+                <small>{% trans "Accurate information saves time" %}</small>
+            </div>
+        </div>
+    </section>
+
+    <div class="row g-4 profile-layout">
+
+        <!-- Profile Summary -->
+        <div class="col-lg-4">
+            <section class="profile-card reveal">
+                <div class="profile-card-header">
+                    <span class="profile-header-icon">
+                        <i class="fas fa-user"></i>
+                    </span>
+                    <div>
+                        <h2 class="profile-card-title">{% trans "Profile Summary" %}</h2>
+                        <p class="profile-card-subtitle">{% trans "Your donor information at a glance" %}</p>
+                    </div>
+                </div>
+
+                <div class="profile-card-body">
+                    <div class="profile-summary-top">
+                        <div class="profile-avatar">
+                            {% if donor.photo %}
+                                <img src="{{ donor.photo.url }}" alt="{{ donor.full_name }}">
+                            {% else %}
+                                <span class="profile-avatar-placeholder">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                            {% endif %}
+
+                            <span class="profile-avatar-status {% if not donor.is_eligible %}not-ready{% endif %}">
+                                {% if donor.is_eligible %}
+                                    <i class="fas fa-check"></i>
+                                {% else %}
+                                    <i class="fas fa-clock"></i>
+                                {% endif %}
+                            </span>
+                        </div>
+
+                        <div class="profile-blood-badge">
+                            {{ donor.blood_group }}
+                        </div>
+
+                        <h3 class="profile-name">{{ donor.full_name }}</h3>
+
+                        <div class="profile-basic-info">
+                            {% if donor.gender == 'Male' %}
+                                <i class="fas fa-mars"></i>
+                            {% elif donor.gender == 'Female' %}
+                                <i class="fas fa-venus"></i>
+                            {% else %}
+                                <i class="fas fa-genderless"></i>
+                            {% endif %}
+
+                            {{ donor.age }} {% trans "years old" %}
+                        </div>
+
+                        <div class="mt-3">
+                            <span class="lifesaver-badge tier-{{ donor.lifesaver_tier }}">
+                                <i class="fas fa-award"></i>
+
+                                {% if donor.lifesaver_tier == 'gold' %}
+                                    {% trans "Gold Life-Saver" %}
+                                {% elif donor.lifesaver_tier == 'silver' %}
+                                    {% trans "Silver Life-Saver" %}
+                                {% elif donor.lifesaver_tier == 'bronze' %}
+                                    {% trans "Bronze Life-Saver" %}
+                                {% else %}
+                                    {% trans "New Donor" %}
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="profile-info-list">
+                        <div class="profile-info-item">
+                            <span class="profile-info-icon">
+                                <i class="fas fa-location-dot"></i>
+                            </span>
+                            <div>
+                                <span class="profile-info-label">{% trans "Location" %}</span>
+                                <span class="profile-info-value">
+                                    {{ donor.district }}, {{ donor.upazila }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="profile-info-item">
+                            <span class="profile-info-icon">
+                                <i class="fas fa-phone"></i>
+                            </span>
+                            <div>
+                                <span class="profile-info-label">{% trans "Mobile" %}</span>
+                                <span class="profile-info-value">{{ donor.mobile_number }}</span>
+                            </div>
+                        </div>
+
+                        {% if donor.email %}
+                            <div class="profile-info-item">
+                                <span class="profile-info-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </span>
+                                <div>
+                                    <span class="profile-info-label">{% trans "Email" %}</span>
+                                    <span class="profile-info-value">{{ donor.email }}</span>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="profile-status-grid">
+                        <div class="profile-status-box">
+                            <strong>{{ donor.last_donation_date|date:"M d, Y" }}</strong>
+                            <small>{% trans "Last Donation" %}</small>
+                        </div>
+
+                        <div class="profile-status-box">
+                            <strong>{{ donor.days_since_last_donation }}</strong>
+                            <small>{% trans "Days Since Donation" %}</small>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-3">
+                        {% if donor.is_eligible %}
+                            <span class="eligible-badge">
+                                <i class="fas fa-circle-check"></i>
+                                {% trans "Eligible to Donate" %}
+                            </span>
+                        {% else %}
+                            <span class="not-eligible-badge">
+                                <i class="fas fa-clock"></i>
+                                {{ donor.days_until_eligible }} {% trans "days remaining" %}
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    <div class="text-center mt-2">
+                        {% if donor.availability_status == 'Available' %}
+                            <span class="availability-badge available">
+                                <i class="fas fa-toggle-on"></i>
+                                {% trans "Available" %}
+                            </span>
+                        {% else %}
+                            <span class="availability-badge unavailable">
+                                <i class="fas fa-toggle-off"></i>
+                                {% trans "Not Available" %}
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Edit Profile -->
+        <div class="col-lg-8">
+            <section class="profile-edit-card reveal">
+                <div class="edit-card-header">
+                    <span class="profile-header-icon">
+                        <i class="fas fa-user-pen"></i>
+                    </span>
+                    <div>
+                        <h2 class="profile-card-title">{% trans "Edit Profile" %}</h2>
+                        <p class="profile-card-subtitle">
+                            {% trans "Update your information and donor availability" %}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="edit-card-body">
+                    <form method="post" enctype="multipart/form-data" class="profile-form" id="profileForm">
+                        {% csrf_token %}
+
+                        {{ form.latitude }}
+                        {{ form.longitude }}
+
+                        {% if form.non_field_errors %}
+                            <div class="field-error mb-3">
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
+
+                        <!-- Personal Information -->
+                        <div class="form-section">
+                            <div class="form-section-heading">
+                                <span class="form-section-icon">
+                                    <i class="fas fa-id-card"></i>
+                                </span>
+                                <div>
+                                    <h3>{% trans "Personal Information" %}</h3>
+                                    <p>{% trans "Basic information shown on your donor profile" %}</p>
+                                </div>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="profile-form-field">
+                                        <label for="{{ form.full_name.id_for_label }}" class="profile-label">
+                                            <i class="fas fa-user"></i>
+                                            {% trans "Full Name" %}
+                                        </label>
+
+                                        {{ form.full_name }}
+
+                                        {% if form.full_name.errors %}
+                                            <div class="field-error">{{ form.full_name.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="profile-form-field">
+                                        <label for="{{ form.blood_group.id_for_label }}" class="profile-label">
+                                            <i class="fas fa-droplet"></i>
+                                            {% trans "Blood Group" %}
+                                        </label>
+
+                                        {{ form.blood_group }}
+
+                                        {% if form.blood_group.errors %}
+                                            <div class="field-error">{{ form.blood_group.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="profile-form-field">
+                                        <label for="{{ form.gender.id_for_label }}" class="profile-label">
+                                            <i class="fas fa-venus-mars"></i>
+                                            {% trans "Gender" %}
+                                        </label>
+
+                                        {{ form.gender }}
+
+                                        {% if form.gender.errors %}
+                                            <div class="field-error">{{ form.gender.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="profile-form-field">
+                                        <label for="{{ form.age.id_for_label }}" class="profile-label">
+                                            <i class="fas fa-cake-candles"></i>
+                                            {% trans "Age" %}
+                                        </label>
+
+                                        {{ form.age }}
+
+                                        {% if form.age.errors %}
+                                            <div class="field-error">{{ form.age.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact Information -->
+                        <div class="form-section">
+                            <div class="form-section-heading">
+                                <span class="form-section-icon">
+                                    <i class="fas fa-address-book"></i>
+                                </span>
+                                <div>
+                                    <h3>{% trans "Contact Information" %}</h3>
+                                    <p>{% trans "How people can reach you during an emergency" %}</p>
+                                </div>
+                            </div>
+
+                            <div class="profile-form-field">
+                                <label for="{{ form.mobile_number.id_for_label }}" class="profile-label">
+                                    <i class="fas fa-phone"></i>
+                                    {% trans "Mobile Number" %}
+                                </label>
+
+                                {{ form.mobile_number }}
+
+                                {% if form.mobile_number.errors %}
+                                    <div class="field-error">{{ form.mobile_number.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="profile-form-field">
+                                <label for="{{ form.email.id_for_label }}" class="profile-label">
+                                    <i class="fas fa-envelope"></i>
+                                    {% trans "Email" %}
+                                    <span class="text-muted fw-normal">({% trans "Optional" %})</span>
+                                </label>
+
+                                {{ form.email }}
+
+                                {% if form.email.errors %}
+                                    <div class="field-error">{{ form.email.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Photo and Location -->
+                        <div class="form-section">
+                            <div class="form-section-heading">
+                                <span class="form-section-icon">
+                                    <i class="fas fa-image"></i>
+                                </span>
+                                <div>
+                                    <h3>{% trans "Location" %}</h3>
+                                    <p>{% trans "A precise location helps nearby seekers find you" %}</p>
+                                </div>
+                            </div>
+
+                            
+                            <div class="profile-form-field">
+                                <label class="profile-label">
+                                    <i class="fas fa-location-crosshairs"></i>
+                                    {% trans "Current Location" %}
+                                </label>
+
+                                <button
+                                    type="button"
+                                    class="locate-btn location-action {% if donor.latitude %}is-set{% endif %}"
+                                    data-lat-target="id_latitude"
+                                    data-lng-target="id_longitude"
+                                    data-success-label="{% trans 'Location updated' %}"
+                                    data-error-label="{% trans 'Could not get your location. Please allow location access and try again.' %}">
+
+                                    <i class="fas {% if donor.latitude %}fa-location-dot{% else %}fa-location-crosshairs{% endif %}"></i>
+
+                                    {% if donor.latitude %}
+                                        {% trans "Location is set — update it" %}
+                                    {% else %}
+                                        {% trans "Use my location for nearby search" %}
+                                    {% endif %}
+                                </button>
+
+                                <small class="form-help-text">
+                                    <i class="fas fa-circle-info me-1"></i>
+                                    {% trans "Your location helps seekers find nearby donors. It will not be displayed as an exact private address." %}
+                                </small>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="profile-form-field">
+                                        <label for="{{ form.district.id_for_label }}" class="profile-label">
+                                            <i class="fas fa-map"></i>
+                                            {% trans "District" %}
+                                        </label>
+
+                                        {{ form.district }}
+
+                                        {% if form.district.errors %}
+                                            <div class="field-error">{{ form.district.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="profile-form-field">
+                                        <label for="{{ form.upazila.id_for_label }}" class="profile-label">
+                                            <i class="fas fa-map-location-dot"></i>
+                                            {% trans "Upazila / Union" %}
+                                        </label>
+
+                                        {{ form.upazila }}
+
+                                        {% if form.upazila.errors %}
+                                            <div class="field-error">{{ form.upazila.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Donation Status -->
+                        <div class="form-section">
+                            <div class="form-section-heading">
+                                <span class="form-section-icon">
+                                    <i class="fas fa-heart-pulse"></i>
+                                </span>
+                                <div>
+                                    <h3>{% trans "Donation Status" %}</h3>
+                                    <p>{% trans "This information controls your donor eligibility" %}</p>
+                                </div>
+                            </div>
+
+                            <div class="profile-form-field">
+                                <label for="{{ form.last_donation_date.id_for_label }}" class="profile-label">
+                                    <i class="fas fa-calendar-check"></i>
+                                    {% trans "Last Blood Donation Date" %}
+                                </label>
+
+                                {{ form.last_donation_date }}
+
+                                {% if form.last_donation_date.errors %}
+                                    <div class="field-error">{{ form.last_donation_date.errors.0 }}</div>
+                                {% endif %}
+
+                                <small class="form-help-text">
+                                    <i class="fas fa-circle-info me-1"></i>
+                                    {% trans "Eligibility is calculated using 90 days for men and 120 days for women." %}
+                                </small>
+                            </div>
+
+                            <div class="profile-form-field">
+                                <label for="{{ form.availability_status.id_for_label }}" class="profile-label">
+                                    <i class="fas fa-toggle-on"></i>
+                                    {% trans "Availability Status" %}
+                                </label>
+
+                                {{ form.availability_status }}
+
+                                {% if form.availability_status.errors %}
+                                    <div class="field-error">{{ form.availability_status.errors.0 }}</div>
+                                {% endif %}
+
+                                <small class="form-help-text">
+                                    <i class="fas fa-circle-info me-1"></i>
+                                    {% trans 'Set to "Not Available" if you cannot donate currently.' %}
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="profile-actions">
+                            <button type="submit" class="profile-submit-btn" id="updateProfileButton">
+                                <i class="fas fa-floppy-disk"></i>
+                                <span>{% trans "Update Profile" %}</span>
+                            </button>
+
+                            <a href="{% url 'donor_list' %}" class="profile-back-btn">
+                                <i class="fas fa-arrow-left"></i>
+                                {% trans "Back to Donor List" %}
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    (function () {
+        'use strict';
+
+        var form = document.getElementById('profileForm');
+        var submitButton = document.getElementById('updateProfileButton');
+
+        if (!form || !submitButton) return;
+
+        form.addEventListener('submit', function () {
+            submitButton.disabled = true;
+            submitButton.setAttribute('aria-busy', 'true');
+            submitButton.innerHTML =
+                '<i class="fas fa-spinner fa-spin"></i>' +
+                '<span>{% trans "Updating…" %}</span>';
+        });
+
+        var phoneInput = form.querySelector('[name="mobile_number"]');
+        if (phoneInput) {
+            phoneInput.setAttribute('inputmode', 'tel');
+            phoneInput.setAttribute('autocomplete', 'tel');
+        }
+
+        var emailInput = form.querySelector('[name="email"]');
+        if (emailInput) {
+            emailInput.setAttribute('autocomplete', 'email');
+        }
+
+        var nameInput = form.querySelector('[name="full_name"]');
+        if (nameInput) {
+            nameInput.setAttribute('autocomplete', 'name');
+        }
+
+        var upazilaInput = form.querySelector('[name="upazila"]');
+        if (upazilaInput) {
+            upazilaInput.setAttribute('list', 'patiyaUnions');
+        }
+
+        var donationDate = form.querySelector('[name="last_donation_date"]');
+        if (donationDate && donationDate.type === 'date') {
+            donationDate.setAttribute('max', new Date().toISOString().split('T')[0]);
+        }
+    })();
+</script>
+{% endblock %}
