@@ -3,24 +3,19 @@ import dj_database_url
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Static files settings
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Static file storage update
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 # Security: Production-এর জন্য SECRET_KEY নিরাপদ রাখা জরুরি
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-development-key-change-in-production')
 
-# Render-এ চালানোর সময় DEBUG False রাখা ভালো
-# Security: defaults to False so nobody accidentally ships a debug build
-# to production. Set the DEBUG=True environment variable locally while
-# developing if you need Django's debug error pages.
+# Render/Vercel-এ চালানোর সময় DEBUG False রাখা ভালো
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-# Security: '*' is convenient for a quick first deploy but accepts any
-# Host header. Set ALLOWED_HOSTS as a comma-separated env var in
-# production, e.g. "patiyaredpulse.onrender.com,www.yourdomain.com".
 _allowed_hosts = os.environ.get('ALLOWED_HOSTS')
 ALLOWED_HOSTS = _allowed_hosts.split(',') if _allowed_hosts else ['*']
 
@@ -69,14 +64,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'patiya_redpulse.wsgi.application'
 
-# Database Configuration for Render
-DATABASES = {
-    'default': dj_database_url.config(
-        default='sqlite:///db.sqlite3',
-        conn_max_age=600
-    )
-}
-
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -98,11 +85,6 @@ LANGUAGES = [
 
 LOCALE_PATHS = [BASE_DIR / 'locale']
 
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_DIRS = [BASE_DIR / 'static']
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
@@ -120,11 +102,10 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-# Render-এর Environment Variables থেকে তথ্যগুলো আসবে
 EMAIL_HOST_USER = os.environ.get('EMAIL_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASS')
 
-# Database Configuration for Vercel
+# Database Configuration for Vercel / Production
 DATABASES = {
     'default': dj_database_url.config(
         default='sqlite:////tmp/db.sqlite3',
