@@ -3,7 +3,12 @@ import dj_database_url
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [BASE_DIR / 'static']
 
+# Static file storage update
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 # Security: Production-এর জন্য SECRET_KEY নিরাপদ রাখা জরুরি
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-development-key-change-in-production')
 
