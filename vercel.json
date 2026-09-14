@@ -3,17 +3,12 @@
   "builds": [
     {
       "src": "patiya_redpulse/wsgi.py",
-      "use": "@vercel/python",
-      "config": { "maxLambdaSize": "15mb", "runtime": "python3.12" }
+      "use": "@vercel/python"
     }
   ],
   "routes": [
     {
-      "src": "/static/(.*)",
-      "dest": "/static/$1"
-    },
-    {
-      "src": "(.*)",
+      "src": "/(.*)",
       "dest": "patiya_redpulse/wsgi.py"
     }
   ]
