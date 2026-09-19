@@ -4,45 +4,1150 @@
 {% block title %}{% trans "Emergency Card" %} — Patiya RedPulse{% endblock %}
 
 {% block content %}
-<div class="text-center mb-3 no-print">
-    <button onclick="window.print()" class="btn btn-primary">
-        <i class="fas fa-print"></i> {% trans "Print / Save as PDF" %}
-    </button>
-    <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">
-        <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+
+<style>
+/* ================================
+   EMERGENCY CARD
+   ================================ */
+
+.ec-card {
+    background: linear-gradient(
+        160deg,
+        #1a1a2e 0%,
+        #16213e 50%,
+        #0f3460 100%
+    );
+    color: #fff;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(220, 53, 69, 0.3);
+    width: 100%;
+}
+
+.ec-header {
+    background: linear-gradient(135deg, #dc3545, #a71d2a);
+    padding: 1rem 1.5rem;
+}
+
+.ec-brand {
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: 0.9;
+}
+
+.ec-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-top: 2px;
+}
+
+.ec-body {
+    padding: 1.5rem;
+}
+
+.ec-left {
+    text-align: center;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    padding-right: 1rem;
+}
+
+.ec-right {
+    padding-left: 1.25rem;
+}
+
+.ec-photo {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #dc3545;
+    margin-bottom: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ec-photo-ph {
+    background: rgba(220, 53, 69, 0.2);
+    color: #dc3545;
+    font-size: 2.5rem;
+}
+
+.ec-bg-label {
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    opacity: 0.7;
+    margin-top: 0.5rem;
+}
+
+.ec-bg-value {
+    font-size: 3.2rem;
+    font-weight: 900;
+    color: #ff4757;
+    line-height: 1.1;
+    text-shadow: 0 0 20px rgba(255, 71, 87, 0.4);
+}
+
+.ec-badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 50px;
+    margin-top: 0.5rem;
+    font-weight: 700;
+}
+
+.ec-badge-danger {
+    background: #dc3545;
+}
+
+.ec-badge-dark {
+    background: #343a40;
+}
+
+.ec-name {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #fff;
+    word-break: break-word;
+}
+
+.ec-info-row {
+    font-size: 0.85rem;
+    margin-bottom: 0.35rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.ec-info-row i {
+    color: #ff4757;
+    width: 16px;
+    text-align: center;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.ec-link {
+    color: #74b9ff;
+    text-decoration: none;
+    word-break: break-word;
+}
+
+.ec-link:hover {
+    text-decoration: underline;
+}
+
+.ec-emergency-box {
+    background: rgba(220, 53, 69, 0.15);
+    border: 1px solid rgba(220, 53, 69, 0.3);
+    border-radius: 10px;
+    padding: 0.6rem 0.8rem;
+    margin-top: 0.75rem;
+}
+
+.ec-emergency-label {
+    font-size: 0.6rem;
+    letter-spacing: 1px;
+    color: #ff6b81;
+    font-weight: 700;
+}
+
+.ec-emergency-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin: 0.2rem 0;
+    word-break: break-word;
+}
+
+.ec-emergency-phone {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #ff4757;
+}
+
+.ec-compat {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.85rem 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ec-compat-box {
+    border-radius: 8px;
+    padding: 0.5rem;
+    text-align: center;
+    height: 100%;
+}
+
+.ec-compat-box small {
+    font-size: 0.6rem;
+    letter-spacing: 1px;
+    font-weight: 700;
+}
+
+.ec-compat-donate {
+    background: rgba(40, 206, 64, 0.1);
+    border: 1px solid rgba(40, 206, 64, 0.3);
+}
+
+.ec-compat-donate small {
+    color: #28ca40;
+}
+
+.ec-compat-receive {
+    background: rgba(116, 185, 255, 0.1);
+    border: 1px solid rgba(116, 185, 255, 0.3);
+}
+
+.ec-compat-receive small {
+    color: #74b9ff;
+}
+
+.ec-compat-groups {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    justify-content: center;
+    margin-top: 4px;
+}
+
+.ec-compat-groups span {
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.ec-hospitals {
+    padding: 0.75rem 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ec-hosp-label {
+    font-size: 0.6rem;
+    letter-spacing: 1px;
+    color: #a29bfe;
+    font-weight: 700;
+}
+
+.ec-hosp-item {
+    display: block;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 0.4rem 0.6rem;
+    margin-bottom: 0.35rem;
+    text-decoration: none;
+    color: #fff;
+    transition: all 0.2s ease;
+}
+
+.ec-hosp-item:hover {
+    background: rgba(220, 53, 69, 0.2);
+    border-color: #dc3545;
+    color: #fff;
+}
+
+.ec-hosp-name {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    word-break: break-word;
+}
+
+.ec-hosp-phone {
+    display: block;
+    font-size: 0.75rem;
+    color: #74b9ff;
+    font-weight: 700;
+    word-break: break-word;
+}
+
+.ec-footer {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 1rem 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ec-qr-wrap {
+    display: inline-block;
+    background: #fff;
+    padding: 5px;
+    border-radius: 8px;
+}
+
+.ec-qr-label {
+    font-size: 0.6rem;
+    opacity: 0.6;
+    display: block;
+    margin-top: 4px;
+}
+
+.ec-footer-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 0.75rem;
+    margin-bottom: 3px;
+    flex-wrap: wrap;
+}
+
+.ec-footer-id {
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.65rem;
+    opacity: 0.6;
+}
+
+/* ================================
+   PRINT
+   ================================ */
+
+@media print {
+    @page {
+        size: auto;
+        margin: 10mm;
+    }
+
+    body * {
+        visibility: hidden !important;
+    }
+
+    #ecCard,
+    #ecCard * {
+        visibility: visible !important;
+    }
+
+    #ecCard {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        max-width: 700px;
+        margin: 0 auto;
+        box-shadow: none;
+        border: 2px solid #dc3545;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+}
+
+/* ================================
+   MOBILE
+   ================================ */
+
+@media (max-width: 576px) {
+    .ec-header {
+        padding: 0.9rem 1rem;
+    }
+
+    .ec-body {
+        padding: 1rem;
+    }
+
+    .ec-bg-value {
+        font-size: 2.5rem;
+    }
+
+    .ec-photo {
+        width: 70px;
+        height: 70px;
+    }
+
+    .ec-photo-ph {
+        font-size: 2rem;
+    }
+
+    .ec-left {
+        padding-right: 0.5rem;
+    }
+
+    .ec-right {
+        padding-left: 0.75rem;
+    }
+
+    .ec-name {
+        font-size: 1.1rem;
+    }
+
+    .ec-info-row {
+        font-size: 0.78rem;
+    }
+
+    .ec-compat,
+    .ec-hospitals,
+    .ec-footer {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .ec-footer-row {
+        flex-direction: column;
+        gap: 2px;
+    }
+}
+</style>
+
+
+<!-- ================================
+     ACTION BAR
+     ================================ -->
+
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2 no-print">
+
+    <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary btn-sm">
+        <i class="fas fa-arrow-left"></i>
+        {% trans "Back" %}
     </a>
+
+    <div class="d-flex gap-2 flex-wrap">
+
+        <button
+            type="button"
+            onclick="window.print()"
+            class="btn btn-primary btn-sm"
+        >
+            <i class="fas fa-print"></i>
+            {% trans "Print / PDF" %}
+        </button>
+
+        <button
+            type="button"
+            onclick="downloadImage()"
+            class="btn btn-success btn-sm"
+        >
+            <i class="fas fa-download"></i>
+            {% trans "Save Image" %}
+        </button>
+
+        <button
+            type="button"
+            onclick="saveVCard()"
+            class="btn btn-outline-secondary btn-sm"
+        >
+            <i class="fas fa-address-book"></i>
+            {% trans "Save Contact" %}
+        </button>
+
+    </div>
 </div>
 
-<div class="emergency-card">
-    <div class="d-flex justify-content-between align-items-start mb-3">
-        <div>
-            <div class="text-uppercase small" style="letter-spacing: 0.08em; opacity: 0.8;">Patiya RedPulse</div>
-            <h5 class="mb-0">{% trans "Blood Donor Emergency Card" %}</h5>
+
+<!-- ================================
+     CARD
+     ================================ -->
+
+<div class="row justify-content-center">
+    <div class="col-lg-7 col-xl-6">
+
+        <div
+            id="ecCard"
+            class="ec-card"
+            data-name="{{ donor.full_name }}"
+            data-bg="{{ donor.blood_group }}"
+            data-phone="{{ donor.mobile_number }}"
+            data-location="{{ donor.upazila }}, {{ donor.district }}"
+        >
+
+            <!-- HEADER -->
+            <div class="ec-header">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+                        <div class="ec-brand">
+                            Patiya RedPulse
+                        </div>
+
+                        <div class="ec-title">
+                            {% trans "BLOOD DONOR EMERGENCY CARD" %}
+                        </div>
+                    </div>
+
+                    <svg
+                        width="36"
+                        height="36"
+                        viewBox="0 0 32 32"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            d="M2 17 H10 L13 9 L18 25 L21 17 H30"
+                            fill="none"
+                            stroke="#fff"
+                            stroke-width="5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        />
+                    </svg>
+
+                </div>
+
+            </div>
+
+
+            <!-- BODY -->
+            <div class="ec-body">
+
+                <div class="row g-0">
+
+                    <!-- LEFT -->
+                    <div class="col-4 ec-left">
+
+                        {% if donor.photo %}
+                            <img
+                                src="{{ donor.photo.url }}"
+                                alt="{{ donor.full_name }}"
+                                class="ec-photo"
+                            >
+                        {% else %}
+                            <div class="ec-photo ec-photo-ph">
+                                <i class="fas fa-user"></i>
+                            </div>
+                        {% endif %}
+
+                        <div class="ec-bg-label">
+                            {% trans "BLOOD GROUP" %}
+                        </div>
+
+                        <div class="ec-bg-value">
+                            {{ donor.blood_group }}
+                        </div>
+
+                        {% if donor.blood_group == "O-" %}
+
+                            <span class="ec-badge ec-badge-danger">
+                                <i class="fas fa-globe"></i>
+                                {% trans "Universal Donor" %}
+                            </span>
+
+                        {% elif donor.blood_group == "AB+" %}
+
+                            <span class="ec-badge ec-badge-dark">
+                                <i class="fas fa-globe"></i>
+                                {% trans "Universal Recipient" %}
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- RIGHT -->
+                    <div class="col-8 ec-right">
+
+                        <h4 class="ec-name mb-1">
+                            {{ donor.full_name }}
+                        </h4>
+
+
+                        <div class="ec-info-row">
+
+                            <i class="fas fa-phone"></i>
+
+                            <a
+                                href="tel:{{ donor.mobile_number }}"
+                                class="ec-link"
+                            >
+                                {{ donor.mobile_number }}
+                            </a>
+
+                        </div>
+
+
+                        <div class="ec-info-row">
+
+                            <i class="fas fa-map-marker-alt"></i>
+
+                            <span>
+                                {{ donor.upazila }}, {{ donor.district }}
+                            </span>
+
+                        </div>
+
+
+                        {% if donor.emergency_contact_name %}
+
+                        <div class="ec-emergency-box">
+
+                            <div class="ec-emergency-label">
+                                <i class="fas fa-bell"></i>
+                                {% trans "EMERGENCY CONTACT" %}
+                            </div>
+
+                            <div class="ec-emergency-name">
+
+                                {{ donor.emergency_contact_name }}
+
+                                {% if donor.emergency_contact_relation %}
+                                    <small>
+                                        ({{ donor.emergency_contact_relation }})
+                                    </small>
+                                {% endif %}
+
+                            </div>
+
+                            {% if donor.emergency_contact_phone %}
+
+                            <a
+                                href="tel:{{ donor.emergency_contact_phone }}"
+                                class="ec-link ec-emergency-phone"
+                            >
+                                <i class="fas fa-phone-alt"></i>
+                                {{ donor.emergency_contact_phone }}
+                            </a>
+
+                            {% endif %}
+
+                        </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- COMPATIBILITY -->
+            <div class="ec-compat">
+
+                <div class="row g-2">
+
+                    <!-- DONATE TO -->
+                    <div class="col-6">
+
+                        <div class="ec-compat-box ec-compat-donate">
+
+                            <small>
+                                <i class="fas fa-hand-holding-heart"></i>
+                                {% trans "DONATE TO" %}
+                            </small>
+
+                            <div class="ec-compat-groups">
+
+                                {% if donor.blood_group == "A+" %}
+                                    <span>A+</span>
+                                    <span>AB+</span>
+
+                                {% elif donor.blood_group == "A-" %}
+                                    <span>A+</span>
+                                    <span>A-</span>
+                                    <span>AB+</span>
+                                    <span>AB-</span>
+
+                                {% elif donor.blood_group == "B+" %}
+                                    <span>B+</span>
+                                    <span>AB+</span>
+
+                                {% elif donor.blood_group == "B-" %}
+                                    <span>B+</span>
+                                    <span>B-</span>
+                                    <span>AB+</span>
+                                    <span>AB-</span>
+
+                                {% elif donor.blood_group == "AB+" %}
+                                    <span>AB+</span>
+
+                                {% elif donor.blood_group == "AB-" %}
+                                    <span>AB+</span>
+                                    <span>AB-</span>
+
+                                {% elif donor.blood_group == "O+" %}
+                                    <span>O+</span>
+                                    <span>A+</span>
+                                    <span>B+</span>
+                                    <span>AB+</span>
+
+                                {% elif donor.blood_group == "O-" %}
+                                    <span>{% trans "ALL" %}</span>
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- RECEIVE FROM -->
+                    <div class="col-6">
+
+                        <div class="ec-compat-box ec-compat-receive">
+
+                            <small>
+                                <i class="fas fa-hand-holding-medical"></i>
+                                {% trans "RECEIVE FROM" %}
+                            </small>
+
+                            <div class="ec-compat-groups">
+
+                                {% if donor.blood_group == "A+" %}
+                                    <span>A+</span>
+                                    <span>A-</span>
+                                    <span>O+</span>
+                                    <span>O-</span>
+
+                                {% elif donor.blood_group == "A-" %}
+                                    <span>A-</span>
+                                    <span>O-</span>
+
+                                {% elif donor.blood_group == "B+" %}
+                                    <span>B+</span>
+                                    <span>B-</span>
+                                    <span>O+</span>
+                                    <span>O-</span>
+
+                                {% elif donor.blood_group == "B-" %}
+                                    <span>B-</span>
+                                    <span>O-</span>
+
+                                {% elif donor.blood_group == "AB+" %}
+                                    <span>{% trans "ALL" %}</span>
+
+                                {% elif donor.blood_group == "AB-" %}
+                                    <span>A-</span>
+                                    <span>B-</span>
+                                    <span>AB-</span>
+                                    <span>O-</span>
+
+                                {% elif donor.blood_group == "O+" %}
+                                    <span>O+</span>
+                                    <span>O-</span>
+
+                                {% elif donor.blood_group == "O-" %}
+                                    <span>O-</span>
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- HOSPITALS -->
+            <div class="ec-hospitals">
+
+                <small class="ec-hosp-label">
+                    <i class="fas fa-hospital"></i>
+                    {% trans "NEARBY BLOOD BANKS / HOSPITALS" %}
+                </small>
+
+                <div class="row g-2 mt-2">
+
+                    {% for h in hospitals %}
+
+                    <div class="col-6 col-md-4">
+
+                        <a
+                            href="tel:{{ h.phone }}"
+                            class="ec-hosp-item"
+                        >
+
+                            <span class="ec-hosp-name">
+                                {{ h.name|truncatechars:22 }}
+                            </span>
+
+                            <span class="ec-hosp-phone">
+                                {{ h.phone }}
+                            </span>
+
+                        </a>
+
+                    </div>
+
+                    {% empty %}
+
+                    <div class="col-12">
+                        <div class="text-white-50 small">
+                            {% trans "No nearby hospitals or blood banks available." %}
+                        </div>
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+
+            <!-- FOOTER -->
+            <div class="ec-footer">
+
+                <div class="row g-3 align-items-center">
+
+                    <!-- QR -->
+                    <div class="col-4 text-center">
+
+                        <div id="ecQr" class="ec-qr-wrap"></div>
+
+                        <small class="ec-qr-label">
+                            {% trans "Scan for info" %}
+                        </small>
+
+                    </div>
+
+
+                    <!-- DETAILS -->
+                    <div class="col-8">
+
+                        <div class="ec-footer-row">
+
+                            <span>
+                                {% trans "Blood Group" %}:
+                                <strong>{{ donor.blood_group }}</strong>
+                            </span>
+
+                            <span>
+                                {% trans "Phone" %}:
+                                <strong>{{ donor.mobile_number }}</strong>
+                            </span>
+
+                        </div>
+
+
+                        <div class="ec-footer-row">
+
+                            <span>
+                                {% trans "Location" %}:
+                                <strong>
+                                    {{ donor.upazila }}, {{ donor.district }}
+                                </strong>
+                            </span>
+
+                        </div>
+
+
+                        <div class="ec-footer-row ec-footer-id">
+
+                            <span>
+                                PatiyaRedPulse.com
+                            </span>
+
+                            <span id="ecDate"></span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
-        <svg width="30" height="30" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-            <path d="M2 17 H10 L13 9 L18 25 L21 17 H30" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-    </div>
 
-    <div class="text-center my-4">
-        <div class="card-blood-group">{{ donor.blood_group }}</div>
-        <div class="fs-5">{{ donor.full_name }}</div>
-        <div class="opacity-75 small">{{ donor.mobile_number }} &middot; {{ donor.district }}, {{ donor.upazila }}</div>
-    </div>
 
-    <hr style="border-color: rgba(255,255,255,0.2);">
+        <!-- ================================
+             BELOW CARD
+             ================================ -->
 
-    <div class="small">
-        <strong>{% trans "In case of emergency:" %}</strong>
-        <ul class="mb-0 mt-2">
-            {% for h in hospitals %}
-                <li>{{ h.name }}: {{ h.phone }}</li>
-            {% endfor %}
-        </ul>
+        <div class="text-center mt-4 no-print">
+
+            <p class="text-muted small mb-3">
+
+                <i class="fas fa-lightbulb"></i>
+
+                {% trans "Tip: Save the image to your phone gallery. Show this card to paramedics in emergency." %}
+
+            </p>
+
+
+            <div class="d-flex justify-content-center gap-2 flex-wrap">
+
+                <a
+                    href="tel:{{ donor.mobile_number }}"
+                    class="btn btn-danger btn-sm"
+                >
+                    <i class="fas fa-phone"></i>
+                    {% trans "Call Donor" %}
+                </a>
+
+
+                {% for h in hospitals %}
+
+                <a
+                    href="tel:{{ h.phone }}"
+                    class="btn btn-outline-secondary btn-sm"
+                >
+                    <i class="fas fa-hospital"></i>
+                    {{ h.name|truncatechars:12 }}
+                </a>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
     </div>
 </div>
 
-<p class="text-center text-muted small mt-3 no-print">
-    {% trans "Print this and keep it in your wallet." %}
-</p>
+
+<!-- ================================
+     EXTERNAL LIBRARIES
+     ================================ -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"
+></script>
+
+<script
+    src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"
+></script>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    var card = document.getElementById("ecCard");
+
+    if (!card) {
+        return;
+    }
+
+
+    /* ================================
+       READ DATA FROM HTML
+       ================================ */
+
+    var name = card.getAttribute("data-name") || "";
+    var bg = card.getAttribute("data-bg") || "";
+    var phone = card.getAttribute("data-phone") || "";
+    var loc = card.getAttribute("data-location") || "";
+
+
+    /* ================================
+       QR CODE
+       ================================ */
+
+    var qrEl = document.getElementById("ecQr");
+
+    if (
+        qrEl &&
+        typeof QRCode !== "undefined"
+    ) {
+
+        var qrText =
+            "BLOOD DONOR EMERGENCY CARD\n" +
+            "Name: " + name + "\n" +
+            "Blood Group: " + bg + "\n" +
+            "Phone: " + phone + "\n" +
+            "Location: " + loc;
+
+
+        new QRCode(qrEl, {
+
+            text: qrText,
+
+            width: 90,
+
+            height: 90,
+
+            colorDark: "#1a1a2e",
+
+            colorLight: "#ffffff",
+
+            correctLevel:
+                QRCode.CorrectLevel.M
+
+        });
+
+    }
+
+
+    /* ================================
+       DATE
+       ================================ */
+
+    var dateEl =
+        document.getElementById("ecDate");
+
+    if (dateEl) {
+
+        var today =
+            new Date().toLocaleDateString(
+                "en-GB",
+                {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric"
+                }
+            );
+
+        dateEl.textContent = today;
+
+    }
+
+
+    /* ================================
+       DOWNLOAD IMAGE
+       ================================ */
+
+    window.downloadImage = function () {
+
+        if (
+            typeof html2canvas ===
+            "undefined"
+        ) {
+
+            alert(
+                "Image library could not be loaded. Please check your internet connection and try again."
+            );
+
+            return;
+        }
+
+
+        html2canvas(card, {
+
+            scale: 3,
+
+            backgroundColor: "#1a1a2e",
+
+            useCORS: true,
+
+            allowTaint: false,
+
+            logging: false
+
+        })
+        .then(function (canvas) {
+
+            var link =
+                document.createElement("a");
+
+            var safeBloodGroup =
+                bg
+                    .replace(/[^a-zA-Z0-9+-]/g, "_");
+
+            link.download =
+                "emergency_card_" +
+                safeBloodGroup +
+                ".png";
+
+            link.href =
+                canvas.toDataURL("image/png");
+
+            document.body.appendChild(link);
+
+            link.click();
+
+            document.body.removeChild(link);
+
+        })
+        .catch(function (error) {
+
+            console.error(
+                "Image generation failed:",
+                error
+            );
+
+            alert(
+                "Could not save the card image. Please try again."
+            );
+
+        });
+
+    };
+
+
+    /* ================================
+       SAVE VCARD
+       ================================ */
+
+    window.saveVCard = function () {
+
+        function escapeVCardValue(value) {
+
+            return String(value || "")
+                .replace(/\\/g, "\\\\")
+                .replace(/\n/g, "\\n")
+                .replace(/;/g, "\\;")
+                .replace(/,/g, "\\,");
+
+        }
+
+
+        var safeName =
+            escapeVCardValue(name);
+
+        var safePhone =
+            escapeVCardValue(phone);
+
+        var safeBg =
+            escapeVCardValue(bg);
+
+
+        var vCard =
+            "BEGIN:VCARD\n" +
+            "VERSION:3.0\n" +
+            "FN:" + safeName + "\n" +
+            "ORG:Patiya RedPulse Blood Donor\n" +
+            "TEL;TYPE=CELL:" + safePhone + "\n" +
+            "NOTE:Blood Group: " + safeBg + "\n" +
+            "END:VCARD";
+
+
+        var blob =
+            new Blob(
+                [vCard],
+                { type: "text/vcard;charset=utf-8" }
+            );
+
+
+        var link =
+            document.createElement("a");
+
+        var fileName =
+            name
+                .trim()
+                .replace(/\s+/g, "_")
+                .replace(/[^a-zA-Z0-9_-]/g, "");
+
+
+        if (!fileName) {
+            fileName = "blood_donor";
+        }
+
+
+        link.download =
+            fileName + ".vcf";
+
+        link.href =
+            URL.createObjectURL(blob);
+
+
+        document.body.appendChild(link);
+
+        link.click();
+
+        document.body.removeChild(link);
+
+
+        setTimeout(function () {
+
+            URL.revokeObjectURL(
+                link.href
+            );
+
+        }, 1000);
+
+    };
+
+});
+</script>
+
+
 {% endblock %}
