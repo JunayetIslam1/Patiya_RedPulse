@@ -1,30 +1,879 @@
 {% extends 'base.html' %}
-{% load i18n %}
+{% load i18n static %}
 
 {% block title %}{% trans "Frequently Asked Questions" %} — Patiya RedPulse{% endblock %}
 
+{% block extra_head %}
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   FAQ PAGE — STYLES
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ─── Hero ─── */
+.faq-hero {
+    position: relative;
+    padding: 2.8rem 0 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+.faq-hero::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 100px; height: 3px;
+    border-radius: var(--r-full);
+    background: var(--grad-brand);
+    opacity: .55;
+}
+.faq-hero-badge {
+    width: 72px; height: 72px;
+    border-radius: var(--r-lg);
+    display: grid; place-items: center;
+    font-size: 1.7rem;
+    background: var(--grad-brand);
+    color: #fff;
+    box-shadow: var(--sh-red), var(--sh-inset),
+                inset 0 -4px 12px rgba(0,0,0,.18);
+    position: relative; overflow: hidden;
+    margin: 0 auto 1.2rem;
+    animation: badge-drift 3.5s ease-in-out infinite;
+}
+.faq-hero-badge::after {
+    content: '';
+    position: absolute; inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(160deg, rgba(255,255,255,.30), transparent 50%);
+}
+@keyframes badge-drift {
+    0%,100% { transform: translateY(0) rotate(0); }
+    50%     { transform: translateY(-7px) rotate(3deg); }
+}
+.faq-hero-title {
+    font-size: 2rem; font-weight: 700;
+    color: var(--text); margin-bottom: .5rem;
+}
+.faq-hero-sub {
+    font-size: .95rem; color: var(--text-2);
+    max-width: 520px; margin: 0 auto 1.5rem; line-height: 1.7;
+}
+
+/* ─── Search Bar ─── */
+.faq-search-wrap {
+    max-width: 520px;
+    margin: 0 auto 2rem;
+    position: relative;
+}
+.faq-search {
+    width: 100%;
+    padding: .82rem 1.1rem .82rem 3rem;
+    border-radius: var(--r-full);
+    border: 1.5px solid var(--border);
+    background: var(--bg-elevated);
+    color: var(--text);
+    font-size: .9rem; font-weight: 500;
+    box-shadow: var(--sh-sm), var(--sh-inset);
+    transition: border-color var(--dur-fast) var(--ease-smooth),
+                box-shadow var(--dur-fast) var(--ease-smooth);
+    outline: none;
+}
+.faq-search::placeholder { color: var(--text-3); font-weight: 500; }
+.faq-search:focus {
+    border-color: var(--border-focus);
+    box-shadow: var(--sh-glow), var(--sh-sm);
+}
+.faq-search-icon {
+    position: absolute;
+    left: 1.1rem; top: 50%; transform: translateY(-50%);
+    color: var(--text-3); font-size: .9rem;
+    pointer-events: none;
+    transition: color var(--dur-fast);
+}
+.faq-search:focus ~ .faq-search-icon { color: var(--c-red); }
+.faq-search-clear {
+    position: absolute;
+    right: .7rem; top: 50%; transform: translateY(-50%);
+    width: 28px; height: 28px;
+    border-radius: 50%; border: none;
+    background: var(--bg-glass); color: var(--text-3);
+    display: none; place-items: center;
+    font-size: .7rem; cursor: pointer;
+    transition: all var(--dur-fast);
+}
+.faq-search-clear.is-visible { display: grid; }
+.faq-search-clear:hover { background: var(--c-red); color: #fff; }
+
+.faq-results-count {
+    text-align: center;
+    font-size: .8rem; font-weight: 600;
+    color: var(--text-3);
+    margin-bottom: 1.2rem;
+    min-height: 1.2em;
+    transition: opacity var(--dur-fast);
+}
+.faq-results-count em {
+    font-style: normal; color: var(--c-red); font-weight: 700;
+}
+
+/* ─── Quick-Jump Pills ─── */
+.faq-categories {
+    display: flex; flex-wrap: wrap;
+    justify-content: center;
+    gap: .45rem;
+    margin-bottom: 2rem;
+}
+.faq-cat-pill {
+    display: inline-flex; align-items: center; gap: .35rem;
+    padding: .42rem .88rem;
+    border-radius: var(--r-full);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    color: var(--text-2);
+    font-size: .78rem; font-weight: 700;
+    cursor: pointer; user-select: none;
+    box-shadow: var(--sh-xs), var(--sh-inset);
+    transition: all var(--dur-norm) var(--ease-spring);
+}
+.faq-cat-pill i { font-size: .72rem; }
+.faq-cat-pill:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--sh-sm);
+    color: var(--c-red);
+    border-color: rgba(199,0,34,.15);
+}
+.faq-cat-pill.is-active {
+    background: var(--grad-brand);
+    color: #fff; border-color: transparent;
+    box-shadow: var(--sh-red);
+}
+.faq-cat-pill .pill-count {
+    font-size: .62rem; font-weight: 800;
+    background: rgba(0,0,0,.10);
+    padding: .1rem .38rem;
+    border-radius: var(--r-full);
+    min-width: 1.2rem; text-align: center;
+}
+.faq-cat-pill.is-active .pill-count {
+    background: rgba(255,255,255,.25);
+}
+
+/* ─── FAQ Accordion ─── */
+.faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: .65rem;
+    margin-bottom: 2rem;
+}
+
+.faq-item {
+    background: var(--bg-elevated);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    box-shadow: var(--sh-xs), var(--sh-inset);
+    transition: border-color var(--dur-norm) var(--ease-smooth),
+                box-shadow var(--dur-norm) var(--ease-smooth);
+    animation: faq-in .40s var(--ease-out) both;
+}
+.faq-item:nth-child(1)  { animation-delay: .03s; }
+.faq-item:nth-child(2)  { animation-delay: .06s; }
+.faq-item:nth-child(3)  { animation-delay: .09s; }
+.faq-item:nth-child(4)  { animation-delay: .12s; }
+.faq-item:nth-child(5)  { animation-delay: .15s; }
+.faq-item:nth-child(6)  { animation-delay: .18s; }
+.faq-item:nth-child(7)  { animation-delay: .21s; }
+.faq-item:nth-child(8)  { animation-delay: .24s; }
+.faq-item:nth-child(9)  { animation-delay: .27s; }
+.faq-item:nth-child(10) { animation-delay: .30s; }
+@keyframes faq-in {
+    from { opacity: 0; transform: translateY(10px) scale(.99); }
+    to   { opacity: 1; transform: none; }
+}
+
+.faq-item:hover {
+    border-color: rgba(199,0,34,.10);
+    box-shadow: var(--sh-sm);
+}
+
+/* Question header */
+.faq-q {
+    display: flex; align-items: center; gap: .75rem;
+    padding: 1.1rem 1.3rem;
+    cursor: pointer; user-select: none;
+    position: relative;
+    transition: background var(--dur-fast);
+}
+.faq-q:hover { background: var(--grad-brand-soft); }
+.faq-q:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--border-focus); border-radius: var(--r-lg); }
+
+.faq-q-num {
+    width: 30px; height: 30px;
+    border-radius: var(--r-xs);
+    display: grid; place-items: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: .72rem; font-weight: 700;
+    background: var(--grad-brand-soft);
+    color: var(--c-red);
+    border: 1px solid rgba(199,0,34,.10);
+    flex-shrink: 0;
+    transition: all var(--dur-norm) var(--ease-spring);
+}
+.faq-item.is-open .faq-q-num {
+    background: var(--grad-brand);
+    color: #fff; border-color: transparent;
+    box-shadow: 0 4px 10px -3px var(--c-red-glow);
+    transform: scale(1.05);
+}
+
+.faq-q-text {
+    flex: 1; min-width: 0;
+    font-size: .94rem; font-weight: 700;
+    color: var(--text); line-height: 1.4;
+    letter-spacing: -.005em;
+}
+.faq-item.is-open .faq-q-text { color: var(--c-red); }
+
+.faq-q-actions {
+    display: flex; align-items: center; gap: .4rem;
+    flex-shrink: 0;
+}
+
+/* Copy link btn */
+.faq-copy-btn {
+    width: 30px; height: 30px;
+    border-radius: var(--r-xs);
+    display: grid; place-items: center;
+    border: none; background: transparent;
+    color: var(--text-3); font-size: .72rem;
+    cursor: pointer; opacity: 0;
+    transition: all var(--dur-fast);
+}
+.faq-q:hover .faq-copy-btn { opacity: 1; }
+.faq-copy-btn:hover { color: var(--c-red); background: var(--bg-glass); }
+.faq-copy-btn.is-copied { color: var(--c-emerald) !important; opacity: 1 !important; }
+
+/* Chevron */
+.faq-chevron {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: grid; place-items: center;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-2);
+    color: var(--text-3); font-size: .65rem;
+    transition: all var(--dur-norm) var(--ease-spring);
+}
+.faq-item.is-open .faq-chevron {
+    background: var(--grad-brand);
+    color: #fff; border-color: transparent;
+    box-shadow: 0 4px 10px -3px var(--c-red-glow);
+    transform: rotate(90deg);
+}
+
+/* Answer body */
+.faq-answer-wrap {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .40s var(--ease-out);
+}
+.faq-answer-wrap.is-open {
+    max-height: 800px;
+}
+.faq-answer {
+    padding: 0 1.3rem 1.2rem 3.85rem;
+}
+.faq-answer-text {
+    font-size: .88rem; color: var(--text-2);
+    line-height: 1.75; margin-bottom: .8rem;
+}
+.faq-answer-text a { color: var(--c-red); font-weight: 600; border-bottom: 1px dashed rgba(199,0,34,.30); }
+.faq-answer-text a:hover { border-bottom-style: solid; }
+
+/* Helpful feedback */
+.faq-helpful {
+    display: flex; align-items: center; gap: .6rem;
+    padding-top: .7rem;
+    border-top: 1px solid var(--border-2);
+}
+.faq-helpful-label {
+    font-size: .72rem; font-weight: 600;
+    color: var(--text-3);
+}
+.faq-helpful-btn {
+    display: inline-flex; align-items: center; gap: .25rem;
+    padding: .25rem .55rem;
+    border-radius: var(--r-full);
+    border: 1px solid var(--border);
+    background: var(--bg-glass);
+    color: var(--text-3);
+    font-size: .72rem; font-weight: 600;
+    cursor: pointer;
+    transition: all var(--dur-fast);
+}
+.faq-helpful-btn:hover {
+    border-color: rgba(199,0,34,.15);
+    color: var(--c-red);
+}
+.faq-helpful-btn.is-voted {
+    pointer-events: none;
+    border-color: transparent;
+}
+.faq-helpful-btn.is-voted.vote-yes {
+    background: rgba(16,185,129,.10);
+    color: #059669;
+}
+.faq-helpful-btn.is-voted.vote-no {
+    background: rgba(199,0,34,.08);
+    color: var(--c-red);
+}
+.faq-helpful-thanks {
+    font-size: .72rem; font-weight: 600;
+    color: var(--c-emerald);
+    display: none;
+}
+.faq-helpful-thanks.is-visible { display: inline-flex; align-items: center; gap: .3rem; }
+
+/* ─── Highlight mark ─── */
+mark.faq-hl {
+    background: rgba(199,0,34,.14);
+    color: var(--c-red);
+    padding: .05em .18em;
+    border-radius: 3px;
+    font-weight: 700;
+}
+
+/* ─── No Results ─── */
+.faq-no-results {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    display: none;
+}
+.faq-no-results.is-visible { display: block; }
+.faq-no-results-icon {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    display: grid; place-items: center;
+    font-size: 1.5rem;
+    background: var(--grad-brand-soft);
+    color: var(--c-red);
+    border: 1px solid rgba(199,0,34,.10);
+    margin: 0 auto 1rem;
+}
+.faq-no-results-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.1rem; font-weight: 700;
+    color: var(--text); margin-bottom: .4rem;
+}
+.faq-no-results-text {
+    font-size: .88rem; color: var(--text-3);
+    max-width: 340px; margin: 0 auto;
+}
+
+/* ─── Disclaimer ─── */
+.faq-disclaimer {
+    display: flex; align-items: flex-start; gap: .85rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    padding: 1rem 1.2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--sh-xs), var(--sh-inset);
+    position: relative;
+}
+.faq-disclaimer::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 8px; bottom: 8px;
+    width: 4px; border-radius: var(--r-full);
+    background: linear-gradient(180deg, var(--c-amber), #d97706);
+}
+.faq-disclaimer-icon {
+    width: 36px; height: 36px;
+    border-radius: var(--r-xs);
+    display: grid; place-items: center;
+    font-size: .85rem; flex-shrink: 0;
+    background: rgba(245,158,11,.08);
+    color: #d97706;
+    border: 1px solid rgba(245,158,11,.15);
+}
+.faq-disclaimer-text {
+    font-size: .82rem; font-weight: 500;
+    color: var(--text-2); line-height: 1.65;
+}
+
+/* ─── CTA Section ─── */
+.faq-cta {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--r-xl);
+    padding: 2.2rem 2rem;
+    text-align: center;
+    box-shadow: var(--sh-md), var(--sh-inset);
+    position: relative;
+    overflow: hidden;
+}
+.faq-cta::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, transparent, var(--c-red-3), var(--c-red), transparent);
+    opacity: .55;
+}
+.faq-cta::after {
+    content: '';
+    position: absolute;
+    width: 280px; height: 280px;
+    right: -90px; bottom: -90px;
+    border-radius: 50%;
+    background: var(--c-red);
+    opacity: .03; filter: blur(50px);
+}
+.faq-cta-emoji { font-size: 2.2rem; margin-bottom: .8rem; display: block; }
+.faq-cta-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.25rem; font-weight: 700;
+    color: var(--text); margin-bottom: .4rem;
+}
+.faq-cta-text {
+    font-size: .88rem; color: var(--text-2);
+    max-width: 420px; margin: 0 auto 1.3rem; line-height: 1.7;
+}
+.faq-cta-chips {
+    display: flex; flex-wrap: wrap;
+    justify-content: center; gap: .5rem;
+    margin-bottom: 1.3rem;
+}
+.faq-cta-chip {
+    display: inline-flex; align-items: center; gap: .35rem;
+    padding: .35rem .72rem;
+    border-radius: var(--r-full);
+    font-size: .75rem; font-weight: 700;
+    color: var(--text-2);
+    background: var(--bg-glass);
+    border: 1px solid var(--border);
+}
+.faq-cta-chip i { font-size: .68rem; color: var(--c-red); }
+
+/* ─── Back to Top mini ─── */
+.faq-scroll-top {
+    display: flex; justify-content: center;
+    margin-top: 1.5rem;
+}
+.faq-scroll-btn {
+    display: inline-flex; align-items: center; gap: .4rem;
+    padding: .45rem 1rem;
+    border-radius: var(--r-full);
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    color: var(--text-3);
+    font-size: .78rem; font-weight: 600;
+    cursor: pointer;
+    box-shadow: var(--sh-xs), var(--sh-inset);
+    transition: all var(--dur-norm) var(--ease-spring);
+}
+.faq-scroll-btn:hover {
+    color: var(--c-red);
+    transform: translateY(-2px);
+    box-shadow: var(--sh-sm);
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 767.98px) {
+    .faq-hero-title { font-size: 1.55rem; }
+    .faq-answer { padding-left: 1.3rem; }
+    .faq-q { padding: .95rem 1rem; gap: .6rem; }
+    .faq-q-num { width: 26px; height: 26px; font-size: .66rem; }
+    .faq-q-text { font-size: .88rem; }
+    .faq-cta { padding: 1.5rem 1.2rem; }
+}
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="card reveal">
-    <div class="card-header">
-        <h4 class="mb-0"><i class="fas fa-circle-question"></i> {% trans "Frequently Asked Questions" %}</h4>
-    </div>
-    <div class="card-body">
-        <div class="accordion" id="faqAccordion">
-            {% for item in faqs %}
-                <div class="faq-item">
-                    <h6 class="mb-2" data-bs-toggle="collapse" data-bs-target="#faq{{ forloop.counter }}" style="cursor: pointer;" role="button">
-                        <i class="fas fa-angle-right text-danger"></i> {{ item.q }}
-                    </h6>
-                    <div id="faq{{ forloop.counter }}" class="collapse">
-                        <p class="text-muted mb-0">{{ item.a }}</p>
-                    </div>
-                </div>
-            {% endfor %}
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<section class="faq-hero">
+    <div class="d-flex justify-content-center">
+        <div class="faq-hero-badge">
+            <i class="fas fa-circle-question"></i>
         </div>
-        <p class="text-muted small mt-4 mb-0">
-            <i class="fas fa-circle-info"></i>
-            {% trans "This is general information, not individualised medical advice. For any personal health question, please consult a doctor." %}
-        </p>
+    </div>
+    <h1 class="faq-hero-title">{% trans "Frequently Asked Questions" %}</h1>
+    <p class="faq-hero-sub">
+        {% trans "Quick answers about blood donation, eligibility, compatibility, and how Patiya RedPulse works." %}
+    </p>
+
+    <!-- Search -->
+    <div class="faq-search-wrap">
+        <input type="text"
+               class="faq-search"
+               id="faqSearch"
+               placeholder="{% trans 'Search questions…' %}"
+               autocomplete="off"
+               aria-label="{% trans 'Search FAQs' %}">
+        <i class="fas fa-magnifying-glass faq-search-icon"></i>
+        <button type="button" class="faq-search-clear" id="faqSearchClear" aria-label="{% trans 'Clear search' %}">
+            <i class="fas fa-xmark"></i>
+        </button>
+    </div>
+    <div class="faq-results-count" id="faqResultsCount"></div>
+</section>
+
+<!-- ═══════════════ CATEGORY PILLS ═══════════════ -->
+<div class="faq-categories" id="faqCategories">
+    <button type="button" class="faq-cat-pill is-active" data-cat="all">
+        <i class="fas fa-layer-group"></i>
+        {% trans "All" %}
+        <span class="pill-count" id="countAll">{{ faqs|length }}</span>
+    </button>
+    <button type="button" class="faq-cat-pill" data-cat="donation">
+        <i class="fas fa-heart-pulse"></i>
+        {% trans "Donation" %}
+        <span class="pill-count" id="countDonation">0</span>
+    </button>
+    <button type="button" class="faq-cat-pill" data-cat="eligibility">
+        <i class="fas fa-user-check"></i>
+        {% trans "Eligibility" %}
+        <span class="pill-count" id="countEligibility">0</span>
+    </button>
+    <button type="button" class="faq-cat-pill" data-cat="platform">
+        <i class="fas fa-mobile-screen-button"></i>
+        {% trans "Platform" %}
+        <span class="pill-count" id="countPlatform">0</span>
+    </button>
+    <button type="button" class="faq-cat-pill" data-cat="emergency">
+        <i class="fas fa-triangle-exclamation"></i>
+        {% trans "Emergency" %}
+        <span class="pill-count" id="countEmergency">0</span>
+    </button>
+</div>
+
+<!-- ═══════════════ FAQ LIST ═══════════════ -->
+<div class="faq-list" id="faqList">
+    {% for item in faqs %}
+    <div class="faq-item" data-index="{{ forloop.counter0 }}" data-cat="{{ item.category|default:'donation' }}" id="faq-{{ forloop.counter }}">
+        <!-- Question -->
+        <div class="faq-q"
+             role="button"
+             tabindex="0"
+             aria-expanded="false"
+             aria-controls="faqBody{{ forloop.counter }}"
+             data-target="faqBody{{ forloop.counter }}">
+            <span class="faq-q-num">{{ forloop.counter }}</span>
+            <span class="faq-q-text">{{ item.q }}</span>
+            <span class="faq-q-actions">
+                <button type="button" class="faq-copy-btn" data-faq-id="{{ forloop.counter }}" aria-label="{% trans 'Copy link' %}" title="{% trans 'Copy link' %}">
+                    <i class="fas fa-link"></i>
+                </button>
+                <span class="faq-chevron"><i class="fas fa-chevron-right"></i></span>
+            </span>
+        </div>
+        <!-- Answer -->
+        <div class="faq-answer-wrap" id="faqBody{{ forloop.counter }}">
+            <div class="faq-answer">
+                <div class="faq-answer-text">{{ item.a }}</div>
+                <div class="faq-helpful">
+                    <span class="faq-helpful-label">{% trans "Was this helpful?" %}</span>
+                    <button type="button" class="faq-helpful-btn" data-vote="yes" data-faq="{{ forloop.counter }}">
+                        <i class="fas fa-thumbs-up"></i> {% trans "Yes" %}
+                    </button>
+                    <button type="button" class="faq-helpful-btn" data-vote="no" data-faq="{{ forloop.counter }}">
+                        <i class="fas fa-thumbs-down"></i> {% trans "No" %}
+                    </button>
+                    <span class="faq-helpful-thanks" data-faq="{{ forloop.counter }}">
+                        <i class="fas fa-circle-check"></i> {% trans "Thanks!" %}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- ═══════════════ NO RESULTS ═══════════════ -->
+<div class="faq-no-results" id="faqNoResults">
+    <div class="faq-no-results-icon">
+        <i class="fas fa-magnifying-glass"></i>
+    </div>
+    <div class="faq-no-results-title">{% trans "No matching questions found" %}</div>
+    <p class="faq-no-results-text">
+        {% trans "Try different keywords or browse all categories above." %}
+    </p>
+</div>
+
+<!-- ═══════════════ DISCLAIMER ═══════════════ -->
+<div class="faq-disclaimer">
+    <div class="faq-disclaimer-icon">
+        <i class="fas fa-shield-heart"></i>
+    </div>
+    <div class="faq-disclaimer-text">
+        {% trans "This is general information, not individualised medical advice. For any personal health question, please consult a qualified doctor." %}
     </div>
 </div>
+
+<!-- ═══════════════ CTA ═══════════════ -->
+<div class="faq-cta">
+    <span class="faq-cta-emoji">🩸</span>
+    <div class="faq-cta-title">{% trans "Still have questions?" %}</div>
+    <p class="faq-cta-text">
+        {% trans "Our team and community are here to help. Reach out or explore more resources below." %}
+    </p>
+    <div class="faq-cta-chips">
+        <span class="faq-cta-chip"><i class="fas fa-location-dot"></i> {% trans "Patiya, Chattogram" %}</span>
+        <span class="faq-cta-chip"><i class="fas fa-clock"></i> {% trans "24/7 Active" %}</span>
+        <span class="faq-cta-chip"><i class="fas fa-bolt"></i> {% trans "Instant connection" %}</span>
+    </div>
+    <div class="d-flex flex-wrap justify-content-center gap-2">
+        <a href="{% url 'submit_blood_request' %}" class="btn-rp btn-rp--primary rp-ripple-host">
+            <i class="fas fa-droplet"></i> {% trans "Request Blood" %}
+        </a>
+        <a href="{% url 'donor_list' %}" class="btn-rp btn-rp--outline rp-ripple-host">
+            <i class="fas fa-magnifying-glass"></i> {% trans "Find Donors" %}
+        </a>
+        <a href="{% url 'compatibility_guide' %}" class="btn-rp btn-rp--ghost rp-ripple-host">
+            <i class="fas fa-dna"></i> {% trans "Compatibility Guide" %}
+        </a>
+    </div>
+</div>
+
+<!-- ═══════════════ SCROLL TOP ═══════════════ -->
+<div class="faq-scroll-top">
+    <button type="button" class="faq-scroll-btn" id="faqScrollTop">
+        <i class="fas fa-arrow-up"></i> {% trans "Back to top" %}
+    </button>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+    'use strict';
+
+    /* ─── Element refs ─── */
+    var searchInput  = document.getElementById('faqSearch');
+    var searchClear  = document.getElementById('faqSearchClear');
+    var resultsCount = document.getElementById('faqResultsCount');
+    var faqList      = document.getElementById('faqList');
+    var noResults    = document.getElementById('faqNoResults');
+    var catPills     = document.querySelectorAll('.faq-cat-pill');
+    var faqItems     = document.querySelectorAll('.faq-item');
+    var scrollTopBtn = document.getElementById('faqScrollTop');
+
+    /* ─── Category counts ─── */
+    var catCounts = { all: faqItems.length, donation: 0, eligibility: 0, platform: 0, emergency: 0 };
+    faqItems.forEach(function (el) {
+        var cat = el.getAttribute('data-cat') || 'donation';
+        if (catCounts[cat] !== undefined) catCounts[cat]++;
+    });
+    var countEl = document.getElementById('countDonation');
+    if (countEl) countEl.textContent = catCounts.donation;
+    countEl = document.getElementById('countEligibility');
+    if (countEl) countEl.textContent = catCounts.eligibility;
+    countEl = document.getElementById('countPlatform');
+    if (countEl) countEl.textContent = catCounts.platform;
+    countEl = document.getElementById('countEmergency');
+    if (countEl) countEl.textContent = catCounts.emergency;
+
+    /* ─── Current state ─── */
+    var activeCat  = 'all';
+    var searchQuery = '';
+
+    /* ─── Filter logic ─── */
+    function applyFilters() {
+        var query = searchQuery.toLowerCase().trim();
+        var visible = 0;
+
+        faqItems.forEach(function (el) {
+            var cat   = el.getAttribute('data-cat') || 'donation';
+            var text  = (el.textContent || '').toLowerCase();
+            var matchCat  = (activeCat === 'all' || cat === activeCat);
+            var matchText = !query || text.indexOf(query) !== -1;
+            var show = matchCat && matchText;
+            el.style.display = show ? '' : 'none';
+            if (show) visible++;
+        });
+
+        /* Update count */
+        if (query || activeCat !== 'all') {
+            resultsCount.innerHTML = '<em>' + visible + '</em> ' +
+                (visible === 1 ? '{% trans "question found" %}' : '{% trans "questions found" %}');
+        } else {
+            resultsCount.textContent = '';
+        }
+
+        /* No results */
+        noResults.classList.toggle('is-visible', visible === 0);
+        faqList.style.display = visible === 0 ? 'none' : '';
+    }
+
+    /* ─── Category pills ─── */
+    catPills.forEach(function (pill) {
+        pill.addEventListener('click', function () {
+            catPills.forEach(function (p) { p.classList.remove('is-active'); });
+            pill.classList.add('is-active');
+            activeCat = pill.getAttribute('data-cat') || 'all';
+            applyFilters();
+        });
+    });
+
+    /* ─── Search input ─── */
+    if (searchInput) {
+        var debounceTimer;
+        searchInput.addEventListener('input', function () {
+            searchQuery = searchInput.value;
+            searchClear.classList.toggle('is-visible', searchQuery.length > 0);
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(applyFilters, 150);
+        });
+    }
+    if (searchClear) {
+        searchClear.addEventListener('click', function () {
+            searchInput.value = '';
+            searchQuery = '';
+            searchClear.classList.remove('is-visible');
+            applyFilters();
+            searchInput.focus();
+        });
+    }
+
+    /* ─── Accordion toggle (smooth) ─── */
+    faqList.addEventListener('click', function (e) {
+        /* Ignore clicks on copy / helpful buttons */
+        if (e.target.closest('.faq-copy-btn') || e.target.closest('.faq-helpful-btn')) return;
+
+        var header = e.target.closest('.faq-q');
+        if (!header) return;
+
+        var item   = header.closest('.faq-item');
+        var target = document.getElementById(header.getAttribute('data-target'));
+        if (!item || !target) return;
+
+        var isOpen = item.classList.contains('is-open');
+
+        /* Close all others */
+        document.querySelectorAll('.faq-item.is-open').forEach(function (other) {
+            if (other !== item) {
+                other.classList.remove('is-open');
+                var otherWrap = other.querySelector('.faq-answer-wrap');
+                if (otherWrap) otherWrap.classList.remove('is-open');
+                var otherQ = other.querySelector('.faq-q');
+                if (otherQ) otherQ.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        /* Toggle current */
+        if (isOpen) {
+            item.classList.remove('is-open');
+            target.classList.remove('is-open');
+            header.setAttribute('aria-expanded', 'false');
+        } else {
+            item.classList.add('is-open');
+            target.classList.add('is-open');
+            header.setAttribute('aria-expanded', 'true');
+
+            /* Smooth scroll into view */
+            setTimeout(function () {
+                item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+        }
+    });
+
+    /* Keyboard support */
+    faqList.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            var header = e.target.closest('.faq-q');
+            if (header) { e.preventDefault(); header.click(); }
+        }
+    });
+
+    /* ─── Copy link ─── */
+    document.addEventListener('click', function (e) {
+        var btn = e.target.closest('.faq-copy-btn');
+        if (!btn) return;
+        e.stopPropagation();
+
+        var id = btn.getAttribute('data-faq-id');
+        var url = window.location.origin + window.location.pathname + '#faq-' + id;
+
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(url).then(function () {
+                btn.classList.add('is-copied');
+                btn.querySelector('i').className = 'fas fa-check';
+                setTimeout(function () {
+                    btn.classList.remove('is-copied');
+                    btn.querySelector('i').className = 'fas fa-link';
+                }, 2000);
+            });
+        }
+    });
+
+    /* ─── Helpful vote ─── */
+    document.addEventListener('click', function (e) {
+        var btn = e.target.closest('.faq-helpful-btn');
+        if (!btn) return;
+
+        var faqId = btn.getAttribute('data-faq');
+        var vote  = btn.getAttribute('data-vote');
+
+        /* Mark voted */
+        var siblings = btn.parentElement.querySelectorAll('.faq-helpful-btn');
+        siblings.forEach(function (b) {
+            b.classList.add('is-voted');
+            if (b.getAttribute('data-vote') === vote) b.classList.add('vote-' + vote);
+        });
+
+        /* Show thanks */
+        var thanks = btn.parentElement.querySelector('.faq-helpful-thanks');
+        if (thanks) {
+            setTimeout(function () { thanks.classList.add('is-visible'); }, 200);
+        }
+
+        /* Persist to localStorage */
+        try {
+            var votes = JSON.parse(localStorage.getItem('rp-faq-votes') || '{}');
+            votes[faqId] = vote;
+            localStorage.setItem('rp-faq-votes', JSON.stringify(votes));
+        } catch (_) {}
+    });
+
+    /* Restore previous votes */
+    try {
+        var savedVotes = JSON.parse(localStorage.getItem('rp-faq-votes') || '{}');
+        Object.keys(savedVotes).forEach(function (faqId) {
+            var vote = savedVotes[faqId];
+            var container = document.querySelector('[data-faq="' + faqId + '"] .faq-helpful');
+            if (!container) return;
+            var btns = container.querySelectorAll('.faq-helpful-btn');
+            btns.forEach(function (b) {
+                b.classList.add('is-voted');
+                if (b.getAttribute('data-vote') === vote) b.classList.add('vote-' + vote);
+            });
+            var thanks = container.querySelector('.faq-helpful-thanks');
+            if (thanks) thanks.classList.add('is-visible');
+        });
+    } catch (_) {}
+
+    /* ─── Open FAQ from URL hash ─── */
+    function openFromHash() {
+        var hash = window.location.hash;
+        if (!hash || hash.indexOf('#faq-') !== 0) return;
+        var target = document.querySelector(hash + ' .faq-q');
+        if (target) {
+            setTimeout(function () { target.click(); }, 300);
+        }
+    }
+    openFromHash();
+    window.addEventListener('hashchange', openFromHash);
+
+    /* ─── Scroll to top ─── */
+    if (scrollTopBtn) {
+        scrollTopBtn.addEventListener('click', function () {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+
+})();
+</script>
 {% endblock %}
