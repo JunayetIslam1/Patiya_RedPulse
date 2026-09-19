@@ -5,1347 +5,1572 @@
 
 {% block extra_head %}
 <style>
-    /* ================================================================
-       PATIYA REDPULSE — PREMIUM DONOR DIRECTORY 2026
-       ================================================================ */
+/* ================================================================
+   PATIYA REDPULSE — DONOR DIRECTORY 2026
+   Premium, responsive, scoped styles.
+   IMPORTANT: No theme button is added here.
+   The existing global site dark mode remains the source of truth.
+   ================================================================ */
 
-    .donor-page {
-        --directory-red: var(--rp-red, #d90429);
-        --directory-text: var(--rp-text, #0f172a);
-        --directory-muted: var(--rp-subtext, #64748b);
-        --directory-surface: var(--rp-surface, rgba(255, 255, 255, .82));
-        --directory-border: var(--rp-border, rgba(15, 23, 42, .09));
-        position: relative;
+.donor-page {
+    --directory-red: #b5092a;
+    --directory-red-dark: #87001f;
+    --directory-red-soft: #fce8ec;
+    --directory-coral: #ef476f;
+    --directory-blue: #2563eb;
+    --directory-green: #059669;
+    --directory-amber: #d97706;
+    --directory-text: #172033;
+    --directory-muted: #667085;
+    --directory-surface: rgba(255,255,255,.92);
+    --directory-surface-2: #f7f9fc;
+    --directory-border: rgba(23,32,51,.10);
+    --directory-shadow: 0 18px 45px rgba(20,27,45,.08);
+    --directory-shadow-hover: 0 24px 55px rgba(20,27,45,.14);
+    --directory-radius: 22px;
+    position: relative;
+}
+
+/* -------------------------- Shared polish -------------------------- */
+
+.donor-page,
+.donor-page * {
+    box-sizing: border-box;
+}
+
+.donor-page .text-muted {
+    color: var(--directory-muted) !important;
+}
+
+.donor-page .btn,
+.donor-page button,
+.donor-page a,
+.donor-page select,
+.donor-page input {
+    -webkit-tap-highlight-color: transparent;
+}
+
+.donor-page .reveal {
+    animation: donorReveal .5s ease both;
+}
+
+@keyframes donorReveal {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
     }
-
-    /* ------------------------------ Hero ------------------------------ */
-
-    .donor-hero {
-        position: relative;
-        isolation: isolate;
-        overflow: hidden;
-        min-height: 290px;
-        padding: clamp(1.6rem, 4vw, 3rem);
-        border: 1px solid var(--directory-border);
-        border-radius: 32px;
-        background:
-            radial-gradient(circle at 92% 8%, rgba(255, 255, 255, .25), transparent 27%),
-            linear-gradient(125deg, #8f0018 0%, #d90429 48%, #ff3659 100%);
-        color: #fff;
-        box-shadow:
-            0 30px 70px -28px rgba(217, 4, 41, .65),
-            inset 0 1px 0 rgba(255, 255, 255, .35),
-            inset 0 -16px 35px rgba(90, 0, 16, .22);
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
+}
 
-    .donor-hero::before {
-        content: "";
-        position: absolute;
-        z-index: -1;
-        width: 340px;
-        height: 340px;
-        top: -190px;
-        right: -80px;
-        border: 55px solid rgba(255, 255, 255, .08);
-        border-radius: 50%;
-        animation: donorHeroOrbit 16s linear infinite;
-    }
+/* ------------------------------ Hero ------------------------------ */
 
-    .donor-hero::after {
-        content: "";
-        position: absolute;
-        z-index: -1;
-        width: 470px;
-        height: 470px;
-        right: 7%;
-        bottom: -410px;
-        border: 70px solid rgba(255, 255, 255, .06);
-        border-radius: 50%;
-    }
+.donor-hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    min-height: 310px;
+    padding: clamp(1.55rem, 4vw, 3rem);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 30px;
+    color: #fff;
+    background:
+        radial-gradient(circle at 88% 16%, rgba(255,255,255,.17), transparent 21%),
+        radial-gradient(circle at 72% 88%, rgba(239,71,111,.20), transparent 26%),
+        linear-gradient(126deg, #640019 0%, #8f0625 34%, #b5092a 70%, #d5264e 100%);
+    box-shadow:
+        0 28px 70px -34px rgba(181,9,42,.52),
+        inset 0 1px 0 rgba(255,255,255,.28),
+        inset 0 -20px 45px rgba(63,0,15,.18);
+}
 
-    @keyframes donorHeroOrbit {
-        to {
-            transform: rotate(360deg);
-        }
-    }
+.donor-hero::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    width: 330px;
+    height: 330px;
+    top: -190px;
+    right: -65px;
+    border: 54px solid rgba(255,255,255,.07);
+    border-radius: 50%;
+    animation: donorHeroOrbit 18s linear infinite;
+}
 
-    .donor-hero-grid {
-        position: absolute;
-        inset: 0;
-        z-index: -2;
-        opacity: .12;
-        background-image:
-            linear-gradient(rgba(255, 255, 255, .6) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255, 255, 255, .6) 1px, transparent 1px);
-        background-size: 42px 42px;
-        -webkit-mask-image: linear-gradient(90deg, transparent, #000);
-        mask-image: linear-gradient(90deg, transparent, #000);
-    }
+.donor-hero::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    width: 460px;
+    height: 460px;
+    right: 9%;
+    bottom: -395px;
+    border: 66px solid rgba(255,255,255,.055);
+    border-radius: 50%;
+}
 
-    .donor-hero-content {
-        position: relative;
-        z-index: 2;
-        max-width: 750px;
-    }
+@keyframes donorHeroOrbit {
+    to { transform: rotate(360deg); }
+}
 
-    .hero-eyebrow {
-        display: inline-flex;
-        align-items: center;
-        gap: .55rem;
-        padding: .45rem .85rem;
-        margin-bottom: 1rem;
-        border: 1px solid rgba(255, 255, 255, .24);
-        border-radius: 999px;
-        background: rgba(255, 255, 255, .12);
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .28);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        font-size: .74rem;
-        font-weight: 800;
-        letter-spacing: .13em;
-        text-transform: uppercase;
-    }
+.donor-hero-grid {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    opacity: .08;
+    background-image:
+        linear-gradient(rgba(255,255,255,.8) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.8) 1px, transparent 1px);
+    background-size: 42px 42px;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 56%, transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 0%, #000 56%, transparent 100%);
+}
 
-    .hero-live-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: #9dffca;
-        box-shadow: 0 0 0 0 rgba(157, 255, 202, .65);
-        animation: donorLivePulse 1.8s infinite;
-    }
+.donor-hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 760px;
+}
 
-    @keyframes donorLivePulse {
-        70% {
-            box-shadow: 0 0 0 9px rgba(157, 255, 202, 0);
-        }
-    }
+.hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: .55rem;
+    padding: .43rem .78rem;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(255,255,255,.20);
+    border-radius: 999px;
+    color: rgba(255,255,255,.96);
+    background: rgba(72,0,15,.20);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.20);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    font-size: .70rem;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+}
 
-    .donor-hero-title {
-        max-width: 670px;
-        margin: 0 0 .85rem;
-        color: #fff;
-        font-family: 'Sora', 'Noto Sans Bengali', sans-serif;
-        font-size: clamp(2rem, 5vw, 3.65rem);
-        font-weight: 800;
-        line-height: 1.08;
-        letter-spacing: -.055em;
-        text-shadow: 0 8px 24px rgba(83, 0, 14, .25);
-    }
+.hero-live-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #b7ffd9;
+    box-shadow: 0 0 0 0 rgba(183,255,217,.65);
+    animation: donorLivePulse 1.8s infinite;
+}
 
-    .donor-hero-text {
-        max-width: 640px;
-        margin: 0;
-        color: rgba(255, 255, 255, .84);
-        font-size: clamp(.92rem, 2vw, 1.05rem);
-        font-weight: 500;
-        line-height: 1.8;
-    }
+@keyframes donorLivePulse {
+    70% { box-shadow: 0 0 0 9px rgba(183,255,217,0); }
+}
 
+.donor-hero-title {
+    max-width: 700px;
+    margin: 0 0 .8rem;
+    color: #fff;
+    font-family: 'Sora','Noto Sans Bengali',sans-serif;
+    font-size: clamp(2.15rem, 5.2vw, 3.75rem);
+    font-weight: 800;
+    line-height: 1.08;
+    letter-spacing: -.055em;
+    text-shadow: 0 8px 24px rgba(64,0,14,.28);
+}
+
+.donor-hero-text {
+    max-width: 650px;
+    margin: 0;
+    color: rgba(255,255,255,.83);
+    font-size: clamp(1rem, 2vw, 1.08rem);
+    line-height: 1.78;
+}
+
+.hero-bottom-row {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    flex-wrap: wrap;
+    margin-top: 1.45rem;
+}
+
+.hero-quick-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    padding: .48rem .72rem;
+    border: 1px solid rgba(255,255,255,.16);
+    border-radius: 999px;
+    color: rgba(255,255,255,.86);
+    background: rgba(255,255,255,.08);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    font-size: .70rem;
+    font-weight: 750;
+}
+
+.hero-stat-float {
+    position: absolute;
+    z-index: 2;
+    right: clamp(1.25rem, 4vw, 2.8rem);
+    bottom: clamp(1.25rem, 4vw, 2.5rem);
+    display: flex;
+    align-items: center;
+    gap: .82rem;
+    min-width: 192px;
+    padding: .88rem .95rem;
+    border: 1px solid rgba(255,255,255,.22);
+    border-radius: 19px;
+    background: rgba(62,0,12,.23);
+    box-shadow:
+        0 18px 34px -18px rgba(0,0,0,.54),
+        inset 0 1px 0 rgba(255,255,255,.22);
+    backdrop-filter: blur(17px);
+    -webkit-backdrop-filter: blur(17px);
+}
+
+.hero-stat-icon {
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    flex: 0 0 44px;
+    border-radius: 14px;
+    color: var(--directory-red);
+    background: #fff;
+    box-shadow: 0 10px 20px -12px rgba(0,0,0,.55);
+}
+
+.hero-stat-number {
+    display: block;
+    font-family: 'Sora',sans-serif;
+    font-size: 1.48rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.hero-stat-label {
+    display: block;
+    margin-top: .23rem;
+    color: rgba(255,255,255,.72);
+    font-size: .66rem;
+    font-weight: 750;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+/* ------------------------- Search panel ------------------------- */
+
+.donor-search-panel {
+    position: relative;
+    z-index: 4;
+    margin: -34px clamp(.55rem, 3vw, 2rem) 0;
+    overflow: hidden;
+    border: 1px solid var(--directory-border);
+    border-radius: 25px;
+    background: var(--directory-surface);
+    box-shadow:
+        0 28px 65px -34px rgba(15,23,42,.42),
+        inset 0 1px 0 rgba(255,255,255,.65);
+    backdrop-filter: blur(22px) saturate(160%);
+    -webkit-backdrop-filter: blur(22px) saturate(160%);
+}
+
+.search-panel-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.15rem 1.25rem;
+    border-bottom: 1px solid var(--directory-border);
+    background: linear-gradient(90deg, rgba(181,9,42,.065), transparent 48%);
+}
+
+.search-heading-content {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+}
+
+.search-heading-icon {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    flex: 0 0 42px;
+    border-radius: 13px;
+    color: #fff;
+    background: linear-gradient(145deg,#d6345c,#b5092a 62%,#85001f);
+    box-shadow:
+        0 10px 21px -8px rgba(181,9,42,.58),
+        inset 0 1px 0 rgba(255,255,255,.42);
+}
+
+.search-panel-title,
+.results-title,
+.empty-title,
+.notes-title {
+    color: var(--directory-text);
+    font-family: 'Sora','Noto Sans Bengali',sans-serif;
+}
+
+.search-panel-title {
+    margin: 0;
+    font-size: 1.02rem;
+    font-weight: 800;
+    letter-spacing: -.025em;
+}
+
+.search-panel-subtitle {
+    margin: .18rem 0 0;
+    color: var(--directory-muted);
+    font-size: .74rem;
+    font-weight: 600;
+}
+
+.secure-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: .42rem;
+    padding: .38rem .68rem;
+    border: 1px solid rgba(5,150,105,.20);
+    border-radius: 999px;
+    color: #047857;
+    background: rgba(5,150,105,.08);
+    font-size: .67rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.search-panel-body {
+    padding: 1.25rem;
+}
+
+.filter-label {
+    display: flex;
+    align-items: center;
+    gap: .42rem;
+    margin-bottom: .5rem;
+    color: var(--directory-text);
+    font-size: .75rem;
+    font-weight: 800;
+}
+
+.filter-label i {
+    color: var(--directory-red);
+}
+
+.field-shell {
+    position: relative;
+}
+
+.field-icon {
+    position: absolute;
+    z-index: 4;
+    top: 50%;
+    left: 1rem;
+    width: 22px;
+    height: 22px;
+    display: grid;
+    place-items: center;
+    transform: translateY(-50%);
+    color: #7b8798;
+    font-size: .90rem;
+    line-height: 1;
+    pointer-events: none;
+    transition: color .2s ease, transform .2s ease;
+}
+
+.directory-control {
+    width: 100%;
+    min-height: 55px;
+    padding: .80rem 2.85rem .80rem 3.05rem;
+    border: 1px solid var(--directory-border);
+    border-radius: 14px;
+    outline: none;
+    color: var(--directory-text);
+    background: var(--directory-surface-2);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.55);
+    font-size: .96rem;
+    font-weight: 650;
+    line-height: 1.35;
+    transition: border-color .22s ease, box-shadow .22s ease, background .22s ease;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.directory-control::placeholder {
+    color: var(--directory-muted);
+    opacity: .75;
+}
+
+.directory-control:focus {
+    border-color: rgba(181,9,42,.45);
+    background: #fff;
+    box-shadow:
+        0 0 0 4px rgba(181,9,42,.08),
+        0 10px 22px -18px rgba(181,9,42,.42);
+}
+
+.field-shell:focus-within .field-icon {
+    color: var(--directory-red);
+    transform: translateY(-50%) scale(1.08);
+}
+
+.select-arrow {
+    position: absolute;
+    z-index: 4;
+    top: 50%;
+    right: 1rem;
+    transform: translateY(-50%);
+    color: var(--directory-muted);
+    font-size: .74rem;
+    line-height: 1;
+    pointer-events: none;
+}
+
+.filter-label-spacer {
+    visibility: hidden;
+}
+
+.search-submit-btn {
+    width: 100%;
+    min-height: 49px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .55rem;
+    position: relative;
+    overflow: hidden;
+    border: 0;
+    border-radius: 14px;
+    color: #fff;
+    background: linear-gradient(145deg,#d6345c 0%,#b5092a 58%,#85001f 100%);
+    box-shadow:
+        0 12px 23px -10px rgba(181,9,42,.62),
+        inset 0 1px 0 rgba(255,255,255,.42);
+    font-size: .83rem;
+    font-weight: 800;
+    transition: transform .24s ease, box-shadow .24s ease;
+}
+
+.search-submit-btn::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 54%;
+    background: linear-gradient(180deg,rgba(255,255,255,.18),transparent);
+}
+
+.search-submit-btn:hover {
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow:
+        0 16px 28px -10px rgba(181,9,42,.70),
+        inset 0 1px 0 rgba(255,255,255,.45);
+}
+
+.search-submit-btn:disabled {
+    cursor: wait;
+    opacity: .82;
+    transform: none;
+}
+
+.near-me-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .9rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--directory-border);
+}
+
+.near-me-info {
+    display: flex;
+    align-items: center;
+    gap: .58rem;
+    color: var(--directory-muted);
+    font-size: .73rem;
+    font-weight: 600;
+}
+
+.near-me-info i {
+    color: var(--directory-red);
+}
+
+.directory-locate-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    min-height: 41px;
+    padding: .56rem .88rem;
+    border: 1px solid rgba(37,99,235,.20);
+    border-radius: 12px;
+    color: #2563eb;
+    background: rgba(37,99,235,.07);
+    font-size: .73rem;
+    font-weight: 800;
+    transition: all .22s ease;
+}
+
+.directory-locate-btn:hover {
+    color: #fff;
+    border-color: transparent;
+    background: linear-gradient(145deg,#4384ff,#2563eb);
+    box-shadow: 0 11px 21px -12px rgba(37,99,235,.68);
+    transform: translateY(-2px);
+}
+
+.directory-locate-btn.is-set {
+    color: #fff;
+    border-color: transparent;
+    background: linear-gradient(145deg,#10b981,#047857);
+}
+
+.directory-locate-btn.is-loading i {
+    animation: locatingSpin .8s linear infinite;
+}
+
+@keyframes locatingSpin {
+    to { transform: rotate(360deg); }
+}
+
+/* Blood-group quick filters */
+
+.quick-group-row {
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--directory-border);
+}
+
+.quick-group-label {
+    margin-right: .2rem;
+    color: var(--directory-muted);
+    font-size: .70rem;
+    font-weight: 800;
+}
+
+.quick-group-btn {
+    min-width: 41px;
+    padding: .35rem .55rem;
+    border: 1px solid var(--directory-border);
+    border-radius: 999px;
+    color: var(--directory-text);
+    background: var(--directory-surface-2);
+    font-size: .68rem;
+    font-weight: 800;
+    transition: all .2s ease;
+}
+
+.quick-group-btn:hover,
+.quick-group-btn.active {
+    color: #fff;
+    border-color: transparent;
+    background: linear-gradient(145deg,#d6345c,#b5092a);
+    box-shadow: 0 8px 16px -10px rgba(181,9,42,.62);
+}
+
+/* Active chips */
+
+.active-filters-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .45rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--directory-border);
+}
+
+.active-filters-label {
+    color: var(--directory-muted);
+    font-size: .68rem;
+    font-weight: 800;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+}
+
+.active-filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: .38rem;
+    padding: .32rem .45rem .32rem .62rem;
+    border: 1px solid rgba(181,9,42,.18);
+    border-radius: 999px;
+    color: var(--directory-red);
+    background: rgba(181,9,42,.06);
+    font-size: .70rem;
+    font-weight: 750;
+}
+
+.active-filter-chip button {
+    width: 17px;
+    height: 17px;
+    display: inline-grid;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    color: #fff;
+    background: var(--directory-red);
+    font-size: .60rem;
+    cursor: pointer;
+}
+
+.active-filter-clear-all {
+    border: 0;
+    padding: .25rem .3rem;
+    color: var(--directory-muted);
+    background: transparent;
+    font-size: .69rem;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+/* ------------------------- Results heading ------------------------- */
+
+.results-section {
+    margin-top: 2.1rem;
+}
+
+.results-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .9rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.results-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: .78rem;
+}
+
+.results-title-icon {
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    flex: 0 0 44px;
+    border: 1px solid rgba(181,9,42,.14);
+    border-radius: 14px;
+    color: var(--directory-red);
+    background: rgba(181,9,42,.07);
+}
+
+.results-title {
+    margin: 0;
+    font-size: clamp(1.02rem,3vw,1.30rem);
+    font-weight: 800;
+    letter-spacing: -.03em;
+}
+
+.results-subtitle {
+    margin: .22rem 0 0;
+    color: var(--directory-muted);
+    font-size: .72rem;
+    font-weight: 600;
+}
+
+.donor-count {
+    display: inline-grid;
+    min-width: 30px;
+    height: 30px;
+    margin-left: .27rem;
+    padding: 0 .42rem;
+    place-items: center;
+    border-radius: 9px;
+    color: #fff;
+    background: linear-gradient(145deg,#d6345c,#b5092a);
+    font-size: .75rem;
+    vertical-align: middle;
+}
+
+.eligible-now-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: .36rem;
+    margin-left: .45rem;
+    padding: .28rem .56rem;
+    border: 1px solid rgba(5,150,105,.20);
+    border-radius: 999px;
+    color: #047857;
+    background: rgba(5,150,105,.08);
+    font-size: .66rem;
+    font-weight: 800;
+    vertical-align: middle;
+}
+
+.toolbar-actions {
+    display: flex;
+    align-items: center;
+    gap: .52rem;
+    flex-wrap: wrap;
+}
+
+.sort-field {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+}
+
+.sort-field label {
+    color: var(--directory-muted);
+    font-size: .70rem;
+    font-weight: 700;
+}
+
+.sort-select,
+.saved-toggle-btn,
+.share-directory-btn,
+.register-donor-btn {
+    min-height: 40px;
+    border-radius: 11px;
+    font-size: .72rem;
+    font-weight: 800;
+}
+
+.sort-select {
+    padding: .38rem 2rem .38rem .72rem;
+    border: 1px solid var(--directory-border);
+    color: var(--directory-text);
+    background: var(--directory-surface);
+}
+
+.saved-toggle-btn,
+.share-directory-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .42rem;
+    padding: .5rem .75rem;
+    border: 1px solid var(--directory-border);
+    color: var(--directory-text);
+    background: var(--directory-surface);
+    transition: all .2s ease;
+}
+
+.saved-toggle-btn i {
+    color: #e11d48;
+}
+
+.saved-toggle-btn:hover,
+.share-directory-btn:hover {
+    border-color: rgba(181,9,42,.22);
+    color: var(--directory-red);
+}
+
+.saved-toggle-btn.active {
+    color: #fff;
+    border-color: transparent;
+    background: linear-gradient(145deg,#d6345c,#b5092a);
+}
+
+.saved-toggle-btn.active i {
+    color: #fff;
+}
+
+.share-directory-btn i {
+    color: #2563eb;
+}
+
+.register-donor-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .48rem;
+    padding: .56rem .85rem;
+    border: 1px solid rgba(181,9,42,.20);
+    color: var(--directory-red);
+    background: var(--directory-surface);
+    box-shadow: 0 8px 19px -16px rgba(15,23,42,.5);
+    transition: all .22s ease;
+}
+
+.register-donor-btn:hover {
+    color: #fff;
+    border-color: transparent;
+    background: linear-gradient(145deg,#d6345c,#b5092a);
+    transform: translateY(-2px);
+}
+
+/* -------------------------- Table --------------------------- */
+
+.donor-table-shell {
+    overflow: hidden;
+    border: 1px solid var(--directory-border);
+    border-radius: 24px;
+    background: var(--directory-surface);
+    box-shadow:
+        0 20px 52px -32px rgba(15,23,42,.35),
+        inset 0 1px 0 rgba(255,255,255,.60);
+    backdrop-filter: blur(17px);
+    -webkit-backdrop-filter: blur(17px);
+}
+
+.donor-table-scroll {
+    overflow-x: auto;
+}
+
+.donor-directory-table {
+    width: 100%;
+    min-width: 1040px;
+    margin: 0;
+    color: var(--directory-text);
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.donor-directory-table thead th {
+    padding: .92rem .95rem;
+    border: 0;
+    border-bottom: 1px solid var(--directory-border);
+    color: var(--directory-muted);
+    background: linear-gradient(180deg,rgba(181,9,42,.045),transparent), var(--directory-surface-2);
+    font-size: .64rem;
+    font-weight: 800;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.donor-directory-table tbody td {
+    padding: 1.08rem .95rem;
+    border: 0;
+    border-bottom: 1px solid var(--directory-border);
+    vertical-align: middle;
+    transition: background .20s ease;
+}
+
+.donor-directory-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.donor-directory-table tbody tr:hover td {
+    background: rgba(181,9,42,.028);
+}
+
+.donor-directory-table tbody tr:hover td:first-child {
+    box-shadow: inset 3px 0 0 var(--directory-red);
+}
+
+.donor-profile {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    min-width: 225px;
+}
+
+.donor-photo-wrap {
+    position: relative;
+    flex: 0 0 52px;
+}
+
+.directory-avatar,
+.directory-avatar-placeholder {
+    width: 52px;
+    height: 52px;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    border: 2px solid #fff;
+    border-radius: 17px;
+    color: var(--directory-red);
+    background: linear-gradient(145deg,rgba(214,52,92,.14),rgba(181,9,42,.05));
+    box-shadow:
+        0 8px 18px -12px rgba(15,23,42,.60),
+        0 0 0 1px rgba(181,9,42,.09);
+    object-fit: cover;
+}
+
+.directory-avatar-placeholder {
+    font-size: .95rem;
+}
+
+.avatar-status-dot {
+    position: absolute;
+    right: -2px;
+    bottom: -2px;
+    width: 14px;
+    height: 14px;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 3px 7px rgba(16,185,129,.38);
+}
+
+.avatar-status-dot.not-ready {
+    background: #f59e0b;
+}
+
+.donor-name-line {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .35rem;
+    margin-bottom: .25rem;
+}
+
+.donor-name {
+    color: var(--directory-text);
+    font-size: .87rem;
+    font-weight: 800;
+}
+
+.tier-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .24rem;
+    padding: .22rem .43rem;
+    border: 1px solid var(--directory-border);
+    border-radius: 999px;
+    font-size: .57rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.tier-badge.tier-gold {
+    color: #a16207;
+    background: rgba(245,158,11,.08);
+    border-color: rgba(245,158,11,.20);
+}
+
+.tier-badge.tier-silver {
+    color: #64748b;
+    background: rgba(148,163,184,.09);
+}
+
+.tier-badge.tier-bronze {
+    color: #b45309;
+    background: rgba(180,83,9,.08);
+}
+
+.tier-badge.tier-new {
+    color: #2563eb;
+    background: rgba(37,99,235,.07);
+}
+
+.donor-meta {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    color: var(--directory-muted);
+    font-size: .68rem;
+    font-weight: 600;
+}
+
+.donor-meta i {
+    color: var(--directory-red);
+}
+
+.save-donor-btn {
+    width: 33px;
+    height: 33px;
+    display: inline-grid;
+    place-items: center;
+    padding: 0;
+    border: 1px solid var(--directory-border);
+    border-radius: 10px;
+    color: #7c8799;
+    background: var(--directory-surface-2);
+    transition: all .20s ease;
+}
+
+.save-donor-btn:hover {
+    color: #e11d48;
+    border-color: rgba(225,29,72,.22);
+}
+
+.save-donor-btn.is-saved {
+    color: #fff;
+    border-color: transparent;
+    background: linear-gradient(145deg,#fb7185,#e11d48);
+}
+
+.blood-badge-3d {
+    width: 57px;
+    height: 57px;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    position: relative;
+    border-radius: 18px 18px 18px 6px;
+    border: 1px solid rgba(181,9,42,.16);
+    color: #fff;
+    background: linear-gradient(145deg,#d83b62 0%,#b5092a 62%,#82001d 100%);
+    box-shadow:
+        0 11px 21px -12px rgba(181,9,42,.68),
+        inset 0 1px 0 rgba(255,255,255,.45),
+        inset 0 -7px 12px rgba(62,0,12,.21);
+    font-family: 'Sora',sans-serif;
+    font-size: .94rem;
+    font-weight: 800;
+}
+
+.blood-badge-3d::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 51%;
+    background: linear-gradient(180deg,rgba(255,255,255,.22),transparent);
+}
+
+.location-primary {
+    display: flex;
+    align-items: center;
+    gap: .42rem;
+    margin-bottom: .2rem;
+    color: var(--directory-text);
+    font-size: .79rem;
+    font-weight: 800;
+}
+
+.location-primary i {
+    color: var(--directory-red);
+}
+
+.location-secondary {
+    padding-left: 1.15rem;
+    color: var(--directory-muted);
+    font-size: .68rem;
+    font-weight: 600;
+}
+
+.distance-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: .38rem;
+    padding: .38rem .58rem;
+    border: 1px solid rgba(37,99,235,.17);
+    border-radius: 999px;
+    color: #2563eb;
+    background: rgba(37,99,235,.07);
+    font-size: .68rem;
+    font-weight: 800;
+}
+
+.eligibility-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: .36rem;
+    padding: .39rem .58rem;
+    border-radius: 999px;
+    font-size: .63rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.eligibility-pill.ready {
+    color: #047857;
+    border: 1px solid rgba(5,150,105,.18);
+    background: rgba(5,150,105,.08);
+}
+
+.eligibility-pill.waiting {
+    color: #b45309;
+    border: 1px solid rgba(245,158,11,.18);
+    background: rgba(245,158,11,.08);
+}
+
+.eligibility-caption {
+    display: flex;
+    align-items: center;
+    gap: .34rem;
+    margin-top: .38rem;
+    color: var(--directory-muted);
+    font-size: .64rem;
+}
+
+.eligibility-caption.ready-text {
+    color: #059669;
+}
+
+.contact-stack {
+    display: grid;
+    gap: .38rem;
+    min-width: 172px;
+}
+
+.contact-action {
+    width: 100%;
+    min-height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .45rem;
+    padding: .45rem .58rem;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    font-size: .66rem;
+    font-weight: 800;
+    line-height: 1;
+    transition: all .20s ease;
+}
+
+.contact-call {
+    color: #fff;
+    background: linear-gradient(145deg,#4384ff,#2563eb);
+    box-shadow: 0 8px 17px -11px rgba(37,99,235,.68);
+}
+
+.contact-call:hover {
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+.contact-whatsapp {
+    color: #fff;
+    background: linear-gradient(145deg,#28c98a,#059669);
+    box-shadow: 0 8px 17px -11px rgba(5,150,105,.68);
+}
+
+.contact-whatsapp:hover {
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+.contact-copy {
+    color: var(--directory-text);
+    border-color: var(--directory-border);
+    background: var(--directory-surface-2);
+}
+
+.contact-copy:hover {
+    color: var(--directory-red);
+    border-color: rgba(181,9,42,.20);
+}
+
+.contact-copy.is-copied {
+    color: #047857;
+    border-color: rgba(5,150,105,.20);
+    background: rgba(5,150,105,.08);
+}
+
+/* -------------------------- Mobile cards -------------------------- */
+
+.mobile-donor-grid {
+    display: none;
+}
+
+.mobile-donor-card {
+    position: relative;
+    overflow: hidden;
+    padding: .95rem;
+    border: 1px solid var(--directory-border);
+    border-radius: 21px;
+    background: var(--directory-surface);
+    box-shadow: 0 18px 38px -26px rgba(15,23,42,.45);
+}
+
+.mobile-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: .65rem;
+    padding-bottom: .85rem;
+    border-bottom: 1px solid var(--directory-border);
+}
+
+.mobile-card-top-actions {
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+}
+
+.mobile-blood-badge {
+    min-width: 50px;
+    height: 50px;
+    display: grid;
+    place-items: center;
+    border-radius: 16px 16px 16px 5px;
+    color: #fff;
+    background: linear-gradient(145deg,#d83b62,#b5092a 62%,#82001d);
+    box-shadow: 0 10px 20px -12px rgba(181,9,42,.68);
+    font-family: 'Sora',sans-serif;
+    font-size: .88rem;
+    font-weight: 800;
+}
+
+.mobile-donor-details {
+    display: grid;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: .55rem;
+    padding: .82rem 0;
+}
+
+.mobile-detail-box {
+    min-height: 65px;
+    padding: .60rem;
+    border: 1px solid var(--directory-border);
+    border-radius: 13px;
+    background: var(--directory-surface-2);
+}
+
+.mobile-detail-label {
+    display: block;
+    margin-bottom: .28rem;
+    color: var(--directory-muted);
+    font-size: .56rem;
+    font-weight: 800;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+}
+
+.mobile-detail-value {
+    color: var(--directory-text);
+    font-size: .71rem;
+    font-weight: 800;
+    line-height: 1.45;
+}
+
+.mobile-contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .45rem;
+}
+
+.mobile-contact-grid .contact-copy {
+    grid-column: 1 / -1;
+}
+
+/* -------------------------- Empty state -------------------------- */
+
+.directory-empty {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(2.7rem,7vw,5rem) 1.2rem;
+    border: 1px solid var(--directory-border);
+    border-radius: 26px;
+    background: var(--directory-surface);
+    box-shadow: 0 20px 48px -31px rgba(15,23,42,.40);
+    text-align: center;
+}
+
+.empty-icon-orbit {
+    position: relative;
+    width: 98px;
+    height: 98px;
+    display: grid;
+    place-items: center;
+    margin: 0 auto 1.25rem;
+    border: 1px solid rgba(181,9,42,.13);
+    border-radius: 50%;
+    color: var(--directory-red);
+    background: radial-gradient(circle,rgba(181,9,42,.11),rgba(181,9,42,.025));
+    font-size: 1.7rem;
+}
+
+.empty-icon-orbit::before {
+    content: "";
+    position: absolute;
+    inset: -8px;
+    border: 1px dashed rgba(181,9,42,.22);
+    border-radius: 50%;
+    animation: emptyOrbit 12s linear infinite;
+}
+
+@keyframes emptyOrbit {
+    to { transform: rotate(360deg); }
+}
+
+.empty-title {
+    margin-bottom: .5rem;
+    font-size: 1.22rem;
+    font-weight: 800;
+}
+
+.empty-text {
+    max-width: 480px;
+    margin: 0 auto 1.15rem;
+    color: var(--directory-muted);
+    font-size: .82rem;
+    line-height: 1.7;
+}
+
+/* -------------------------- Notes -------------------------- */
+
+.directory-notes {
+    position: relative;
+    overflow: hidden;
+    margin-top: 1.45rem;
+    border: 1px solid var(--directory-border);
+    border-radius: 24px;
+    background: var(--directory-surface);
+    box-shadow: 0 18px 42px -31px rgba(15,23,42,.40);
+}
+
+.notes-heading {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    padding: 1.02rem 1.15rem;
+    border-bottom: 1px solid var(--directory-border);
+    background: linear-gradient(90deg,rgba(181,9,42,.06),transparent);
+}
+
+.notes-heading-icon {
+    width: 37px;
+    height: 37px;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(181,9,42,.14);
+    border-radius: 12px;
+    color: var(--directory-red);
+    background: rgba(181,9,42,.07);
+}
+
+.notes-title {
+    margin: 0;
+    font-size: .92rem;
+    font-weight: 800;
+}
+
+.notes-grid {
+    display: grid;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: .7rem;
+    padding: 1.15rem;
+}
+
+.note-item {
+    display: flex;
+    align-items: flex-start;
+    gap: .62rem;
+    padding: .78rem;
+    border: 1px solid var(--directory-border);
+    border-radius: 15px;
+    background: var(--directory-surface-2);
+}
+
+.note-number {
+    width: 30px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+    flex: 0 0 30px;
+    border-radius: 9px;
+    color: #fff;
+    background: linear-gradient(145deg,#d6345c,#b5092a);
+    font-size: .64rem;
+    font-weight: 800;
+}
+
+.note-content {
+    color: var(--directory-muted);
+    font-size: .72rem;
+    line-height: 1.62;
+}
+
+.note-content strong {
+    color: var(--directory-text);
+}
+
+/* -------------------------- Dark mode compatibility --------------------------
+   This page does NOT control theme state. It simply follows common
+   global theme selectors so the existing base.html dark mode works. */
+
+[data-theme="dark"] .donor-page,
+body.dark-mode .donor-page,
+body.dark .donor-page,
+.dark-mode .donor-page {
+    --directory-text: #eef2f7;
+    --directory-muted: #9aa7ba;
+    --directory-surface: rgba(17,24,39,.92);
+    --directory-surface-2: #111827;
+    --directory-border: rgba(255,255,255,.09);
+    --directory-red-soft: rgba(181,9,42,.15);
+    --directory-shadow: 0 18px 45px rgba(0,0,0,.24);
+    --directory-shadow-hover: 0 24px 55px rgba(0,0,0,.32);
+}
+
+[data-theme="dark"] .donor-page .directory-control,
+body.dark-mode .donor-page .directory-control,
+body.dark .donor-page .directory-control,
+.dark-mode .donor-page .directory-control {
+    color-scheme: dark;
+    background: #0f172a;
+}
+
+[data-theme="dark"] .donor-page .directory-control:focus,
+body.dark-mode .donor-page .directory-control:focus,
+body.dark .donor-page .directory-control:focus,
+.dark-mode .donor-page .directory-control:focus {
+    background: #111827;
+}
+
+[data-theme="dark"] .donor-page .directory-avatar,
+[data-theme="dark"] .donor-page .directory-avatar-placeholder,
+[data-theme="dark"] .donor-page .avatar-status-dot,
+body.dark-mode .donor-page .directory-avatar,
+body.dark-mode .donor-page .directory-avatar-placeholder,
+body.dark-mode .donor-page .avatar-status-dot,
+body.dark .donor-page .directory-avatar,
+body.dark .donor-page .directory-avatar-placeholder,
+body.dark .donor-page .avatar-status-dot,
+.dark-mode .donor-page .directory-avatar,
+.dark-mode .donor-page .directory-avatar-placeholder,
+.dark-mode .donor-page .avatar-status-dot {
+    border-color: #121a2b;
+}
+
+/* ---------------------------- Responsive ---------------------------- */
+
+@media (max-width: 991.98px) {
     .hero-stat-float {
-        position: absolute;
-        right: clamp(1.3rem, 4vw, 3rem);
-        bottom: clamp(1.3rem, 4vw, 2.5rem);
-        display: flex;
-        align-items: center;
-        gap: .85rem;
-        min-width: 190px;
-        padding: .9rem 1rem;
-        border: 1px solid rgba(255, 255, 255, .25);
-        border-radius: 20px;
-        background: rgba(74, 0, 13, .25);
-        box-shadow:
-            0 18px 34px -18px rgba(0, 0, 0, .55),
-            inset 0 1px 0 rgba(255, 255, 255, .25);
-        backdrop-filter: blur(18px);
-        -webkit-backdrop-filter: blur(18px);
+        position: static;
+        width: max-content;
+        max-width: 100%;
+        margin-top: 1.3rem;
     }
-
-    .hero-stat-icon {
-        width: 46px;
-        height: 46px;
-        display: grid;
-        place-items: center;
-        flex: 0 0 46px;
-        border-radius: 15px;
-        color: #d90429;
-        background: #fff;
-        box-shadow:
-            0 10px 20px -12px rgba(0, 0, 0, .55),
-            inset 0 -4px 8px rgba(217, 4, 41, .09);
-    }
-
-    .hero-stat-number {
-        display: block;
-        font-family: 'Sora', sans-serif;
-        font-size: 1.55rem;
-        font-weight: 800;
-        line-height: 1;
-    }
-
-    .hero-stat-label {
-        display: block;
-        margin-top: .25rem;
-        color: rgba(255, 255, 255, .74);
-        font-size: .7rem;
-        font-weight: 700;
-        letter-spacing: .08em;
-        text-transform: uppercase;
-    }
-
-    /* -------------------------- Search panel -------------------------- */
 
     .donor-search-panel {
-        position: relative;
-        z-index: 4;
-        margin: -34px clamp(.55rem, 3vw, 2.1rem) 0;
-        overflow: hidden;
-        border: 1px solid var(--directory-border);
-        border-radius: 26px;
-        background: var(--directory-surface);
-        box-shadow:
-            0 28px 65px -32px rgba(15, 23, 42, .45),
-            inset 0 1px 0 rgba(255, 255, 255, .55);
-        backdrop-filter: blur(24px) saturate(170%);
-        -webkit-backdrop-filter: blur(24px) saturate(170%);
-    }
-
-    .search-panel-heading {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1rem;
-        padding: 1.2rem 1.35rem;
-        border-bottom: 1px solid var(--directory-border);
-        background:
-            linear-gradient(90deg, rgba(217, 4, 41, .08), transparent 45%);
-    }
-
-    .search-heading-content {
-        display: flex;
-        align-items: center;
-        gap: .8rem;
-    }
-
-    .search-heading-icon {
-        width: 43px;
-        height: 43px;
-        display: grid;
-        place-items: center;
-        flex: 0 0 43px;
-        border-radius: 14px;
-        color: #fff;
-        background: linear-gradient(145deg, #ff3659, #d90429 60%, #920019);
-        box-shadow:
-            0 10px 22px -8px rgba(217, 4, 41, .6),
-            inset 0 1px 0 rgba(255, 255, 255, .45),
-            inset 0 -5px 10px rgba(90, 0, 16, .2);
-    }
-
-    .search-panel-title {
-        margin: 0;
-        color: var(--directory-text);
-        font-family: 'Sora', 'Noto Sans Bengali', sans-serif;
-        font-size: 1.05rem;
-        font-weight: 800;
-        letter-spacing: -.025em;
-    }
-
-    .search-panel-subtitle {
-        margin: .2rem 0 0;
-        color: var(--directory-muted);
-        font-size: .76rem;
-        font-weight: 600;
-    }
-
-    .secure-chip {
-        display: inline-flex;
-        align-items: center;
-        gap: .45rem;
-        padding: .4rem .75rem;
-        border: 1px solid rgba(16, 185, 129, .22);
-        border-radius: 999px;
-        color: #059669;
-        background: rgba(16, 185, 129, .09);
-        font-size: .7rem;
-        font-weight: 800;
-        white-space: nowrap;
-    }
-
-    .search-panel-body {
-        padding: 1.35rem;
-    }
-
-    .filter-field {
-        position: relative;
-    }
-
-    .filter-label {
-        display: flex;
-        align-items: center;
-        gap: .45rem;
-        margin-bottom: .55rem;
-        color: var(--directory-text);
-        font-size: .78rem;
-        font-weight: 800;
-        letter-spacing: .01em;
-    }
-
-    .filter-label i {
-        color: var(--directory-red);
-    }
-
-    .field-shell {
-        position: relative;
-    }
-
-    .field-icon {
-        position: absolute;
-        z-index: 3;
-        top: 50%;
-        left: .95rem;
-        transform: translateY(-50%);
-        color: var(--directory-muted);
-        font-size: .86rem;
-        pointer-events: none;
-        transition: color .25s ease, transform .25s ease;
-    }
-
-    .directory-control {
-        width: 100%;
-        min-height: 50px;
-        padding: .72rem 2.6rem .72rem 2.65rem;
-        border: 1px solid var(--directory-border);
-        border-radius: 15px;
-        outline: none;
-        color: var(--directory-text);
-        background: var(--rp-surface-2, rgba(255, 255, 255, .55));
-        box-shadow:
-            inset 0 1px 0 rgba(255, 255, 255, .45),
-            0 7px 16px -14px rgba(15, 23, 42, .5);
-        font-size: .88rem;
-        font-weight: 650;
-        transition:
-            border-color .25s ease,
-            box-shadow .25s ease,
-            background .25s ease,
-            transform .25s ease;
-        appearance: none;
-        -webkit-appearance: none;
-    }
-
-    .directory-control::placeholder {
-        color: var(--directory-muted);
-        opacity: .75;
-    }
-
-    .directory-control:focus {
-        border-color: rgba(217, 4, 41, .55);
-        background: var(--rp-surface-solid, #fff);
-        box-shadow:
-            0 0 0 4px rgba(217, 4, 41, .1),
-            0 13px 24px -18px rgba(217, 4, 41, .45);
-        transform: translateY(-1px);
-    }
-
-    .field-shell:focus-within .field-icon {
-        color: var(--directory-red);
-        transform: translateY(-50%) scale(1.1);
-    }
-
-    .select-arrow {
-        position: absolute;
-        z-index: 3;
-        top: 50%;
-        right: 1rem;
-        transform: translateY(-50%);
-        color: var(--directory-muted);
-        font-size: .72rem;
-        pointer-events: none;
-    }
-
-    .search-submit-btn {
-        width: 100%;
-        min-height: 50px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: .6rem;
-        position: relative;
-        overflow: hidden;
-        border: 0;
-        border-radius: 15px;
-        color: #fff;
-        background: linear-gradient(145deg, #ff3659 0%, #d90429 57%, #97001b 100%);
-        box-shadow:
-            0 13px 25px -10px rgba(217, 4, 41, .65),
-            inset 0 1px 0 rgba(255, 255, 255, .48),
-            inset 0 -5px 10px rgba(91, 0, 16, .22);
-        font-size: .88rem;
-        font-weight: 800;
-        transition: transform .28s cubic-bezier(.34, 1.56, .64, 1), box-shadow .28s ease;
-    }
-
-    .search-submit-btn::before {
-        content: "";
-        position: absolute;
-        inset: 0 0 52%;
-        background: linear-gradient(180deg, rgba(255, 255, 255, .25), transparent);
-        pointer-events: none;
-    }
-
-    .search-submit-btn:hover {
-        color: #fff;
-        transform: translateY(-3px);
-        box-shadow:
-            0 18px 32px -10px rgba(217, 4, 41, .72),
-            inset 0 1px 0 rgba(255, 255, 255, .5);
-    }
-
-    .search-submit-btn:active {
-        transform: translateY(0) scale(.985);
+        margin-right: .45rem;
+        margin-left: .45rem;
     }
 
     .near-me-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1rem;
-        margin-top: 1rem;
-        padding-top: 1rem;
-        border-top: 1px dashed var(--directory-border);
-    }
-
-    .near-me-info {
-        display: flex;
-        align-items: center;
-        gap: .65rem;
-        color: var(--directory-muted);
-        font-size: .76rem;
-        font-weight: 600;
-    }
-
-    .near-me-info i {
-        color: var(--directory-red);
+        align-items: stretch;
+        flex-direction: column;
     }
 
     .directory-locate-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: .55rem;
-        min-height: 43px;
-        padding: .6rem 1rem;
-        border: 1px solid rgba(37, 99, 235, .22);
-        border-radius: 13px;
-        color: #2563eb;
-        background: rgba(37, 99, 235, .08);
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4);
-        font-size: .78rem;
-        font-weight: 800;
-        transition: all .28s cubic-bezier(.34, 1.56, .64, 1);
-    }
-
-    .directory-locate-btn:hover {
-        color: #fff;
-        border-color: transparent;
-        background: linear-gradient(145deg, #4384ff, #2563eb);
-        box-shadow: 0 12px 24px -11px rgba(37, 99, 235, .65);
-        transform: translateY(-2px);
-    }
-
-    .directory-locate-btn.is-set {
-        color: #fff;
-        border-color: transparent;
-        background: linear-gradient(145deg, #34d399, #059669);
-        box-shadow: 0 12px 24px -11px rgba(5, 150, 105, .55);
-    }
-
-    .directory-locate-btn.is-loading i {
-        animation: locatingSpin 1s linear infinite;
-    }
-
-    @keyframes locatingSpin {
-        to {
-            transform: rotate(360deg);
-        }
-    }
-
-    /* ------------------------- Results heading ------------------------ */
-
-    .results-section {
-        margin-top: 2.2rem;
-    }
-
-    .results-toolbar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1rem;
-        margin-bottom: 1rem;
-    }
-
-    .results-title-wrap {
-        display: flex;
-        align-items: center;
-        gap: .85rem;
-    }
-
-    .results-title-icon {
-        width: 46px;
-        height: 46px;
-        display: grid;
-        place-items: center;
-        flex: 0 0 46px;
-        border: 1px solid rgba(217, 4, 41, .16);
-        border-radius: 15px;
-        color: var(--directory-red);
-        background: rgba(217, 4, 41, .08);
-        box-shadow:
-            inset 0 1px 0 rgba(255, 255, 255, .48),
-            0 10px 18px -16px rgba(217, 4, 41, .65);
-    }
-
-    .results-title {
-        margin: 0;
-        color: var(--directory-text);
-        font-family: 'Sora', 'Noto Sans Bengali', sans-serif;
-        font-size: clamp(1.05rem, 3vw, 1.35rem);
-        font-weight: 800;
-        letter-spacing: -.03em;
-    }
-
-    .results-subtitle {
-        margin: .25rem 0 0;
-        color: var(--directory-muted);
-        font-size: .76rem;
-        font-weight: 600;
-    }
-
-    .donor-count {
-        display: inline-grid;
-        min-width: 31px;
-        height: 31px;
-        margin-left: .3rem;
-        padding: 0 .45rem;
-        place-items: center;
-        border-radius: 10px;
-        color: #fff;
-        background: linear-gradient(145deg, #ff3659, #d90429);
-        box-shadow:
-            0 8px 16px -8px rgba(217, 4, 41, .65),
-            inset 0 1px 0 rgba(255, 255, 255, .4);
-        font-size: .78rem;
-        vertical-align: middle;
-    }
-
-    .register-donor-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: .55rem;
-        min-height: 45px;
-        padding: .65rem 1.05rem;
-        border: 1px solid rgba(217, 4, 41, .28);
-        border-radius: 14px;
-        color: var(--directory-red);
-        background: var(--directory-surface);
-        box-shadow:
-            0 10px 20px -16px rgba(15, 23, 42, .5),
-            inset 0 1px 0 rgba(255, 255, 255, .5);
-        font-size: .8rem;
-        font-weight: 800;
-        transition: all .28s cubic-bezier(.34, 1.56, .64, 1);
-    }
-
-    .register-donor-btn:hover {
-        color: #fff;
-        border-color: transparent;
-        background: linear-gradient(145deg, #ff3659, #d90429);
-        box-shadow: 0 14px 27px -12px rgba(217, 4, 41, .7);
-        transform: translateY(-3px);
-    }
-
-    /* -------------------------- Donor table --------------------------- */
-
-    .donor-table-shell {
-        overflow: hidden;
-        border: 1px solid var(--directory-border);
-        border-radius: 26px;
-        background: var(--directory-surface);
-        box-shadow:
-            0 22px 55px -32px rgba(15, 23, 42, .38),
-            inset 0 1px 0 rgba(255, 255, 255, .55);
-        backdrop-filter: blur(18px);
-        -webkit-backdrop-filter: blur(18px);
-    }
-
-    .donor-table-scroll {
-        overflow-x: auto;
-    }
-
-    .donor-directory-table {
         width: 100%;
-        min-width: 1060px;
-        margin: 0;
-        color: var(--directory-text);
-        border-collapse: separate;
-        border-spacing: 0;
     }
 
-    .donor-directory-table thead th {
-        padding: 1rem 1.05rem;
-        border: 0;
-        border-bottom: 1px solid var(--directory-border);
-        color: var(--directory-muted);
-        background:
-            linear-gradient(180deg, rgba(217, 4, 41, .055), transparent),
-            var(--rp-surface-2, rgba(255, 255, 255, .5));
-        font-size: .68rem;
-        font-weight: 800;
-        letter-spacing: .1em;
-        text-transform: uppercase;
-        white-space: nowrap;
-    }
-
-    .donor-directory-table thead th:first-child {
-        padding-left: 1.3rem;
-    }
-
-    .donor-directory-table tbody td {
-        padding: 1.15rem 1.05rem;
-        border: 0;
-        border-bottom: 1px solid var(--directory-border);
-        background: transparent;
-        vertical-align: middle;
-        transition: background .25s ease;
-    }
-
-    .donor-directory-table tbody tr:last-child td {
-        border-bottom: 0;
-    }
-
-    .donor-directory-table tbody tr {
-        position: relative;
-        transition: transform .28s ease, box-shadow .28s ease;
-    }
-
-    .donor-directory-table tbody tr:hover td {
-        background: rgba(217, 4, 41, .035);
-    }
-
-    .donor-directory-table tbody tr:hover td:first-child {
-        box-shadow: inset 4px 0 0 var(--directory-red);
-    }
-
-    .donor-profile {
-        display: flex;
-        align-items: center;
-        gap: .85rem;
-        min-width: 240px;
-    }
-
-    .donor-photo-wrap {
-        position: relative;
-        flex: 0 0 54px;
-    }
-
-    .directory-avatar,
-    .directory-avatar-placeholder {
-        width: 54px;
-        height: 54px;
-        display: grid;
-        place-items: center;
-        overflow: hidden;
-        border: 3px solid var(--rp-surface-solid, #fff);
-        border-radius: 18px;
-        color: var(--directory-red);
-        background:
-            linear-gradient(145deg, rgba(255, 54, 89, .17), rgba(217, 4, 41, .07));
-        box-shadow:
-            0 10px 22px -13px rgba(15, 23, 42, .6),
-            0 0 0 1px rgba(217, 4, 41, .12);
-        object-fit: cover;
-    }
-
-    .directory-avatar-placeholder {
-        font-size: 1rem;
-    }
-
-    .avatar-status-dot {
-        position: absolute;
-        right: -2px;
-        bottom: -2px;
-        width: 15px;
-        height: 15px;
-        border: 3px solid var(--rp-surface-solid, #fff);
-        border-radius: 50%;
-        background: #10b981;
-        box-shadow: 0 3px 8px rgba(16, 185, 129, .4);
-    }
-
-    .avatar-status-dot.not-ready {
-        background: #f59e0b;
-        box-shadow: 0 3px 8px rgba(245, 158, 11, .4);
-    }
-
-    .donor-name-line {
-        display: flex;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: .4rem;
-        margin-bottom: .3rem;
-    }
-
-    .donor-name {
-        color: var(--directory-text);
-        font-size: .91rem;
-        font-weight: 800;
-    }
-
-    .tier-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: .28rem;
-        padding: .25rem .48rem;
-        border: 1px solid var(--directory-border);
-        border-radius: 999px;
-        font-size: .6rem;
-        font-weight: 800;
-        letter-spacing: .03em;
-        white-space: nowrap;
-    }
-
-    .tier-badge.tier-gold {
-        color: #a16207;
-        border-color: rgba(245, 158, 11, .23);
-        background: linear-gradient(145deg, rgba(253, 230, 138, .35), rgba(245, 158, 11, .1));
-    }
-
-    .tier-badge.tier-silver {
-        color: #64748b;
-        border-color: rgba(100, 116, 139, .22);
-        background: linear-gradient(145deg, rgba(226, 232, 240, .6), rgba(148, 163, 184, .1));
-    }
-
-    .tier-badge.tier-bronze {
-        color: #b45309;
-        border-color: rgba(180, 83, 9, .2);
-        background: rgba(180, 83, 9, .09);
-    }
-
-    .tier-badge.tier-new {
-        color: #2563eb;
-        border-color: rgba(37, 99, 235, .2);
-        background: rgba(37, 99, 235, .08);
-    }
-
-    .donor-meta {
-        display: flex;
-        align-items: center;
-        gap: .45rem;
-        color: var(--directory-muted);
-        font-size: .71rem;
-        font-weight: 600;
-    }
-
-    .donor-meta i {
-        color: var(--directory-red);
-    }
-
-    .blood-badge-3d {
-        position: relative;
-        width: 59px;
-        height: 59px;
-        display: grid;
-        place-items: center;
-        overflow: hidden;
-        border: 1px solid rgba(217, 4, 41, .18);
-        border-radius: 20px 20px 20px 7px;
-        color: #fff;
-        background: linear-gradient(145deg, #ff4666 0%, #d90429 60%, #8f0018 100%);
-        box-shadow:
-            0 12px 23px -11px rgba(217, 4, 41, .68),
-            inset 0 1px 0 rgba(255, 255, 255, .5),
-            inset 0 -7px 12px rgba(74, 0, 13, .25);
-        font-family: 'Sora', sans-serif;
-        font-size: 1rem;
-        font-weight: 800;
-        transform: perspective(400px) rotateY(-5deg);
-    }
-
-    .blood-badge-3d::before {
-        content: "";
-        position: absolute;
-        inset: 0 0 50%;
-        background: linear-gradient(180deg, rgba(255, 255, 255, .28), transparent);
-    }
-
-    .location-cell {
-        min-width: 150px;
-    }
-
-    .location-primary {
-        display: flex;
-        align-items: center;
-        gap: .45rem;
-        margin-bottom: .25rem;
-        color: var(--directory-text);
-        font-size: .83rem;
-        font-weight: 800;
-    }
-
-    .location-primary i {
-        color: var(--directory-red);
-    }
-
-    .location-secondary {
-        padding-left: 1.2rem;
-        color: var(--directory-muted);
-        font-size: .72rem;
-        font-weight: 600;
-    }
-
-    .distance-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: .4rem;
-        padding: .42rem .65rem;
-        border: 1px solid rgba(37, 99, 235, .18);
-        border-radius: 999px;
-        color: #2563eb;
-        background: rgba(37, 99, 235, .08);
-        font-size: .7rem;
-        font-weight: 800;
-        white-space: nowrap;
-    }
-
-    .eligibility-card {
-        min-width: 165px;
-    }
-
-    .eligibility-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: .4rem;
-        padding: .42rem .65rem;
-        border-radius: 999px;
-        font-size: .67rem;
-        font-weight: 800;
-        white-space: nowrap;
-    }
-
-    .eligibility-pill.ready {
-        color: #047857;
-        border: 1px solid rgba(16, 185, 129, .2);
-        background: rgba(16, 185, 129, .1);
-    }
-
-    .eligibility-pill.waiting {
-        color: #b45309;
-        border: 1px solid rgba(245, 158, 11, .22);
-        background: rgba(245, 158, 11, .1);
-    }
-
-    .eligibility-caption {
-        display: flex;
-        align-items: center;
-        gap: .35rem;
-        margin-top: .45rem;
-        color: var(--directory-muted);
-        font-size: .67rem;
-        font-weight: 650;
-    }
-
-    .eligibility-caption.ready-text {
-        color: #059669;
-    }
-
-    .contact-stack {
-        display: grid;
-        gap: .42rem;
-        min-width: 184px;
-    }
-
-    .contact-action {
-        width: 100%;
-        min-height: 38px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: .5rem;
-        padding: .48rem .65rem;
-        border: 1px solid transparent;
-        border-radius: 11px;
-        outline: none;
-        font-size: .7rem;
-        font-weight: 800;
-        line-height: 1;
-        transition: all .25s cubic-bezier(.34, 1.56, .64, 1);
-    }
-
-    .contact-action:hover {
-        transform: translateY(-2px);
-    }
-
-    .contact-call {
-        color: #fff;
-        background: linear-gradient(145deg, #4384ff, #2563eb);
-        box-shadow:
-            0 9px 18px -11px rgba(37, 99, 235, .7),
-            inset 0 1px 0 rgba(255, 255, 255, .4);
-    }
-
-    .contact-call:hover {
-        color: #fff;
-        box-shadow: 0 13px 22px -10px rgba(37, 99, 235, .75);
-    }
-
-    .contact-whatsapp {
-        color: #fff;
-        background: linear-gradient(145deg, #34d399, #059669);
-        box-shadow:
-            0 9px 18px -11px rgba(5, 150, 105, .7),
-            inset 0 1px 0 rgba(255, 255, 255, .4);
-    }
-
-    .contact-whatsapp:hover {
-        color: #fff;
-        box-shadow: 0 13px 22px -10px rgba(5, 150, 105, .75);
-    }
-
-    .contact-copy {
-        color: var(--directory-text);
-        border-color: var(--directory-border);
-        background: var(--rp-surface-2, rgba(255, 255, 255, .5));
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4);
-    }
-
-    .contact-copy:hover {
-        color: var(--directory-red);
-        border-color: rgba(217, 4, 41, .25);
-        background: rgba(217, 4, 41, .06);
-    }
-
-    /* ------------------------ Mobile donor cards ---------------------- */
-
-    .mobile-donor-grid {
+    .desktop-donor-table {
         display: none;
     }
 
-    .mobile-donor-card {
-        position: relative;
-        overflow: hidden;
-        padding: 1rem;
-        border: 1px solid var(--directory-border);
+    .mobile-donor-grid {
+        display: grid;
+        grid-template-columns: repeat(2,minmax(0,1fr));
+        gap: .82rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .directory-control {
+        min-height: 54px;
+        font-size: .94rem;
+    }
+
+    .filter-label {
+        font-size: .82rem;
+    }
+
+    .donor-hero {
+        min-height: auto;
+        padding: 1.35rem 1.05rem 1.25rem;
         border-radius: 23px;
-        background: var(--directory-surface);
-        box-shadow:
-            0 17px 35px -26px rgba(15, 23, 42, .55),
-            inset 0 1px 0 rgba(255, 255, 255, .5);
-        backdrop-filter: blur(18px);
-        -webkit-backdrop-filter: blur(18px);
     }
 
-    .mobile-donor-card::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 100px;
-        height: 100px;
-        border-radius: 0 0 0 100%;
-        background: radial-gradient(circle at 100% 0, rgba(217, 4, 41, .12), transparent 70%);
-        pointer-events: none;
+    .donor-hero-title {
+        font-size: clamp(1.82rem,9vw,2.45rem);
     }
 
-    .mobile-card-top {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: .7rem;
-        padding-bottom: .9rem;
-        border-bottom: 1px solid var(--directory-border);
+    .hero-bottom-row {
+        margin-top: 1.15rem;
     }
 
-    .mobile-blood-badge {
-        min-width: 52px;
-        height: 52px;
-        display: grid;
-        place-items: center;
-        flex: 0 0 52px;
-        border-radius: 17px 17px 17px 6px;
-        color: #fff;
-        background: linear-gradient(145deg, #ff4666, #d90429 60%, #8f0018);
-        box-shadow:
-            0 11px 20px -11px rgba(217, 4, 41, .7),
-            inset 0 1px 0 rgba(255, 255, 255, .45);
-        font-family: 'Sora', sans-serif;
-        font-size: .95rem;
-        font-weight: 800;
+    .hero-stat-float {
+        margin-top: 1.1rem;
     }
 
-    .mobile-donor-details {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: .65rem;
-        padding: .85rem 0;
+    .donor-search-panel {
+        margin-top: -28px;
+        border-radius: 20px;
     }
 
-    .mobile-detail-box {
-        min-height: 67px;
-        padding: .65rem;
-        border: 1px solid var(--directory-border);
-        border-radius: 14px;
-        background: var(--rp-surface-2, rgba(255, 255, 255, .45));
+    .search-panel-heading,
+    .search-panel-body {
+        padding: .95rem;
     }
 
-    .mobile-detail-label {
-        display: block;
-        margin-bottom: .32rem;
-        color: var(--directory-muted);
-        font-size: .59rem;
-        font-weight: 800;
-        letter-spacing: .08em;
-        text-transform: uppercase;
+    .secure-chip {
+        display: none;
     }
 
-    .mobile-detail-value {
-        color: var(--directory-text);
-        font-size: .74rem;
-        font-weight: 800;
-        line-height: 1.4;
+    .results-toolbar {
+        align-items: stretch;
+        flex-direction: column;
     }
 
-    .mobile-contact-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: .5rem;
+    .toolbar-actions {
+        width: 100%;
     }
 
-    .mobile-contact-grid .contact-copy {
-        grid-column: 1 / -1;
+    .sort-field {
+        flex: 1 1 100%;
     }
 
-    /* -------------------------- Empty state --------------------------- */
-
-    .directory-empty {
-        position: relative;
-        overflow: hidden;
-        padding: clamp(2.5rem, 7vw, 5rem) 1.25rem;
-        border: 1px solid var(--directory-border);
-        border-radius: 28px;
-        background: var(--directory-surface);
-        box-shadow:
-            0 22px 50px -32px rgba(15, 23, 42, .4),
-            inset 0 1px 0 rgba(255, 255, 255, .55);
-        text-align: center;
+    .sort-select {
+        width: 100%;
     }
 
-    .empty-icon-orbit {
-        position: relative;
-        width: 102px;
-        height: 102px;
-        display: grid;
-        place-items: center;
-        margin: 0 auto 1.4rem;
-        border: 1px solid rgba(217, 4, 41, .14);
-        border-radius: 50%;
-        color: var(--directory-red);
-        background:
-            radial-gradient(circle, rgba(217, 4, 41, .13), rgba(217, 4, 41, .035));
-        font-size: 1.8rem;
-        box-shadow:
-            0 18px 35px -24px rgba(217, 4, 41, .65),
-            inset 0 1px 0 rgba(255, 255, 255, .5);
-    }
-
-    .empty-icon-orbit::before {
-        content: "";
-        position: absolute;
-        inset: -9px;
-        border: 1px dashed rgba(217, 4, 41, .25);
-        border-radius: 50%;
-        animation: emptyOrbit 12s linear infinite;
-    }
-
-    .empty-icon-orbit::after {
-        content: "";
-        position: absolute;
-        top: -12px;
-        width: 9px;
-        height: 9px;
-        border-radius: 50%;
-        background: var(--directory-red);
-        box-shadow: 0 0 12px rgba(217, 4, 41, .7);
-    }
-
-    @keyframes emptyOrbit {
-        to {
-            transform: rotate(360deg);
-        }
-    }
-
-    .empty-title {
-        margin-bottom: .55rem;
-        color: var(--directory-text);
-        font-family: 'Sora', 'Noto Sans Bengali', sans-serif;
-        font-size: 1.25rem;
-        font-weight: 800;
-    }
-
-    .empty-text {
-        max-width: 480px;
-        margin: 0 auto 1.25rem;
-        color: var(--directory-muted);
-        font-size: .86rem;
-        line-height: 1.7;
-    }
-
-    /* --------------------------- Notes card --------------------------- */
-
-    .directory-notes {
-        position: relative;
-        overflow: hidden;
-        margin-top: 1.5rem;
-        border: 1px solid var(--directory-border);
-        border-radius: 26px;
-        background: var(--directory-surface);
-        box-shadow:
-            0 18px 44px -32px rgba(15, 23, 42, .42),
-            inset 0 1px 0 rgba(255, 255, 255, .55);
-        backdrop-filter: blur(18px);
-        -webkit-backdrop-filter: blur(18px);
-    }
-
-    .directory-notes::before {
-        content: "";
-        position: absolute;
-        top: -70px;
-        right: -60px;
-        width: 170px;
-        height: 170px;
-        border-radius: 50%;
-        background: rgba(217, 4, 41, .07);
-        filter: blur(3px);
-    }
-
-    .notes-heading {
-        position: relative;
-        display: flex;
-        align-items: center;
-        gap: .75rem;
-        padding: 1.1rem 1.25rem;
-        border-bottom: 1px solid var(--directory-border);
-        background: linear-gradient(90deg, rgba(217, 4, 41, .075), transparent);
-    }
-
-    .notes-heading-icon {
-        width: 38px;
-        height: 38px;
-        display: grid;
-        place-items: center;
-        border: 1px solid rgba(217, 4, 41, .17);
-        border-radius: 13px;
-        color: var(--directory-red);
-        background: rgba(217, 4, 41, .08);
-    }
-
-    .notes-title {
-        margin: 0;
-        color: var(--directory-text);
-        font-family: 'Sora', 'Noto Sans Bengali', sans-serif;
-        font-size: .95rem;
-        font-weight: 800;
+    .register-donor-btn,
+    .share-directory-btn,
+    .saved-toggle-btn {
+        flex: 1 1 calc(50% - .3rem);
     }
 
     .notes-grid {
-        position: relative;
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: .75rem;
-        padding: 1.25rem;
+        grid-template-columns: 1fr;
+        padding: .95rem;
+    }
+}
+
+@media (max-width: 460px) {
+    .hero-bottom-row {
+        display: none;
     }
 
-    .note-item {
-        display: flex;
-        align-items: flex-start;
-        gap: .7rem;
-        padding: .85rem;
-        border: 1px solid var(--directory-border);
-        border-radius: 16px;
-        background: var(--rp-surface-2, rgba(255, 255, 255, .45));
+    .search-panel-subtitle {
+        display: none;
     }
 
-    .note-number {
-        width: 31px;
-        height: 31px;
-        display: grid;
-        place-items: center;
-        flex: 0 0 31px;
-        border-radius: 10px;
-        color: #fff;
-        background: linear-gradient(145deg, #ff3659, #d90429);
-        box-shadow:
-            0 8px 14px -9px rgba(217, 4, 41, .65),
-            inset 0 1px 0 rgba(255, 255, 255, .4);
-        font-size: .7rem;
-        font-weight: 800;
+    .mobile-donor-grid {
+        grid-template-columns: 1fr;
     }
 
-    .note-content {
-        color: var(--directory-muted);
-        font-size: .76rem;
-        line-height: 1.65;
+    .mobile-contact-grid {
+        grid-template-columns: 1fr;
     }
 
-    .note-content strong {
-        color: var(--directory-text);
+    .mobile-contact-grid .contact-copy {
+        grid-column: auto;
     }
 
-    .note-content a {
-        color: var(--directory-red);
-        font-weight: 800;
-        text-decoration: underline;
-        text-decoration-color: rgba(217, 4, 41, .3);
-        text-underline-offset: 3px;
+    .register-donor-btn,
+    .share-directory-btn,
+    .saved-toggle-btn {
+        flex: 1 1 100%;
     }
 
-    /* ---------------------------- Dark mode --------------------------- */
+    .mobile-donor-details {
+        grid-template-columns: 1fr;
+    }
+}
 
-    [data-theme="dark"] .directory-control {
-        color-scheme: dark;
+@media (prefers-reduced-motion: reduce) {
+    .donor-hero::before,
+    .hero-live-dot,
+    .empty-icon-orbit::before {
+        animation: none !important;
     }
 
-    [data-theme="dark"] .directory-avatar,
-    [data-theme="dark"] .directory-avatar-placeholder,
-    [data-theme="dark"] .avatar-status-dot {
-        border-color: var(--rp-surface-solid, #121a2b);
+    .donor-page .reveal {
+        animation: none !important;
     }
-
-    [data-theme="dark"] .tier-badge.tier-silver {
-        color: #cbd5e1;
-        background: rgba(148, 163, 184, .1);
-    }
-
-    [data-theme="dark"] .donor-directory-table tbody tr:hover td {
-        background: rgba(217, 4, 41, .06);
-    }
-
-    /* --------------------------- Responsive --------------------------- */
-
-    @media (max-width: 991.98px) {
-        .hero-stat-float {
-            position: static;
-            width: max-content;
-            max-width: 100%;
-            margin-top: 1.4rem;
-        }
-
-        .donor-search-panel {
-            margin-right: .5rem;
-            margin-left: .5rem;
-        }
-
-        .near-me-row {
-            align-items: stretch;
-            flex-direction: column;
-        }
-
-        .directory-locate-btn {
-            width: 100%;
-        }
-
-        .desktop-donor-table {
-            display: none;
-        }
-
-        .mobile-donor-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: .9rem;
-        }
-    }
-
-    @media (max-width: 767.98px) {
-        .donor-hero {
-            min-height: auto;
-            padding: 1.45rem 1.15rem 4rem;
-            border-radius: 25px;
-        }
-
-        .donor-hero-title {
-            font-size: clamp(1.8rem, 10vw, 2.5rem);
-        }
-
-        .donor-search-panel {
-            margin-top: -36px;
-            border-radius: 22px;
-        }
-
-        .search-panel-heading,
-        .search-panel-body {
-            padding: 1rem;
-        }
-
-        .secure-chip,
-        .near-me-info {
-            display: none;
-        }
-
-        .results-toolbar {
-            align-items: stretch;
-            flex-direction: column;
-        }
-
-        .register-donor-btn {
-            width: 100%;
-        }
-
-        .mobile-donor-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .notes-grid {
-            grid-template-columns: 1fr;
-            padding: 1rem;
-        }
-    }
-
-    @media (max-width: 420px) {
-        .donor-hero {
-            padding-bottom: 4.4rem;
-        }
-
-        .hero-stat-float {
-            min-width: 0;
-            width: 100%;
-        }
-
-        .search-panel-subtitle {
-            display: none;
-        }
-
-        .mobile-donor-details {
-            grid-template-columns: 1fr;
-        }
-
-        .mobile-contact-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .mobile-contact-grid .contact-copy {
-            grid-column: auto;
-        }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-        .donor-hero::before,
-        .hero-live-dot,
-        .empty-icon-orbit::before {
-            animation: none !important;
-        }
-    }
+}
 </style>
 {% endblock %}
 
@@ -1372,14 +1597,14 @@
         <option value="Dakshin Bhurshi">
     </datalist>
 
-    <!-- Premium Hero -->
+    <!-- =============================== HERO =============================== -->
     <section class="donor-hero reveal" aria-labelledby="donorPageTitle">
         <div class="donor-hero-grid" aria-hidden="true"></div>
 
         <div class="donor-hero-content">
             <div class="hero-eyebrow">
                 <span class="hero-live-dot"></span>
-                {% trans "Live Donor Directory" %}
+                {% if LANGUAGE_CODE == 'bn' %}লাইভ রক্তদাতা ডিরেক্টরি{% else %}Live Donor Directory{% endif %}
             </div>
 
             <h1 class="donor-hero-title" id="donorPageTitle">
@@ -1387,13 +1612,28 @@
             </h1>
 
             <p class="donor-hero-text">
-                {% trans "Search eligible blood donors across Patiya and connect with them directly by phone or WhatsApp—fast, secure and without a middleman." %}
+                {% trans "Search eligible blood donors across Patiya and connect directly by phone or WhatsApp—fast, simple and transparent." %}
             </p>
+
+            <div class="hero-bottom-row">
+                <span class="hero-quick-pill">
+                    <i class="fas fa-bolt"></i>
+                    {% trans "Quick contact" %}
+                </span>
+                <span class="hero-quick-pill">
+                    <i class="fas fa-location-dot"></i>
+                    {% trans "Location-aware search" %}
+                </span>
+                <span class="hero-quick-pill">
+                    <i class="fas fa-heart"></i>
+                    {% trans "Save trusted donors" %}
+                </span>
+            </div>
         </div>
 
         <div class="hero-stat-float">
             <div class="hero-stat-icon">
-                <i class="fas fa-users"></i>
+                <i class="fas fa-user-group"></i>
             </div>
             <div>
                 <span class="hero-stat-number">{{ donors.count }}</span>
@@ -1402,7 +1642,7 @@
         </div>
     </section>
 
-    <!-- Advanced Search -->
+    <!-- =========================== SMART SEARCH =========================== -->
     <section class="donor-search-panel reveal" aria-labelledby="searchPanelTitle">
         <div class="search-panel-heading">
             <div class="search-heading-content">
@@ -1414,7 +1654,7 @@
                         {% trans "Smart Donor Search" %}
                     </h2>
                     <p class="search-panel-subtitle">
-                        {% trans "Filter by blood group and nearby location" %}
+                        {% trans "Filter by blood group, district, upazila or your current location" %}
                     </p>
                 </div>
             </div>
@@ -1427,23 +1667,34 @@
 
         <div class="search-panel-body">
             <form method="get" id="donorSearchForm" class="row g-3">
+
                 <div class="col-md-6 col-lg-3">
                     <div class="filter-field">
                         <label for="bloodGroupFilter" class="filter-label">
                             <i class="fas fa-droplet"></i>
-                            {% trans "Blood Group" %}
+                            {% if LANGUAGE_CODE == 'bn' %}রক্তের গ্রুপ{% else %}Blood Group{% endif %}
                         </label>
 
                         <div class="field-shell">
                             <i class="fas fa-heart-pulse field-icon"></i>
-                            <select name="blood_group" id="bloodGroupFilter" class="directory-control">
-                                <option value="">{% trans "All Blood Groups" %}</option>
+
+                            <select
+                                name="blood_group"
+                                id="bloodGroupFilter"
+                                class="directory-control">
+                                <option value="">
+                                    {% if LANGUAGE_CODE == 'bn' %}সকল রক্তের গ্রুপ{% else %}All Blood Groups{% endif %}
+                                </option>
+
                                 {% for bg in blood_groups %}
-                                    <option value="{{ bg }}" {% if bg == selected_blood_group %}selected{% endif %}>
+                                    <option
+                                        value="{{ bg }}"
+                                        {% if bg == selected_blood_group %}selected{% endif %}>
                                         {{ bg }}
                                     </option>
                                 {% endfor %}
                             </select>
+
                             <i class="fas fa-chevron-down select-arrow"></i>
                         </div>
                     </div>
@@ -1453,7 +1704,7 @@
                     <div class="filter-field">
                         <label for="districtFilter" class="filter-label">
                             <i class="fas fa-map"></i>
-                            {% trans "District" %}
+                            {% if LANGUAGE_CODE == 'bn' %}জেলা{% else %}District{% endif %}
                         </label>
 
                         <div class="field-shell">
@@ -1463,7 +1714,7 @@
                                 name="district"
                                 id="districtFilter"
                                 class="directory-control"
-                                placeholder="{% trans 'Enter district' %}"
+                                placeholder="{% if LANGUAGE_CODE == 'bn' %}জেলা লিখুন{% else %}Enter district{% endif %}"
                                 value="{{ selected_district }}"
                                 autocomplete="address-level2">
                         </div>
@@ -1474,7 +1725,7 @@
                     <div class="filter-field">
                         <label for="upazilaFilter" class="filter-label">
                             <i class="fas fa-map-location-dot"></i>
-                            {% trans "Upazila / Union" %}
+                            {% if LANGUAGE_CODE == 'bn' %}উপজেলা / ইউনিয়ন{% else %}Upazila / Union{% endif %}
                         </label>
 
                         <div class="field-shell">
@@ -1485,7 +1736,7 @@
                                 id="upazilaFilter"
                                 class="directory-control"
                                 list="patiyaUnions"
-                                placeholder="{% trans 'Enter upazila or union' %}"
+                                placeholder="{% if LANGUAGE_CODE == 'bn' %}উপজেলা বা ইউনিয়ন লিখুন{% else %}Enter upazila or union{% endif %}"
                                 value="{{ selected_upazila }}"
                                 autocomplete="address-level3">
                         </div>
@@ -1494,14 +1745,17 @@
 
                 <div class="col-md-6 col-lg-3">
                     <div class="filter-field">
-                        <label class="filter-label" aria-hidden="true">
+                        <label class="filter-label filter-label-spacer" aria-hidden="true">
                             <i class="fas fa-wand-magic-sparkles"></i>
-                            {% trans "Search Donors" %}
+                            {% if LANGUAGE_CODE == 'bn' %}রক্তদাতা খুঁজুন{% else %}Search Donors{% endif %}
                         </label>
 
-                        <button type="submit" class="search-submit-btn">
+                        <button
+                            type="submit"
+                            class="search-submit-btn"
+                            id="searchSubmitBtn">
                             <i class="fas fa-magnifying-glass"></i>
-                            <span>{% trans "Search Now" %}</span>
+                            <span>{% if LANGUAGE_CODE == 'bn' %}এখনই খুঁজুন{% else %}Search Now{% endif %}</span>
                         </button>
                     </div>
                 </div>
@@ -1510,48 +1764,148 @@
                 <input type="hidden" name="lng" id="nearLng">
 
                 <div class="col-12">
+                    <div class="quick-group-row">
+                        <span class="quick-group-label">
+                            {% if LANGUAGE_CODE == 'bn' %}দ্রুত রক্তের গ্রুপ:{% else %}Quick blood group:{% endif %}
+                        </span>
+
+                        {% for quick_bg in blood_groups %}
+                            <button
+                                type="button"
+                                class="quick-group-btn {% if quick_bg == selected_blood_group %}active{% endif %}"
+                                data-blood-group="{{ quick_bg }}">
+                                {{ quick_bg }}
+                            </button>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="col-12">
                     <div class="near-me-row">
                         <div class="near-me-info">
                             <i class="fas fa-circle-info"></i>
-                            <span>{% trans "Allow location access to see the nearest donors first." %}</span>
+                            <span>
+                                {% trans "Use your device location to ask the server for donors nearest to you." %}
+                            </span>
                         </div>
 
                         <button
                             type="button"
                             id="nearMeButton"
-                            class="locate-btn directory-locate-btn {% if sorted_by_distance %}is-set{% endif %}"
-                            data-lat-target="nearLat"
-                            data-lng-target="nearLng"
-                            data-auto-submit="true"
-                            data-success-label="{% trans 'Sorting by distance…' %}"
-                            data-error-label="{% trans 'Could not get your location. Please allow location access and try again.' %}">
+                            class="directory-locate-btn {% if sorted_by_distance %}is-set{% endif %}">
                             <i class="fas {% if sorted_by_distance %}fa-location-circle-check{% else %}fa-location-crosshairs{% endif %}"></i>
-                            <span>
+                            <span id="nearMeLabel">
                                 {% if sorted_by_distance %}
-                                    {% trans "Sorted by Distance From You" %}
+                                    {% if LANGUAGE_CODE == 'bn' %}দূরত্ব অনুযায়ী সাজানো{% else %}Sorted by Distance{% endif %}
                                 {% else %}
-                                    {% trans "Near Me — Sort by Distance" %}
+                                    {% if LANGUAGE_CODE == 'bn' %}আমার কাছাকাছি — দূরত্ব অনুযায়ী{% else %}Near Me — Sort by Distance{% endif %}
                                 {% endif %}
                             </span>
                         </button>
                     </div>
                 </div>
+
+                {% if selected_blood_group or selected_district or selected_upazila or sorted_by_distance %}
+                <div class="col-12">
+                    <div class="active-filters-row" id="activeFiltersRow">
+
+                        <span class="active-filters-label">
+                            {% trans "Active filters:" %}
+                        </span>
+
+                        {% if selected_blood_group %}
+                            <span class="active-filter-chip">
+                                <i class="fas fa-droplet"></i>
+                                {{ selected_blood_group }}
+                                <button
+                                    type="button"
+                                    data-remove-param="blood_group"
+                                    aria-label="{% trans 'Remove blood group filter' %}">
+                                    &times;
+                                </button>
+                            </span>
+                        {% endif %}
+
+                        {% if selected_district %}
+                            <span class="active-filter-chip">
+                                <i class="fas fa-map"></i>
+                                {{ selected_district }}
+                                <button
+                                    type="button"
+                                    data-remove-param="district"
+                                    aria-label="{% trans 'Remove district filter' %}">
+                                    &times;
+                                </button>
+                            </span>
+                        {% endif %}
+
+                        {% if selected_upazila %}
+                            <span class="active-filter-chip">
+                                <i class="fas fa-map-location-dot"></i>
+                                {{ selected_upazila }}
+                                <button
+                                    type="button"
+                                    data-remove-param="upazila"
+                                    aria-label="{% trans 'Remove upazila filter' %}">
+                                    &times;
+                                </button>
+                            </span>
+                        {% endif %}
+
+                        {% if sorted_by_distance %}
+                            <span class="active-filter-chip">
+                                <i class="fas fa-route"></i>
+                                {% trans "Distance mode" %}
+                                <button
+                                    type="button"
+                                    id="removeDistanceMode"
+                                    aria-label="{% trans 'Remove distance mode' %}">
+                                    &times;
+                                </button>
+                            </span>
+                        {% endif %}
+
+                        <button
+                            type="button"
+                            class="active-filter-clear-all"
+                            id="clearAllFiltersBtn">
+                            {% trans "Clear all" %}
+                        </button>
+                    </div>
+                </div>
+                {% endif %}
             </form>
         </div>
     </section>
 
-    <!-- Donor Results -->
+    <!-- ============================ RESULTS ============================ -->
     <section class="results-section" aria-labelledby="availableDonorsTitle">
+
         <div class="results-toolbar">
             <div class="results-title-wrap">
                 <span class="results-title-icon">
                     <i class="fas fa-user-group"></i>
                 </span>
+
                 <div>
                     <h2 class="results-title" id="availableDonorsTitle">
                         {% trans "Available Donors" %}
-                        <span class="donor-count">{{ donors.count }}</span>
+
+                        <span class="donor-count" id="donorCountBadge">
+                            {{ donors.count }}
+                        </span>
+
+                        <span
+                            class="eligible-now-chip"
+                            id="eligibleNowChip"
+                            style="display:none;">
+                            <i class="fas fa-circle-check"></i>
+                            <span id="eligibleNowText">
+                                0 {% trans "eligible now" %}
+                            </span>
+                        </span>
                     </h2>
+
                     <p class="results-subtitle">
                         {% if sorted_by_distance %}
                             <i class="fas fa-location-arrow me-1"></i>
@@ -1563,27 +1917,89 @@
                 </div>
             </div>
 
-            <a href="{% url 'register' %}" class="register-donor-btn">
-                <i class="fas fa-user-plus"></i>
-                {% trans "Register as Donor" %}
-            </a>
+            <div class="toolbar-actions">
+
+                {% if donors %}
+                    <div class="sort-field">
+                        <label for="donorSortSelect">
+                            {% trans "Sort:" %}
+                        </label>
+
+                        <select
+                            id="donorSortSelect"
+                            class="sort-select">
+                            <option value="default">
+                                {% trans "Default" %}
+                            </option>
+                            <option value="name-asc">
+                                {% trans "Name (A–Z)" %}
+                            </option>
+                            <option value="name-desc">
+                                {% trans "Name (Z–A)" %}
+                            </option>
+                            <option value="blood-group">
+                                {% if LANGUAGE_CODE == 'bn' %}রক্তের গ্রুপ{% else %}Blood Group{% endif %}
+                            </option>
+
+                            {% if sorted_by_distance %}
+                                <option value="distance">
+                                    {% trans "Nearest First" %}
+                                </option>
+                            {% endif %}
+                        </select>
+                    </div>
+
+                    <button
+                        type="button"
+                        class="saved-toggle-btn"
+                        id="savedOnlyToggle">
+                        <i class="fas fa-heart"></i>
+                        <span>{% trans "Saved only" %}</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        class="share-directory-btn"
+                        id="shareDirectoryBtn">
+                        <i class="fas fa-share-nodes"></i>
+                        <span>{% trans "Share" %}</span>
+                    </button>
+                {% endif %}
+
+                <a
+                    href="{% url 'register' %}"
+                    class="register-donor-btn">
+                    <i class="fas fa-user-plus"></i>
+                    {% trans "Register as Donor" %}
+                </a>
+            </div>
         </div>
 
         {% if donors %}
-            <!-- Desktop Table -->
+
+            <!-- ======================= DESKTOP TABLE ======================= -->
+
             <div class="donor-table-shell desktop-donor-table reveal">
                 <div class="donor-table-scroll">
-                    <table class="donor-directory-table">
+
+                    <table
+                        class="donor-directory-table"
+                        id="donorTable">
+
                         <thead>
                             <tr>
+                                <th></th>
+
                                 <th>
                                     <i class="fas fa-user me-1"></i>
                                     {% trans "Donor" %}
                                 </th>
+
                                 <th>
                                     <i class="fas fa-droplet me-1"></i>
-                                    {% trans "Blood Group" %}
+                                    {% if LANGUAGE_CODE == 'bn' %}রক্তের গ্রুপ{% else %}Blood Group{% endif %}
                                 </th>
+
                                 <th>
                                     <i class="fas fa-location-dot me-1"></i>
                                     {% trans "Location" %}
@@ -1600,6 +2016,7 @@
                                     <i class="fas fa-heart-circle-check me-1"></i>
                                     {% trans "Eligibility" %}
                                 </th>
+
                                 <th>
                                     <i class="fas fa-address-book me-1"></i>
                                     {% trans "Contact Options" %}
@@ -1607,11 +2024,33 @@
                             </tr>
                         </thead>
 
-                        <tbody>
+                        <tbody id="donorTableBody">
+
                             {% for donor in donors %}
-                                <tr>
+
+                                <tr
+                                    data-donor-id="{{ donor.pk }}"
+                                    data-donor-name="{{ donor.full_name }}"
+                                    data-blood-group="{{ donor.blood_group }}"
+                                    data-eligible="{{ donor.is_eligible|yesno:'1,0' }}"
+                                    {% if donor.distance_km is not None %}
+                                        data-distance="{{ donor.distance_km }}"
+                                    {% endif %}>
+
+                                    <td>
+                                        <button
+                                            type="button"
+                                            class="save-donor-btn"
+                                            data-save-donor="{{ donor.pk }}"
+                                            aria-label="{% trans 'Save donor' %}"
+                                            title="{% trans 'Save donor' %}">
+                                            <i class="far fa-heart"></i>
+                                        </button>
+                                    </td>
+
                                     <td>
                                         <div class="donor-profile">
+
                                             <div class="donor-photo-wrap">
                                                 {% if donor.photo %}
                                                     <img
@@ -1620,17 +2059,23 @@
                                                         class="directory-avatar"
                                                         loading="lazy">
                                                 {% else %}
-                                                    <span class="directory-avatar-placeholder" aria-hidden="true">
+                                                    <span
+                                                        class="directory-avatar-placeholder"
+                                                        aria-hidden="true">
                                                         <i class="fas fa-user"></i>
                                                     </span>
                                                 {% endif %}
 
-                                                <span class="avatar-status-dot {% if not donor.is_eligible %}not-ready{% endif %}"></span>
+                                                <span
+                                                    class="avatar-status-dot {% if not donor.is_eligible %}not-ready{% endif %}">
+                                                </span>
                                             </div>
 
                                             <div>
                                                 <div class="donor-name-line">
-                                                    <span class="donor-name">{{ donor.full_name }}</span>
+                                                    <span class="donor-name">
+                                                        {{ donor.full_name }}
+                                                    </span>
 
                                                     <span class="tier-badge tier-{{ donor.lifesaver_tier }}">
                                                         <i class="fas fa-award"></i>
@@ -1656,9 +2101,12 @@
                                                         <i class="fas fa-genderless"></i>
                                                     {% endif %}
 
-                                                    <span>{{ donor.age }} {% trans "years old" %}</span>
+                                                    <span>
+                                                        {{ donor.age }} {% trans "years old" %}
+                                                    </span>
                                                 </div>
                                             </div>
+
                                         </div>
                                     </td>
 
@@ -1669,11 +2117,12 @@
                                     </td>
 
                                     <td>
-                                        <div class="location-cell">
+                                        <div>
                                             <div class="location-primary">
                                                 <i class="fas fa-location-dot"></i>
                                                 <span>{{ donor.district }}</span>
                                             </div>
+
                                             <div class="location-secondary">
                                                 {{ donor.upazila }}
                                             </div>
@@ -1694,41 +2143,43 @@
                                     {% endif %}
 
                                     <td>
-                                        <div class="eligibility-card">
-                                            {% if donor.is_eligible %}
-                                                <span class="eligibility-pill ready">
-                                                    <i class="fas fa-circle-check"></i>
-                                                    {% trans "Eligible to Donate" %}
-                                                </span>
+                                        {% if donor.is_eligible %}
 
-                                                <div class="eligibility-caption ready-text">
-                                                    <i class="fas fa-heart"></i>
-                                                    {% trans "Ready to help now" %}
-                                                </div>
-                                            {% else %}
-                                                <span class="eligibility-pill waiting">
-                                                    <i class="fas fa-hourglass-half"></i>
-                                                    {% trans "Temporarily Unavailable" %}
-                                                </span>
+                                            <span class="eligibility-pill ready">
+                                                <i class="fas fa-circle-check"></i>
+                                                {% trans "Eligible to Donate" %}
+                                            </span>
 
-                                                <div class="eligibility-caption">
-                                                    <i class="fas fa-clock"></i>
-                                                    {% trans "Available in" %}
-                                                    <strong>
-                                                        {{ donor.days_until_eligible }}
-                                                        {% trans "days" %}
-                                                    </strong>
-                                                </div>
-                                            {% endif %}
-                                        </div>
+                                            <div class="eligibility-caption ready-text">
+                                                <i class="fas fa-heart"></i>
+                                                {% trans "Ready to help now" %}
+                                            </div>
+
+                                        {% else %}
+
+                                            <span class="eligibility-pill waiting">
+                                                <i class="fas fa-hourglass-half"></i>
+                                                {% trans "Temporarily Unavailable" %}
+                                            </span>
+
+                                            <div class="eligibility-caption">
+                                                <i class="fas fa-clock"></i>
+                                                {% trans "Available in" %}
+                                                <strong>
+                                                    {{ donor.days_until_eligible }}
+                                                    {% trans "days" %}
+                                                </strong>
+                                            </div>
+
+                                        {% endif %}
                                     </td>
 
                                     <td>
                                         <div class="contact-stack">
+
                                             <a
                                                 href="tel:{{ donor.mobile_number }}"
-                                                class="contact-action contact-call"
-                                                aria-label="{% trans 'Call' %} {{ donor.full_name }}">
+                                                class="contact-action contact-call">
                                                 <i class="fas fa-phone-volume"></i>
                                                 <span>{{ donor.mobile_number }}</span>
                                             </a>
@@ -1737,36 +2188,57 @@
                                                 href="https://wa.me/88{{ donor.mobile_number }}?text=আসসালামু আলাইকুম, পটিয়া রেড-পালস (Patiya RedPulse) থেকে আপনার নম্বরটি পেয়েছি। আপনার {{ donor.blood_group }} রক্ত কি দান করা সম্ভব?"
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                class="contact-action contact-whatsapp"
-                                                aria-label="{% trans 'Contact through WhatsApp' %}">
+                                                class="contact-action contact-whatsapp">
                                                 <i class="fab fa-whatsapp"></i>
                                                 <span>WhatsApp</span>
                                             </a>
 
                                             <button
                                                 type="button"
-                                                class="copy-btn contact-action contact-copy"
+                                                class="contact-action contact-copy copy-number-btn"
                                                 data-copy="{{ donor.mobile_number }}"
                                                 data-copied-label="{% trans 'Copied' %}">
                                                 <i class="far fa-copy"></i>
                                                 <span>{% trans "Copy Number" %}</span>
                                             </button>
+
                                         </div>
                                     </td>
                                 </tr>
+
                             {% endfor %}
+
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- Mobile / Tablet Cards -->
-            <div class="mobile-donor-grid">
+            <!-- ======================= MOBILE CARDS ======================= -->
+
+            <div
+                class="mobile-donor-grid"
+                id="donorMobileGrid">
+
                 {% for donor in donors %}
-                    <article class="mobile-donor-card reveal">
+
+                    <article
+                        class="mobile-donor-card reveal"
+                        data-donor-id="{{ donor.pk }}"
+                        data-donor-name="{{ donor.full_name }}"
+                        data-blood-group="{{ donor.blood_group }}"
+                        data-eligible="{{ donor.is_eligible|yesno:'1,0' }}"
+                        {% if donor.distance_km is not None %}
+                            data-distance="{{ donor.distance_km }}"
+                        {% endif %}>
+
                         <div class="mobile-card-top">
-                            <div class="donor-profile" style="min-width:0;">
+
+                            <div
+                                class="donor-profile"
+                                style="min-width:0;">
+
                                 <div class="donor-photo-wrap">
+
                                     {% if donor.photo %}
                                         <img
                                             src="{{ donor.photo.url }}"
@@ -1774,17 +2246,24 @@
                                             class="directory-avatar"
                                             loading="lazy">
                                     {% else %}
-                                        <span class="directory-avatar-placeholder" aria-hidden="true">
+                                        <span
+                                            class="directory-avatar-placeholder"
+                                            aria-hidden="true">
                                             <i class="fas fa-user"></i>
                                         </span>
                                     {% endif %}
 
-                                    <span class="avatar-status-dot {% if not donor.is_eligible %}not-ready{% endif %}"></span>
+                                    <span
+                                        class="avatar-status-dot {% if not donor.is_eligible %}not-ready{% endif %}">
+                                    </span>
                                 </div>
 
                                 <div style="min-width:0;">
+
                                     <div class="donor-name-line">
-                                        <span class="donor-name">{{ donor.full_name }}</span>
+                                        <span class="donor-name">
+                                            {{ donor.full_name }}
+                                        </span>
                                     </div>
 
                                     <span class="tier-badge tier-{{ donor.lifesaver_tier }}">
@@ -1803,17 +2282,30 @@
                                 </div>
                             </div>
 
-                            <span class="mobile-blood-badge">
-                                {{ donor.blood_group }}
-                            </span>
+                            <div class="mobile-card-top-actions">
+
+                                <button
+                                    type="button"
+                                    class="save-donor-btn"
+                                    data-save-donor="{{ donor.pk }}"
+                                    aria-label="{% trans 'Save donor' %}">
+                                    <i class="far fa-heart"></i>
+                                </button>
+
+                                <span class="mobile-blood-badge">
+                                    {{ donor.blood_group }}
+                                </span>
+                            </div>
                         </div>
 
                         <div class="mobile-donor-details">
+
                             <div class="mobile-detail-box">
                                 <span class="mobile-detail-label">
                                     <i class="fas fa-user-clock me-1"></i>
                                     {% trans "Age & Gender" %}
                                 </span>
+
                                 <div class="mobile-detail-value">
                                     {% if donor.gender == 'Male' %}
                                         <i class="fas fa-mars me-1 text-primary"></i>
@@ -1822,6 +2314,7 @@
                                     {% else %}
                                         <i class="fas fa-genderless me-1 text-secondary"></i>
                                     {% endif %}
+
                                     {{ donor.age }} {% trans "years old" %}
                                 </div>
                             </div>
@@ -1831,9 +2324,10 @@
                                     <i class="fas fa-location-dot me-1"></i>
                                     {% trans "Location" %}
                                 </span>
+
                                 <div class="mobile-detail-value">
                                     {{ donor.district }}<br>
-                                    <span style="color:var(--directory-muted);font-size:.68rem;">
+                                    <span style="color:var(--directory-muted);font-size:.66rem;">
                                         {{ donor.upazila }}
                                     </span>
                                 </div>
@@ -1845,6 +2339,7 @@
                                         <i class="fas fa-route me-1"></i>
                                         {% trans "Distance" %}
                                     </span>
+
                                     <div class="mobile-detail-value">
                                         {% if donor.distance_km is not None %}
                                             {{ donor.distance_km|floatformat:1 }} km
@@ -1870,7 +2365,8 @@
                                     {% else %}
                                         <span style="color:#d97706;">
                                             <i class="fas fa-clock me-1"></i>
-                                            {{ donor.days_until_eligible }} {% trans "days remaining" %}
+                                            {{ donor.days_until_eligible }}
+                                            {% trans "days remaining" %}
                                         </span>
                                     {% endif %}
                                 </div>
@@ -1878,6 +2374,7 @@
                         </div>
 
                         <div class="mobile-contact-grid">
+
                             <a
                                 href="tel:{{ donor.mobile_number }}"
                                 class="contact-action contact-call">
@@ -1896,7 +2393,7 @@
 
                             <button
                                 type="button"
-                                class="copy-btn contact-action contact-copy"
+                                class="contact-action contact-copy copy-number-btn"
                                 data-copy="{{ donor.mobile_number }}"
                                 data-copied-label="{% trans 'Copied' %}">
                                 <i class="far fa-copy"></i>
@@ -1904,53 +2401,81 @@
                             </button>
                         </div>
                     </article>
+
                 {% endfor %}
             </div>
+
+            <div
+                class="text-center text-muted small mt-3"
+                id="savedEmptyNotice"
+                style="display:none;">
+                <i class="fas fa-heart-crack me-1"></i>
+                {% trans "You haven't saved any donors from the current results yet." %}
+            </div>
+
         {% else %}
-            <!-- Empty State -->
+
+            <!-- ========================== EMPTY ========================== -->
+
             <div class="directory-empty reveal">
+
                 <div class="empty-icon-orbit">
                     <i class="fas fa-user-magnifying-glass"></i>
                 </div>
 
-                <h2 class="empty-title">{% trans "No matching donors found" %}</h2>
+                <h2 class="empty-title">
+                    {% trans "No matching donors found" %}
+                </h2>
 
                 <p class="empty-text">
                     {% trans "We could not find a donor matching your current filters. Try another blood group or expand your location search." %}
                 </p>
 
                 <div class="d-flex justify-content-center flex-wrap gap-2">
-                    <a href="{% url 'donor_list' %}" class="register-donor-btn">
+
+                    <a
+                        href="{% url 'donor_list' %}"
+                        class="register-donor-btn">
                         <i class="fas fa-rotate-left"></i>
                         {% trans "Clear Filters" %}
                     </a>
 
-                    <a href="{% url 'register' %}" class="search-submit-btn" style="width:auto;padding-left:1.2rem;padding-right:1.2rem;">
+                    <a
+                        href="{% url 'register' %}"
+                        class="search-submit-btn"
+                        style="width:auto;padding-left:1.15rem;padding-right:1.15rem;">
                         <i class="fas fa-user-plus"></i>
                         {% trans "Register as a Donor" %}
                     </a>
                 </div>
             </div>
+
         {% endif %}
     </section>
 
-    <!-- Important Notes -->
-    <aside class="directory-notes reveal" aria-labelledby="importantNotesTitle">
+    <!-- ========================== NOTES ========================== -->
+
+    <aside
+        class="directory-notes reveal"
+        aria-labelledby="importantNotesTitle">
+
         <div class="notes-heading">
             <span class="notes-heading-icon">
                 <i class="fas fa-shield-heart"></i>
             </span>
+
             <h2 class="notes-title" id="importantNotesTitle">
                 {% trans "Important Donation Notes" %}
             </h2>
         </div>
 
         <div class="notes-grid">
+
             <div class="note-item">
                 <span class="note-number">01</span>
                 <div class="note-content">
                     <strong>{% trans "Eligibility:" %}</strong>
-                    {% trans "Donors must wait 90 days for men or 120 days for women between blood donations." %}
+                    {% trans "Follow your local blood donation guidance and the eligibility status shown on the donor profile." %}
                 </div>
             </div>
 
@@ -1958,15 +2483,15 @@
                 <span class="note-number">02</span>
                 <div class="note-content">
                     <strong>{% trans "Countdown:" %}</strong>
-                    {% trans "The displayed number of days indicates when the donor may become ready for their next donation." %}
+                    {% trans "The displayed days are based on the donor records available in Patiya RedPulse." %}
                 </div>
             </div>
 
             <div class="note-item">
                 <span class="note-number">03</span>
                 <div class="note-content">
-                    <strong>{% trans "WhatsApp:" %}</strong>
-                    {% trans "Use WhatsApp for a polite message if the donor is unable to answer your phone call." %}
+                    <strong>{% trans "Contact:" %}</strong>
+                    {% trans "Call first when possible, and use WhatsApp when a quick written message is more convenient." %}
                 </div>
             </div>
 
@@ -1974,77 +2499,766 @@
                 <span class="note-number">04</span>
                 <div class="note-content">
                     <strong>{% trans "Compatibility:" %}</strong>
-                    {% trans "Not sure which blood group can donate to whom? Check our" %}
-                    <a href="{% url 'compatibility_guide' %}">
-                        {% trans "compatibility checker" %}
-                    </a>.
+                    {% trans "For blood-group compatibility, verify the match with a qualified medical professional or blood bank." %}
                 </div>
             </div>
+
         </div>
     </aside>
+
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-    (function () {
-        'use strict';
+(function () {
+    'use strict';
 
-        var nearButton = document.getElementById('nearMeButton');
-        var searchForm = document.getElementById('donorSearchForm');
+    document.addEventListener('DOMContentLoaded', function () {
 
-        if (nearButton) {
-            nearButton.addEventListener('click', function () {
-                nearButton.classList.add('is-loading');
+        /* =========================================================
+           HELPERS
+           ========================================================= */
 
-                var icon = nearButton.querySelector('i');
-                if (icon) {
-                    icon.className = 'fas fa-spinner';
-                }
-
-                window.setTimeout(function () {
-                    nearButton.classList.remove('is-loading');
-
-                    if (icon && !nearButton.classList.contains('is-set')) {
-                        icon.className = 'fas fa-location-crosshairs';
-                    }
-                }, 10000);
-            });
+        function safeParseJSON(value, fallback) {
+            try {
+                return JSON.parse(value);
+            } catch (error) {
+                return fallback;
+            }
         }
+
+        function copyText(text) {
+            if (!text) {
+                return Promise.resolve(false);
+            }
+
+            if (navigator.clipboard && window.isSecureContext) {
+                return navigator.clipboard.writeText(text)
+                    .then(function () {
+                        return true;
+                    })
+                    .catch(function () {
+                        return false;
+                    });
+            }
+
+            var textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.setAttribute('readonly', '');
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+
+            var success = false;
+
+            try {
+                success = document.execCommand('copy');
+            } catch (error) {
+                success = false;
+            }
+
+            document.body.removeChild(textarea);
+
+            return Promise.resolve(success);
+        }
+
+        function showCopiedState(button) {
+            var originalHTML = button.innerHTML;
+            var label = button.getAttribute('data-copied-label') || 'Copied';
+
+            button.innerHTML =
+                '<i class="fas fa-circle-check"></i> ' + label;
+
+            button.classList.add('is-copied');
+
+            window.setTimeout(function () {
+                button.innerHTML = originalHTML;
+                button.classList.remove('is-copied');
+            }, 1800);
+        }
+
+        /* =========================================================
+           SEARCH BUTTON — LOADING STATE
+           ========================================================= */
+
+        var searchForm = document.getElementById('donorSearchForm');
 
         if (searchForm) {
             searchForm.addEventListener('submit', function () {
-                var submitButton = searchForm.querySelector('.search-submit-btn');
 
-                if (!submitButton) return;
+                var submitButton =
+                    document.getElementById('searchSubmitBtn');
+
+                if (!submitButton) {
+                    return;
+                }
 
                 submitButton.disabled = true;
                 submitButton.setAttribute('aria-busy', 'true');
+
                 submitButton.innerHTML =
                     '<i class="fas fa-spinner fa-spin"></i>' +
                     '<span>{% trans "Searching…" %}</span>';
             });
         }
 
-        document.querySelectorAll('.contact-copy').forEach(function (button) {
-            button.addEventListener('click', function () {
-                var icon = button.querySelector('i');
+        /* =========================================================
+           QUICK BLOOD GROUP FILTERS
+           ========================================================= */
 
-                if (icon) {
-                    icon.className = 'fas fa-circle-check';
+        var bloodSelect =
+            document.getElementById('bloodGroupFilter');
+
+        document.querySelectorAll('.quick-group-btn').forEach(function (button) {
+
+            button.addEventListener('click', function () {
+
+                if (!bloodSelect || !searchForm) {
+                    return;
                 }
 
-                button.classList.add('is-copied');
+                bloodSelect.value =
+                    button.getAttribute('data-blood-group') || '';
 
-                window.setTimeout(function () {
-                    if (icon) {
-                        icon.className = 'far fa-copy';
-                    }
-
-                    button.classList.remove('is-copied');
-                }, 1800);
+                searchForm.submit();
             });
         });
-    })();
+
+        /* =========================================================
+           REAL "NEAR ME" GEOLOCATION
+           ========================================================= */
+
+        var nearButton =
+            document.getElementById('nearMeButton');
+
+        var nearLat =
+            document.getElementById('nearLat');
+
+        var nearLng =
+            document.getElementById('nearLng');
+
+        var nearLabel =
+            document.getElementById('nearMeLabel');
+
+        if (nearButton && nearLat && nearLng && searchForm) {
+
+            nearButton.addEventListener('click', function () {
+
+                if (!navigator.geolocation) {
+                    alert(
+                        '{% if LANGUAGE_CODE == 'bn' %}এই ব্রাউজারে লোকেশন সুবিধা সমর্থিত নয়।{% else %}Location is not supported by this browser.{% endif %}'
+                    );
+                    return;
+                }
+
+                nearButton.disabled = true;
+                nearButton.classList.add('is-loading');
+
+                var icon = nearButton.querySelector('i');
+
+                if (icon) {
+                    icon.className = 'fas fa-spinner';
+                }
+
+                if (nearLabel) {
+                    nearLabel.textContent =
+                        '{% if LANGUAGE_CODE == 'bn' %}আপনার লোকেশন নেওয়া হচ্ছে…{% else %}Getting your location…{% endif %}';
+                }
+
+                navigator.geolocation.getCurrentPosition(
+                    function (position) {
+
+                        var latitude =
+                            position.coords.latitude;
+
+                        var longitude =
+                            position.coords.longitude;
+
+                        nearLat.value =
+                            latitude.toFixed(6);
+
+                        nearLng.value =
+                            longitude.toFixed(6);
+
+                        /* Keep existing user filters while adding lat/lng. */
+                        searchForm.submit();
+                    },
+                    function (error) {
+
+                        nearButton.disabled = false;
+                        nearButton.classList.remove('is-loading');
+
+                        if (icon) {
+                            icon.className =
+                                'fas fa-location-crosshairs';
+                        }
+
+                        if (nearLabel) {
+                            nearLabel.textContent =
+                                '{% if LANGUAGE_CODE == 'bn' %}আমার কাছাকাছি — আবার চেষ্টা করুন{% else %}Near Me — Try Again{% endif %}';
+                        }
+
+                        var message =
+                            '{% if LANGUAGE_CODE == 'bn' %}আপনার লোকেশন পাওয়া যায়নি। ব্রাউজারে লোকেশন অনুমতি দিয়ে আবার চেষ্টা করুন।{% else %}Could not get your location. Please allow location access and try again.{% endif %}';
+
+                        if (error && error.code === 1) {
+                            message =
+                                '{% if LANGUAGE_CODE == 'bn' %}লোকেশন অনুমতি দেওয়া হয়নি। ব্রাউজারে লোকেশন অনুমতি দিন।{% else %}Location permission was denied. Please allow location access in your browser.{% endif %}';
+                        }
+
+                        alert(message);
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 60000
+                    }
+                );
+            });
+        }
+
+        /* =========================================================
+           ACTIVE FILTER CHIPS
+           ========================================================= */
+
+        function reloadWithoutParams(params) {
+
+            var url =
+                new URL(window.location.href);
+
+            params.forEach(function (param) {
+                url.searchParams.delete(param);
+            });
+
+            window.location.href =
+                url.toString();
+        }
+
+        document.querySelectorAll('[data-remove-param]').forEach(function (button) {
+
+            button.addEventListener('click', function () {
+
+                reloadWithoutParams([
+                    button.getAttribute('data-remove-param')
+                ]);
+            });
+        });
+
+        var removeDistanceMode =
+            document.getElementById('removeDistanceMode');
+
+        if (removeDistanceMode) {
+            removeDistanceMode.addEventListener('click', function () {
+
+                reloadWithoutParams([
+                    'lat',
+                    'lng',
+                    'sort',
+                    'distance'
+                ]);
+            });
+        }
+
+        var clearAllFiltersBtn =
+            document.getElementById('clearAllFiltersBtn');
+
+        if (clearAllFiltersBtn) {
+            clearAllFiltersBtn.addEventListener('click', function () {
+
+                reloadWithoutParams([
+                    'blood_group',
+                    'district',
+                    'upazila',
+                    'lat',
+                    'lng',
+                    'sort',
+                    'distance'
+                ]);
+            });
+        }
+
+        /* =========================================================
+           ELIGIBLE-NOW CHIP
+           ========================================================= */
+
+        var tableRows =
+            Array.prototype.slice.call(
+                document.querySelectorAll('#donorTableBody tr')
+            );
+
+        var eligibleChip =
+            document.getElementById('eligibleNowChip');
+
+        var eligibleText =
+            document.getElementById('eligibleNowText');
+
+        if (
+            eligibleChip &&
+            eligibleText &&
+            tableRows.length
+        ) {
+            var eligibleCount =
+                tableRows.filter(function (row) {
+                    return row.getAttribute('data-eligible') === '1';
+                }).length;
+
+            eligibleText.textContent =
+                eligibleCount + ' {% trans "eligible now" %}';
+
+            eligibleChip.style.display =
+                'inline-flex';
+        }
+
+        /* =========================================================
+           COPY NUMBERS
+           ========================================================= */
+
+        document.querySelectorAll('.copy-number-btn').forEach(function (button) {
+
+            button.addEventListener('click', function () {
+
+                var text =
+                    button.getAttribute('data-copy') || '';
+
+                copyText(text).then(function (success) {
+
+                    if (success) {
+                        showCopiedState(button);
+                    } else {
+                        alert(
+                            '{% if LANGUAGE_CODE == 'bn' %}কপি করা যায়নি। নম্বরটি ম্যানুয়ালি কপি করুন।{% else %}Copy failed. Please copy the number manually.{% endif %}'
+                        );
+                    }
+                });
+            });
+        });
+
+        /* =========================================================
+           SAVED DONORS — LOCAL DEVICE ONLY
+           ========================================================= */
+
+        var SAVED_KEY =
+            'patiya_redpulse_saved_donors_v1';
+
+        var savedOnlyActive = false;
+
+        var savedOnlyBtn =
+            document.getElementById('savedOnlyToggle');
+
+        var savedEmptyNotice =
+            document.getElementById('savedEmptyNotice');
+
+        var mobileCards =
+            Array.prototype.slice.call(
+                document.querySelectorAll(
+                    '#donorMobileGrid .mobile-donor-card'
+                )
+            );
+
+        function getSavedIds() {
+
+            try {
+                var value =
+                    window.localStorage.getItem(
+                        SAVED_KEY
+                    );
+
+                var parsed =
+                    safeParseJSON(value, []);
+
+                return Array.isArray(parsed)
+                    ? parsed
+                    : [];
+            } catch (error) {
+                return [];
+            }
+        }
+
+        function setSavedIds(ids) {
+
+            try {
+                window.localStorage.setItem(
+                    SAVED_KEY,
+                    JSON.stringify(ids)
+                );
+            } catch (error) {
+                /* Ignore storage restrictions. */
+            }
+        }
+
+        function refreshSaveButtons() {
+
+            var saved =
+                getSavedIds();
+
+            document
+                .querySelectorAll('[data-save-donor]')
+                .forEach(function (button) {
+
+                    var id =
+                        String(
+                            button.getAttribute(
+                                'data-save-donor'
+                            ) || ''
+                        );
+
+                    var isSaved =
+                        saved.indexOf(id) !== -1;
+
+                    button.classList.toggle(
+                        'is-saved',
+                        isSaved
+                    );
+
+                    var icon =
+                        button.querySelector('i');
+
+                    if (icon) {
+                        icon.className =
+                            isSaved
+                                ? 'fas fa-heart'
+                                : 'far fa-heart';
+                    }
+                });
+        }
+
+        function applySavedOnlyFilter() {
+
+            var saved =
+                getSavedIds();
+
+            var visibleCount = 0;
+
+            tableRows.forEach(function (row) {
+
+                var id =
+                    String(
+                        row.getAttribute(
+                            'data-donor-id'
+                        ) || ''
+                    );
+
+                var visible =
+                    !savedOnlyActive ||
+                    saved.indexOf(id) !== -1;
+
+                row.style.display =
+                    visible ? '' : 'none';
+
+                if (visible) {
+                    visibleCount++;
+                }
+            });
+
+            mobileCards.forEach(function (card) {
+
+                var id =
+                    String(
+                        card.getAttribute(
+                            'data-donor-id'
+                        ) || ''
+                    );
+
+                var visible =
+                    !savedOnlyActive ||
+                    saved.indexOf(id) !== -1;
+
+                card.style.display =
+                    visible ? '' : 'none';
+            });
+
+            if (savedEmptyNotice) {
+                savedEmptyNotice.style.display =
+                    (
+                        savedOnlyActive &&
+                        visibleCount === 0
+                    )
+                        ? ''
+                        : 'none';
+            }
+        }
+
+        document
+            .querySelectorAll('[data-save-donor]')
+            .forEach(function (button) {
+
+                button.addEventListener('click', function () {
+
+                    var id =
+                        String(
+                            button.getAttribute(
+                                'data-save-donor'
+                            ) || ''
+                        );
+
+                    var saved =
+                        getSavedIds();
+
+                    var index =
+                        saved.indexOf(id);
+
+                    if (index === -1) {
+                        saved.push(id);
+                    } else {
+                        saved.splice(index, 1);
+                    }
+
+                    setSavedIds(saved);
+                    refreshSaveButtons();
+
+                    if (savedOnlyActive) {
+                        applySavedOnlyFilter();
+                    }
+                });
+            });
+
+        refreshSaveButtons();
+
+        if (savedOnlyBtn) {
+
+            savedOnlyBtn.addEventListener(
+                'click',
+                function () {
+
+                    savedOnlyActive =
+                        !savedOnlyActive;
+
+                    savedOnlyBtn.classList.toggle(
+                        'active',
+                        savedOnlyActive
+                    );
+
+                    applySavedOnlyFilter();
+                }
+            );
+        }
+
+        /* =========================================================
+           CLIENT-SIDE SORTING
+           ========================================================= */
+
+        var sortSelect =
+            document.getElementById(
+                'donorSortSelect'
+            );
+
+        var tableBody =
+            document.getElementById(
+                'donorTableBody'
+            );
+
+        var mobileGrid =
+            document.getElementById(
+                'donorMobileGrid'
+            );
+
+        var originalTableOrder =
+            tableRows.slice();
+
+        var originalMobileOrder =
+            mobileCards.slice();
+
+        function sortNodes(nodes, mode) {
+
+            var sorted =
+                nodes.slice();
+
+            if (
+                mode === 'name-asc' ||
+                mode === 'name-desc'
+            ) {
+                sorted.sort(function (a, b) {
+
+                    var an =
+                        (
+                            a.getAttribute(
+                                'data-donor-name'
+                            ) || ''
+                        ).toLowerCase();
+
+                    var bn =
+                        (
+                            b.getAttribute(
+                                'data-donor-name'
+                            ) || ''
+                        ).toLowerCase();
+
+                    if (an < bn) {
+                        return mode === 'name-asc'
+                            ? -1
+                            : 1;
+                    }
+
+                    if (an > bn) {
+                        return mode === 'name-asc'
+                            ? 1
+                            : -1;
+                    }
+
+                    return 0;
+                });
+
+            } else if (mode === 'blood-group') {
+
+                sorted.sort(function (a, b) {
+
+                    return (
+                        (
+                            a.getAttribute(
+                                'data-blood-group'
+                            ) || ''
+                        ).localeCompare(
+                            b.getAttribute(
+                                'data-blood-group'
+                            ) || ''
+                        )
+                    );
+                });
+
+            } else if (mode === 'distance') {
+
+                sorted.sort(function (a, b) {
+
+                    var ad =
+                        parseFloat(
+                            a.getAttribute(
+                                'data-distance'
+                            )
+                        );
+
+                    var bd =
+                        parseFloat(
+                            b.getAttribute(
+                                'data-distance'
+                            )
+                        );
+
+                    if (isNaN(ad)) return 1;
+                    if (isNaN(bd)) return -1;
+
+                    return ad - bd;
+                });
+            }
+
+            return sorted;
+        }
+
+        if (
+            sortSelect &&
+            tableBody &&
+            mobileGrid
+        ) {
+
+            sortSelect.addEventListener(
+                'change',
+                function () {
+
+                    var mode =
+                        sortSelect.value;
+
+                    if (mode === 'default') {
+
+                        originalTableOrder
+                            .forEach(function (row) {
+                                tableBody.appendChild(row);
+                            });
+
+                        originalMobileOrder
+                            .forEach(function (card) {
+                                mobileGrid.appendChild(card);
+                            });
+
+                        return;
+                    }
+
+                    sortNodes(
+                        tableRows,
+                        mode
+                    ).forEach(function (row) {
+                        tableBody.appendChild(row);
+                    });
+
+                    sortNodes(
+                        mobileCards,
+                        mode
+                    ).forEach(function (card) {
+                        mobileGrid.appendChild(card);
+                    });
+                }
+            );
+        }
+
+        /* =========================================================
+           SHARE DIRECTORY — WEB SHARE WITH COPY FALLBACK
+           ========================================================= */
+
+        var shareDirectoryBtn =
+            document.getElementById(
+                'shareDirectoryBtn'
+            );
+
+        if (shareDirectoryBtn) {
+
+            shareDirectoryBtn.addEventListener(
+                'click',
+                function () {
+
+                    var shareData = {
+                        title:
+                            'Patiya RedPulse — Find Blood Donors',
+                        text:
+                            '{% trans "Find blood donors in Patiya through Patiya RedPulse." %}',
+                        url:
+                            window.location.href
+                    };
+
+                    if (navigator.share) {
+
+                        navigator.share(
+                            shareData
+                        ).catch(function (error) {
+
+                            if (
+                                !error ||
+                                error.name !== 'AbortError'
+                            ) {
+                                copyText(
+                                    window.location.href
+                                ).then(function (success) {
+
+                                    if (success) {
+                                        alert(
+                                            '{% trans "Directory link copied." %}'
+                                        );
+                                    }
+                                });
+                            }
+                        });
+
+                        return;
+                    }
+
+                    copyText(
+                        window.location.href
+                    ).then(function (success) {
+
+                        if (success) {
+                            alert(
+                                '{% trans "Directory link copied." %}'
+                            );
+                        } else {
+                            alert(
+                                window.location.href
+                            );
+                        }
+                    });
+                }
+            );
+        }
+
+    });
+})();
 </script>
 {% endblock %}
