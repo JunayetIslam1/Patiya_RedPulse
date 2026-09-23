@@ -1,24 +1,34 @@
 {% load static i18n %}
+{% get_current_language as CURRENT_LANGUAGE %}
+{% get_available_languages as AVAILABLE_LANGUAGES %}
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta name="google-site-verification" content="O8AWOSdlLN7Sfu4SWhx7OMoYm7y5BGwHZ0Cqx7f58cU" />
-<title>PatiyaRedPulse</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#d90429">
     <meta name="description" content="{% blocktrans %}Patiya RedPulse connects blood seekers with eligible donors directly, in Patiya, Chattogram — no middleman, no waiting.{% endblocktrans %}">
     <title>{% block title %}Patiya RedPulse{% endblock %}</title>
 
+    <!-- Early state restore (theme + accessibility) — runs before paint, no flash -->
     <script>
         (function () {
+            var root = document.documentElement;
+            root.classList.add('rp-js');
             try {
                 var saved = localStorage.getItem('redpulse-theme');
-                if (saved === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
-                else if (saved === 'light') document.documentElement.removeAttribute('data-theme');
+                if (saved === 'dark') root.setAttribute('data-theme', 'dark');
+                else if (saved === 'light') root.removeAttribute('data-theme');
                 else if (!saved && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    document.documentElement.setAttribute('data-theme', 'dark');
+                    root.setAttribute('data-theme', 'dark');
                 }
+                if (localStorage.getItem('rp-motion') === '1') root.classList.add('rp-nomotion');
+                var lowfx = localStorage.getItem('rp-lowfx');
+                if (lowfx === '1') root.classList.add('rp-lowfx');
+                else if (lowfx === null && navigator.connection && navigator.connection.saveData) root.classList.add('rp-lowfx');
+                var fs = parseFloat(localStorage.getItem('rp-font'));
+                if (fs >= 0.8 && fs <= 1.4) root.style.setProperty('--rp-fs', fs);
             } catch (e) {}
         })();
     </script>
@@ -77,6 +87,7 @@
         --rp-ease: cubic-bezier(.22,1,.36,1);
         --rp-spring: cubic-bezier(.34,1.56,.64,1);
         --rp-nav-h: 70px;
+        --rp-fs: 1;
     }
 
     [data-theme="dark"]{
@@ -100,19 +111,30 @@
 
     /* ---------------------------------------------------------------- BASE */
     *{ -webkit-tap-highlight-color: transparent; }
-    html{ scroll-behavior:smooth; }
+    html{ scroll-behavior:smooth; font-size:calc(16px * var(--rp-fs)); }
     body{
         font-family:'Plus Jakarta Sans','Noto Sans Bengali',system-ui,sans-serif;
         background:
-            radial-gradient(1200px 620px at 92% -8%, rgba(217,4,41,.10), transparent 62%),
-            radial-gradient(1000px 560px at -6% 4%, rgba(37,99,235,.08), transparent 60%),
+            radial-gradient(900px 520px at 50% -12%, rgba(255,255,255,.72), transparent 66%),
             linear-gradient(180deg,var(--rp-bg) 0%,var(--rp-bg-2) 100%);
         background-attachment: fixed;
         color:var(--rp-text);
         overflow-x:hidden;
         letter-spacing:-.01em;
-        transition: background-color .35s var(--rp-ease), color .35s var(--rp-ease);
+        isolation:isolate;
+        position:relative;
+        transition:background-color .35s var(--rp-ease),color .35s var(--rp-ease);
     }
+
+    [data-theme="dark"] body{
+        background:
+            radial-gradient(900px 540px at 50% -12%, rgba(255,46,85,.12), transparent 62%),
+            linear-gradient(180deg,var(--rp-bg) 0%,var(--rp-bg-2) 100%);
+    }
+
+    /* Dedicated visual layer: negative z-index + body isolation keeps every
+       existing navbar/modal/fixed control in its original stacking context. */
+    body > .rp-3d-bg{ position:fixed; inset:0; z-index:-1; }
     :lang(bn) body, html[lang="bn"] body{ font-family:'Noto Sans Bengali','Plus Jakarta Sans',sans-serif; }
 
     h1,h2,h3,h4,h5,.rp-display{ font-family:'Sora','Noto Sans Bengali',sans-serif; letter-spacing:-.03em; }
@@ -127,26 +149,372 @@
         border-radius:99px; border:3px solid transparent; background-clip:padding-box;
     }
 
-    /* ------------------------------------------------- AMBIENT BACKGROUND */
-    .rp-aurora{ position:fixed; inset:0; z-index:-2; pointer-events:none; overflow:hidden; }
-    .rp-orb{ position:absolute; border-radius:50%; filter:blur(90px); opacity:.55; will-change:transform; }
-    .rp-orb.o1{ width:520px; height:520px; top:-170px; right:-120px; background:radial-gradient(circle,rgba(255,46,85,.55),transparent 68%); animation:orbFloat 22s ease-in-out infinite; }
-    .rp-orb.o2{ width:460px; height:460px; bottom:-180px; left:-140px; background:radial-gradient(circle,rgba(37,99,235,.40),transparent 68%); animation:orbFloat 28s ease-in-out infinite reverse; }
-    .rp-orb.o3{ width:380px; height:380px; top:42%; left:48%; background:radial-gradient(circle,rgba(16,185,129,.24),transparent 68%); animation:orbFloat 34s ease-in-out infinite; }
-    @keyframes orbFloat{ 0%,100%{transform:translate3d(0,0,0) scale(1);} 50%{transform:translate3d(-40px,50px,0) scale(1.14);} }
-
-    .rp-grid-mask{
-        position:fixed; inset:0; z-index:-2; pointer-events:none; opacity:.5;
-        background-image:
-            linear-gradient(to right, var(--rp-border-2) 1px, transparent 1px),
-            linear-gradient(to bottom, var(--rp-border-2) 1px, transparent 1px);
-        background-size:56px 56px;
-        -webkit-mask-image: radial-gradient(circle at 50% 0%, #000 0%, transparent 72%);
-        mask-image: radial-gradient(circle at 50% 0%, #000 0%, transparent 72%);
+    /* Visible keyboard focus everywhere */
+    a:focus-visible, button:focus-visible, [tabindex]:focus-visible, summary:focus-visible{
+        outline:3px solid rgba(217,4,41,.55); outline-offset:2px; border-radius:10px;
     }
-    .rp-grain{
-        position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.035; mix-blend-mode:overlay;
-        background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+    main:focus{ outline:none; }
+
+    /* ------------------------------------------------------- SKIP LINK (a11y) */
+    .rp-skip{
+        position:fixed; top:0; left:1rem; z-index:9999;
+        background:var(--rp-red); color:#fff!important; font-weight:800; font-size:.92rem;
+        padding:.7rem 1.4rem; border-radius:0 0 14px 14px;
+        transform:translateY(-120%); transition:transform .3s var(--rp-spring);
+    }
+    .rp-skip:focus{ transform:translateY(0); outline:3px solid #fff; }
+
+    /* ------------------------------------------------- PREMIUM 3D BACKGROUND
+       Purpose: deep, cinematic, medical-tech atmosphere without the old
+       particle-network / grid / grain / blurred-orb look.
+    */
+    .rp-3d-bg{
+        --mx:0;
+        --my:0;
+        --scroll:0;
+        overflow:hidden;
+        pointer-events:none;
+        perspective:1400px;
+        perspective-origin:50% 45%;
+        isolation:isolate;
+        contain:layout paint style;
+        background:
+            radial-gradient(700px 460px at 50% 44%, rgba(217,4,41,.08), transparent 72%),
+            radial-gradient(520px 360px at 10% 12%, rgba(37,99,235,.07), transparent 70%),
+            radial-gradient(520px 360px at 90% 84%, rgba(16,185,129,.06), transparent 72%);
+        transition:opacity .35s ease;
+    }
+
+    [data-theme="dark"] .rp-3d-bg{
+        background:
+            radial-gradient(760px 500px at 50% 42%, rgba(255,46,85,.14), transparent 72%),
+            radial-gradient(560px 380px at 8% 10%, rgba(37,99,235,.10), transparent 72%),
+            radial-gradient(560px 380px at 92% 86%, rgba(16,185,129,.07), transparent 74%);
+    }
+
+    .rp-3d-bg::before{
+        content:'';
+        position:absolute;
+        inset:-10%;
+        z-index:-2;
+        background:
+            radial-gradient(ellipse at center, transparent 0 32%, rgba(217,4,41,.035) 58%, transparent 76%),
+            radial-gradient(circle at 50% 50%, rgba(255,255,255,.3), transparent 34%);
+        transform:translate3d(calc(var(--mx) * -14px),calc(var(--my) * -10px),0)
+                  scale(1.08);
+        filter:blur(2px);
+        transition:transform .18s linear;
+    }
+
+    .rp-3d-bg::after{
+        content:'';
+        position:absolute;
+        inset:0;
+        z-index:8;
+        background:
+            linear-gradient(180deg, rgba(255,255,255,.10), transparent 16%, transparent 78%, rgba(255,255,255,.10)),
+            radial-gradient(ellipse at center, transparent 56%, rgba(11,18,32,.06) 100%);
+        opacity:.45;
+        pointer-events:none;
+    }
+
+    [data-theme="dark"] .rp-3d-bg::after{
+        background:
+            linear-gradient(180deg, rgba(255,255,255,.035), transparent 18%, transparent 78%, rgba(0,0,0,.12)),
+            radial-gradient(ellipse at center, transparent 48%, rgba(0,0,0,.50) 100%);
+        opacity:.7;
+    }
+
+    .rp-depth-plane{
+        position:absolute;
+        left:50%;
+        top:48%;
+        width:min(72vw,1120px);
+        height:min(62vh,700px);
+        transform-style:preserve-3d;
+        transform:
+            translate3d(-50%,-50%,0)
+            rotateX(calc(48deg + (var(--my) * -3deg)))
+            rotateZ(calc((var(--mx) * 2deg)));
+        opacity:.38;
+        filter:drop-shadow(0 34px 70px rgba(15,23,42,.12));
+        transition:transform .18s ease-out;
+    }
+
+    .rp-depth-plane::before,
+    .rp-depth-plane::after{
+        content:'';
+        position:absolute;
+        inset:8%;
+        border-radius:50%;
+        border:1px solid rgba(217,4,41,.10);
+        box-shadow:
+            0 0 0 38px rgba(217,4,41,.018),
+            0 0 0 76px rgba(217,4,41,.014),
+            0 0 0 114px rgba(217,4,41,.010);
+        transform:translateZ(-30px);
+    }
+
+    .rp-depth-plane::after{
+        inset:20%;
+        border-color:rgba(37,99,235,.10);
+        box-shadow:
+            0 0 0 28px rgba(37,99,235,.015),
+            0 0 0 56px rgba(37,99,235,.010);
+        transform:translateZ(-60px) rotate(28deg);
+    }
+
+    .rp-ambient-light{
+        position:absolute;
+        width:440px;
+        height:440px;
+        border-radius:50%;
+        transform:
+            translate3d(calc(var(--mx) * -55px),calc(var(--my) * -34px),40px)
+            scale(calc(1 + (var(--scroll) * .02)));
+        filter:blur(34px);
+        opacity:.38;
+        mix-blend-mode:screen;
+        transition:transform .18s ease-out;
+        will-change:transform;
+    }
+
+    .rp-ambient-light.l1{
+        top:-160px; left:-110px;
+        background:radial-gradient(circle,rgba(255,72,103,.34),transparent 66%);
+    }
+    .rp-ambient-light.l2{
+        right:-140px; bottom:-150px;
+        background:radial-gradient(circle,rgba(37,99,235,.25),transparent 67%);
+        transform:
+            translate3d(calc(var(--mx) * 40px),calc(var(--my) * 26px),20px)
+            scale(calc(1 + (var(--scroll) * .014)));
+    }
+    .rp-ambient-light.l3{
+        top:28%; left:46%;
+        width:330px; height:330px;
+        background:radial-gradient(circle,rgba(16,185,129,.13),transparent 70%);
+        opacity:.25;
+        transform:
+            translate3d(calc(var(--mx) * 26px),calc(var(--my) * 18px),60px)
+            scale(calc(1 + (var(--scroll) * .01)));
+    }
+
+    .rp-3d-orbit{
+        position:absolute;
+        left:50%; top:50%;
+        width:min(66vw,980px);
+        aspect-ratio:1.72/1;
+        border:1px solid rgba(217,4,41,.13);
+        border-radius:50%;
+        transform-style:preserve-3d;
+        transform:
+            translate3d(-50%,-50%,0)
+            rotateX(calc(63deg + (var(--my) * -4deg)))
+            rotateY(calc(var(--mx) * 5deg))
+            rotateZ(-12deg);
+        box-shadow:
+            0 0 0 1px rgba(255,255,255,.08),
+            inset 0 0 40px rgba(217,4,41,.025),
+            0 0 70px rgba(217,4,41,.055);
+        transition:transform .2s ease-out;
+        opacity:.78;
+    }
+
+    .rp-3d-orbit.o2{
+        width:min(48vw,700px);
+        aspect-ratio:1.78/1;
+        border-color:rgba(37,99,235,.12);
+        transform:
+            translate3d(-50%,-50%,0)
+            rotateX(calc(58deg + (var(--my) * 3deg)))
+            rotateY(calc(var(--mx) * -6deg))
+            rotateZ(22deg)
+            translateZ(-90px);
+        opacity:.58;
+    }
+
+    .rp-3d-orbit.o3{
+        width:min(28vw,430px);
+        aspect-ratio:1/1;
+        border-color:rgba(16,185,129,.10);
+        transform:
+            translate3d(-50%,-50%,0)
+            rotateX(calc(71deg + (var(--my) * -2deg)))
+            rotateY(calc(var(--mx) * 7deg))
+            rotateZ(8deg)
+            translateZ(-160px);
+        opacity:.38;
+    }
+
+    .rp-orbit-node{
+        position:absolute;
+        width:12px; height:12px;
+        margin:-6px;
+        border-radius:50%;
+        background:radial-gradient(circle at 30% 30%,#fff 0 22%,#ff3b5f 38%,#d90429 70%,transparent 72%);
+        box-shadow:0 0 20px rgba(217,4,41,.6);
+        transform:
+            rotateZ(var(--angle))
+            translateX(calc(min(33vw,490px)))
+            rotateZ(calc(var(--angle) * -1))
+            translateZ(28px);
+        animation:rpOrbitNode 12s linear infinite;
+    }
+
+    .rp-3d-orbit.o2 .rp-orbit-node{
+        background:radial-gradient(circle at 30% 30%,#fff 0 22%,#60a5fa 38%,#2563eb 70%,transparent 72%);
+        box-shadow:0 0 20px rgba(37,99,235,.55);
+        transform:
+            rotateZ(var(--angle))
+            translateX(calc(min(24vw,350px)))
+            rotateZ(calc(var(--angle) * -1))
+            translateZ(18px);
+        animation-duration:17s;
+        animation-direction:reverse;
+    }
+
+    @keyframes rpOrbitNode{
+        from{ transform:
+            rotateZ(var(--angle))
+            translateX(calc(min(33vw,490px)))
+            rotateZ(calc(var(--angle) * -1))
+            translateZ(28px); }
+        to{ transform:
+            rotateZ(calc(var(--angle) + 360deg))
+            translateX(calc(min(33vw,490px)))
+            rotateZ(calc((var(--angle) + 360deg) * -1))
+            translateZ(28px); }
+    }
+
+    .rp-3d-core{
+        position:absolute;
+        left:50%; top:50%;
+        width:260px; height:260px;
+        margin:-130px;
+        border-radius:50%;
+        transform-style:preserve-3d;
+        transform:
+            translate3d(calc(var(--mx) * -22px),calc(var(--my) * -18px),30px)
+            rotateX(calc(var(--my) * -8deg))
+            rotateY(calc(var(--mx) * 10deg));
+        background:
+            radial-gradient(circle at 35% 30%, rgba(255,255,255,.58), transparent 16%),
+            radial-gradient(circle at 48% 48%, rgba(255,46,85,.18), transparent 50%),
+            radial-gradient(circle at 50% 50%, rgba(217,4,41,.08), rgba(217,4,41,0) 66%);
+        border:1px solid rgba(217,4,41,.14);
+        box-shadow:
+            inset 0 1px 0 rgba(255,255,255,.38),
+            inset 0 -24px 50px rgba(15,23,42,.04),
+            0 26px 70px -20px rgba(217,4,41,.24),
+            0 0 70px rgba(217,4,41,.10);
+        transition:transform .18s ease-out;
+        animation:rpCoreBreath 6s ease-in-out infinite;
+    }
+
+    [data-theme="dark"] .rp-3d-core{
+        background:
+            radial-gradient(circle at 35% 30%, rgba(255,255,255,.14), transparent 15%),
+            radial-gradient(circle at 50% 50%, rgba(255,46,85,.22), transparent 50%),
+            radial-gradient(circle at 50% 50%, rgba(217,4,41,.07), rgba(217,4,41,0) 68%);
+        border-color:rgba(255,46,85,.18);
+        box-shadow:
+            inset 0 1px 0 rgba(255,255,255,.10),
+            inset 0 -26px 56px rgba(0,0,0,.28),
+            0 26px 70px -20px rgba(255,46,85,.25),
+            0 0 90px rgba(255,46,85,.12);
+    }
+
+    .rp-3d-core::before{
+        content:'';
+        position:absolute;
+        inset:22px;
+        border-radius:50%;
+        border:1px solid rgba(217,4,41,.16);
+        box-shadow:
+            0 0 0 20px rgba(217,4,41,.025),
+            0 0 0 42px rgba(217,4,41,.018);
+        transform:translateZ(22px);
+    }
+
+    .rp-3d-core::after{
+        content:'';
+        position:absolute;
+        inset:0;
+        border-radius:50%;
+        background:conic-gradient(
+            from 0deg,
+            transparent 0deg,
+            rgba(255,46,85,.12) 52deg,
+            transparent 96deg,
+            rgba(37,99,235,.08) 188deg,
+            transparent 228deg,
+            rgba(16,185,129,.06) 312deg,
+            transparent 348deg
+        );
+        filter:blur(1px);
+        animation:rpCoreSpin 16s linear infinite;
+    }
+
+    @keyframes rpCoreBreath{
+        0%,100%{ box-shadow:
+            inset 0 1px 0 rgba(255,255,255,.38),
+            inset 0 -24px 50px rgba(15,23,42,.04),
+            0 26px 70px -20px rgba(217,4,41,.24),
+            0 0 70px rgba(217,4,41,.10); }
+        50%{ box-shadow:
+            inset 0 1px 0 rgba(255,255,255,.45),
+            inset 0 -26px 54px rgba(15,23,42,.06),
+            0 30px 82px -18px rgba(217,4,41,.31),
+            0 0 98px rgba(217,4,41,.14); }
+    }
+
+    @keyframes rpCoreSpin{ to{ transform:rotate(360deg); } }
+
+    .rp-depth-shard{
+        position:absolute;
+        width:120px; height:18px;
+        left:var(--left); top:var(--top);
+        border:1px solid rgba(217,4,41,.10);
+        background:linear-gradient(90deg,transparent,rgba(255,255,255,.34),rgba(217,4,41,.08),transparent);
+        border-radius:999px;
+        filter:blur(.2px);
+        transform:
+            translate3d(calc(var(--mx) * 14px),calc(var(--my) * 12px),var(--z))
+            rotate(var(--r));
+        opacity:var(--o);
+        transition:transform .22s ease-out;
+    }
+
+    .rp-depth-shard.s2{ width:180px; height:10px; }
+    .rp-depth-shard.s3{ width:74px; height:12px; }
+    .rp-depth-shard.s4{ width:145px; height:24px; border-radius:40%; }
+
+    .rp-vignette{
+        position:absolute;
+        inset:-2px;
+        background:radial-gradient(ellipse at center, transparent 45%, rgba(11,18,32,.10) 100%);
+        opacity:.35;
+        z-index:9;
+    }
+
+    [data-theme="dark"] .rp-vignette{ opacity:.72; }
+
+    @media (max-width: 991.98px){
+        .rp-depth-plane{ width:110vw; height:58vh; opacity:.25; }
+        .rp-3d-orbit{ width:110vw; opacity:.5; }
+        .rp-3d-orbit.o2{ width:78vw; }
+        .rp-3d-orbit.o3{ width:48vw; }
+        .rp-3d-core{ width:190px; height:190px; margin:-95px; }
+        .rp-ambient-light{ width:320px; height:320px; }
+        .rp-depth-shard{ opacity:calc(var(--o) * .7); }
+    }
+
+    @media (max-width: 575.98px){
+        .rp-depth-plane{ top:41%; opacity:.18; }
+        .rp-3d-orbit{ top:42%; }
+        .rp-3d-core{ top:42%; }
+        .rp-depth-shard{ display:none; }
     }
 
     /* -------------------------------------------------- SCROLL PROGRESS */
@@ -156,6 +524,18 @@
         box-shadow:0 0 14px rgba(217,4,41,.85);
         border-radius:0 99px 99px 0; transition:width .12s linear;
     }
+
+    /* ------------------------------------------------- OFFLINE / ONLINE BAR */
+    .rp-offline-bar{
+        position:fixed; top:0; left:0; right:0; z-index:3000;
+        padding:.55rem 1rem; text-align:center; font-weight:700; font-size:.85rem; color:#fff;
+        background:linear-gradient(90deg,#f59e0b,#d97706);
+        display:flex; align-items:center; justify-content:center; gap:.6rem;
+        transform:translateY(-100%); visibility:hidden;
+        transition:transform .4s var(--rp-spring), visibility 0s linear .4s;
+    }
+    .rp-offline-bar.show{ transform:translateY(0); visibility:visible; transition-delay:0s; }
+    .rp-offline-bar.online{ background:linear-gradient(90deg,#10b981,#059669); }
 
     /* ------------------------------------------------------- TOP STRIP */
     .rp-topstrip{
@@ -168,6 +548,7 @@
         content:''; position:absolute; inset:0;
         background:linear-gradient(115deg,transparent 25%,rgba(255,255,255,.28) 48%,transparent 66%);
         transform:translateX(-100%); animation:shine 5.5s ease-in-out infinite;
+        pointer-events:none;
     }
     @keyframes shine{ 0%{transform:translateX(-100%);} 55%,100%{transform:translateX(120%);} }
     .rp-topstrip a{ color:#fff; border-bottom:1px dashed rgba(255,255,255,.55); }
@@ -209,10 +590,7 @@
     .navbar-brand:hover .brand-badge{ transform:perspective(600px) rotateX(0) rotateY(0) scale(1.1) translateY(-2px); box-shadow:var(--rp-red-glow-lg); }
     .brand-sub{ display:block; font-family:'Plus Jakarta Sans',sans-serif; font-size:.6rem; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--rp-muted); }
 
-    /* Nav links */
-    /* Keep the nav on ONE line whenever it's expanded (>=1200px / xl).
-       Wrapping is only a last-resort safety net far below that, where the
-       hamburger menu already takes over anyway. */
+    /* Nav links — keep the nav on ONE line whenever it's expanded (>=1200px / xl). */
     #navbarNav .navbar-nav{
         flex-wrap: nowrap;
         row-gap: 0;
@@ -231,9 +609,7 @@
         transition:color .25s var(--rp-ease), transform .25s var(--rp-spring), background .25s var(--rp-ease);
     }
 
-    /* ---- COMPACT MODE: 1200–1550px (typical laptop widths). Longer
-       English labels need less padding/icon-chrome to still fit on one
-       line here; Bangla already fits easily so this mainly helps English. ---- */
+    /* ---- COMPACT MODE: 1200–1550px (typical laptop widths) ---- */
     @media (min-width: 1200px) and (max-width: 1550px){
         .container-fluid.px-lg-4{ padding-left:1rem!important; padding-right:1rem!important; }
         .navbar-nav.me-auto{ gap:.1rem!important; }
@@ -256,6 +632,10 @@
         .navbar-brand{ font-size:1.05rem; }
         .brand-badge{ width:38px; height:38px; }
         .brand-sub{ font-size:.55rem; }
+    }
+    /* Search pill: label + shortcut hint only when there is room */
+    @media (min-width: 1200px) and (max-width: 1699.98px){
+        .pill-label, .pill-kbd{ display:none!important; }
     }
     .navbar-nav .nav-link .nav-ico{
         width:26px; height:26px; border-radius:9px; display:grid; place-items:center;
@@ -310,7 +690,7 @@
     .dropdown-item:hover .dd-ico{ background:var(--rp-grad); color:#fff; border-color:transparent; box-shadow:0 5px 12px -4px rgba(217,4,41,.5); }
     .dropdown-item.active,.dropdown-item:active{ background:var(--rp-grad); color:#fff!important; }
 
-    /* --------------------------------------------------------- BUTTONS (POLISHED) */
+    /* --------------------------------------------------------- BUTTONS */
     .btn-rp{
         position:relative; display:inline-flex; align-items:center; gap:.5rem;
         font-family:'Sora',sans-serif; font-weight:700; font-size:.84rem;
@@ -356,7 +736,6 @@
     .btn-rp-ghost:hover{ color:var(--rp-red)!important; transform:translateY(-2px); box-shadow:var(--rp-sh-1); background:var(--rp-surface); }
     .btn-rp-ghost:active{ transform:translateY(0) scale(.98); }
 
-    /* Small size helper for compact buttons inside cards/tables */
     .btn-rp-sm{ padding:.4rem .9rem; font-size:.76rem; }
 
     /* Pill-style choice buttons (e.g. blood-group picker grids) */
@@ -378,7 +757,6 @@
     .rp-ripple{ position:absolute; border-radius:50%; transform:scale(0); background:rgba(255,255,255,.45); animation:ripple .6s linear; pointer-events:none; z-index:2; }
     @keyframes ripple{ to{ transform:scale(4); opacity:0; } }
 
-    /* Logout as link-button */
     .btn-navlink{ background:transparent; border:0; }
 
     /* ------------------------------------------------ THEME / LANG PILL */
@@ -392,12 +770,18 @@
         cursor:pointer;
     }
     .rp-pill:hover{ transform:translateY(-2px); box-shadow:var(--rp-sh-2); color:var(--rp-red); }
+    .pill-kbd{
+        font-family:inherit; font-size:.65rem; font-weight:700; padding:.15em .45em; border-radius:6px;
+        background:var(--rp-surface-2); color:var(--rp-muted); border:1px solid var(--rp-border);
+    }
     .theme-toggle-btn{
         width:40px; height:40px; border-radius:14px; padding:0; justify-content:center;
         position:relative; overflow:hidden;
     }
     .theme-toggle-btn i{ transition:transform .5s var(--rp-spring), opacity .3s ease; pointer-events:none; }
     .theme-toggle-btn:hover i{ transform:rotate(160deg) scale(1.15); color:var(--rp-red); }
+    .icon-pill{ width:40px; justify-content:center; padding:0; }
+    @media (min-width: 1200px) and (max-width: 1550px){ .icon-pill{ width:36px; } }
 
     /* ------------------------------------------------------ ECG DIVIDER */
     .pulse-divider-container{
@@ -422,7 +806,7 @@
     @keyframes pulseWave{ 0%{stroke-dashoffset:3340;} 100%{stroke-dashoffset:0;} }
     .pulse-dot{ fill:#fff; stroke:var(--rp-red); stroke-width:2; filter:drop-shadow(0 0 8px rgba(217,4,41,.95)); }
 
-    /* --------------------------------------------------------- ALERTS (rp-alert, used for Django messages) */
+    /* --------------------------------------------------------- ALERTS (Django messages) */
     .rp-alert{
         position:relative; display:flex; align-items:flex-start; gap:.85rem;
         background:var(--rp-surface); -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px);
@@ -443,12 +827,7 @@
     .rp-alert .btn-close{ position:absolute; top:.85rem; right:.9rem; opacity:.45; }
     [data-theme="dark"] .rp-alert .btn-close{ filter:invert(1) grayscale(1); }
 
-    /* ============ GLOBAL FIX + REDESIGN: any plain Bootstrap alert on the site ============
-       Applies to ALL .alert boxes that are NOT already using .rp-alert — e.g. the
-       dashboard "জরুরি নোটিশ" cards ("সময় গুরুত্বপূর্ণ" / "নিরাপত্তা প্রথম").
-       These previously used raw Bootstrap alert-danger/alert-info colors that broke
-       in dark mode. Now they get the same glass + left-accent-bar treatment as
-       .rp-alert automatically, in BOTH light and dark theme, no markup change needed. */
+    /* GLOBAL: any plain Bootstrap alert gets the glass + accent-bar treatment (light + dark) */
     .alert:not(.rp-alert){
         position:relative;
         background:var(--rp-surface) !important;
@@ -475,24 +854,18 @@
         width:30px; height:30px; border-radius:10px; display:inline-grid; place-items:center;
         background:var(--rp-grad-soft); border:1px solid rgba(217,4,41,.18); font-size:.85rem;
     }
-
     .alert-danger:not(.rp-alert)::before{ background:linear-gradient(135deg,#ff2e55,#d90429); }
     .alert-danger:not(.rp-alert) i:first-child,
     .alert-danger:not(.rp-alert) strong i{ background:rgba(217,4,41,.14); color:#d90429; border-color:rgba(217,4,41,.25); }
-
     .alert-info:not(.rp-alert)::before{ background:linear-gradient(135deg,#60a5fa,#2563eb); }
     .alert-info:not(.rp-alert) i:first-child,
     .alert-info:not(.rp-alert) strong i{ background:rgba(37,99,235,.14); color:#2563eb; border-color:rgba(37,99,235,.25); }
-
     .alert-warning:not(.rp-alert)::before{ background:linear-gradient(135deg,#fbbf24,#d97706); }
     .alert-warning:not(.rp-alert) i:first-child,
     .alert-warning:not(.rp-alert) strong i{ background:rgba(245,158,11,.14); color:#d97706; border-color:rgba(245,158,11,.25); }
-
     .alert-success:not(.rp-alert)::before{ background:linear-gradient(135deg,#34d399,#059669); }
     .alert-success:not(.rp-alert) i:first-child,
     .alert-success:not(.rp-alert) strong i{ background:rgba(16,185,129,.14); color:#059669; border-color:rgba(16,185,129,.25); }
-
-    /* Dark-theme text tint so wording stays readable on the darker glass */
     [data-theme="dark"] .alert-danger:not(.rp-alert){ color:#ffd3da !important; }
     [data-theme="dark"] .alert-info:not(.rp-alert){ color:#cfe0ff !important; }
     [data-theme="dark"] .alert-warning:not(.rp-alert){ color:#ffe6b3 !important; }
@@ -550,8 +923,6 @@
             inset 0 1px 0 rgba(255,255,255,.6),
             inset 0 -7px 12px rgba(0,0,0,.25);
     }
-    /* Richer per-color backgrounds (was a flat translucent tint before —
-       now a proper gradient + colored glow, matching the brand icon style) */
     .stat-card-blue{ --card-accent:#2563eb; }
     .stat-card-blue .stat-icon-wrapper{ background:linear-gradient(135deg,#60a5fa,#2563eb 65%,#1d4ed8); }
     .stat-card-green{ --card-accent:#10b981; }
@@ -561,17 +932,11 @@
     .stat-card-red{ --card-accent:#d90429; }
     .stat-card-red .stat-icon-wrapper{ background:linear-gradient(135deg,#ff3b5f,#d90429 65%,#9e001c); }
 
-    /* Fallback for browsers without color-mix() support */
     @supports not (background: color-mix(in srgb, red 50%, transparent)){
         .stat-icon-wrapper{ box-shadow:0 10px 24px -8px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.55), inset 0 -7px 12px rgba(0,0,0,.28); }
     }
 
-    /* ============================================================
-       AUTO-DETECTED ICON BOX — applied by JS (see bottom script) to
-       ANY small square/rounded box in <main> that contains exactly
-       one Font Awesome icon, regardless of what class name your
-       template actually uses. This guarantees the upgrade applies
-       even without knowing the dashboard/home template's markup. */
+    /* AUTO-DETECTED ICON BOX (applied by JS to any small box containing one icon) */
     .rp-icon-auto{
         border-radius:16px !important;
         display:grid !important; place-items:center !important;
@@ -593,22 +958,14 @@
         background:linear-gradient(160deg,rgba(255,255,255,.5),transparent 55%);
         pointer-events:none;
     }
-    .rp-icon-auto:hover{
-        transform:perspective(600px) rotateX(0) rotateY(0) scale(1.1) translateY(-3px);
-    }
-    /* Colour variants — auto-assigned by JS based on the icon's ORIGINAL
-       inline/computed colour so blue stays blue, green stays green, etc. */
+    .rp-icon-auto:hover{ transform:perspective(600px) rotateX(0) rotateY(0) scale(1.1) translateY(-3px); }
     .rp-icon-auto.is-blue{ background:linear-gradient(135deg,#60a5fa,#2563eb 65%,#1d4ed8) !important; box-shadow:0 10px 22px -8px rgba(37,99,235,.55), inset 0 1px 0 rgba(255,255,255,.55), inset 0 -6px 10px rgba(0,0,0,.25) !important; }
     .rp-icon-auto.is-green{ background:linear-gradient(135deg,#34d399,#059669 65%,#047857) !important; box-shadow:0 10px 22px -8px rgba(5,150,105,.55), inset 0 1px 0 rgba(255,255,255,.55), inset 0 -6px 10px rgba(0,0,0,.25) !important; }
     .rp-icon-auto.is-amber{ background:linear-gradient(135deg,#fbbf24,#d97706 65%,#b45309) !important; box-shadow:0 10px 22px -8px rgba(217,119,6,.55), inset 0 1px 0 rgba(255,255,255,.55), inset 0 -6px 10px rgba(0,0,0,.25) !important; }
     .rp-icon-auto.is-red{ background:linear-gradient(135deg,#ff3b5f,#d90429 65%,#9e001c) !important; box-shadow:0 10px 22px -8px rgba(217,4,41,.55), inset 0 1px 0 rgba(255,255,255,.55), inset 0 -6px 10px rgba(0,0,0,.25) !important; }
     .rp-icon-auto i{ position:relative; z-index:1; color:#fff !important; }
 
-    /* ============================================================
-       AUTO-DETECTED PROGRESS BAR — applied by JS to whatever element
-       renders the "Available Donors by Blood Group" bars, regardless
-       of markup. Track gets a glass groove; fill gets a glowing
-       gradient with a soft shine sweep. */
+    /* AUTO-DETECTED PROGRESS BAR */
     .rp-progress-track-auto{
         background:var(--rp-surface-2) !important;
         border:1px solid var(--rp-border) !important;
@@ -633,12 +990,7 @@
     @keyframes rpBarShine{ 0%{transform:translateX(-100%);} 55%,100%{transform:translateX(160%);} }
     @media (prefers-reduced-motion: reduce){ .rp-progress-bar-auto::after{ animation:none; } }
 
-    /* ============================================================
-       GLOBAL UPGRADE — plain Bootstrap .card / .card-header / .badge
-       used anywhere across the site (confirmed from hospital_directory.html
-       and very likely other pages too) now automatically get the
-       Patiya RedPulse glass + gradient design system. No per-page
-       markup changes needed for this base layer. */
+    /* GLOBAL UPGRADE — plain Bootstrap .card / .card-header / .badge */
     .card:not(.stat-card-modern):not(.rp-feature-card):not(.rp-guideline-card):not(.rp-info-panel){
         background:var(--rp-surface) !important;
         -webkit-backdrop-filter: blur(18px);
@@ -725,10 +1077,8 @@
     @keyframes rpRing{ 0%,6%,100%{transform:rotate(0);} 2%{transform:rotate(-16deg);} 4%{transform:rotate(12deg);} }
     @media (prefers-reduced-motion: reduce){ .rp-call-btn i{ animation:none; } .rp-call-btn::after{ animation:none; } }
 
-    /* ---- Page hero header (icon + title + subtitle), for directory-style pages ---- */
-    .rp-page-hero{
-        display:flex; align-items:center; gap:1.1rem; margin-bottom:1.6rem; flex-wrap:wrap;
-    }
+    /* ---- Page hero header (icon + title + subtitle) ---- */
+    .rp-page-hero{ display:flex; align-items:center; gap:1.1rem; margin-bottom:1.6rem; flex-wrap:wrap; }
     .rp-page-hero .rph-icon{
         width:64px; height:64px; border-radius:20px; flex:0 0 64px; display:grid; place-items:center;
         background:var(--rp-grad); color:#fff; font-size:1.6rem; position:relative; isolation:isolate;
@@ -743,38 +1093,35 @@
     .rp-page-hero p{ margin:0; color:var(--rp-subtext); font-size:.9rem; max-width:56ch; }
 
     /* ---- Empty state ---- */
-    .rp-empty-state{
-        text-align:center; padding:3rem 1.5rem; color:var(--rp-subtext);
-    }
+    .rp-empty-state{ text-align:center; padding:3rem 1.5rem; color:var(--rp-subtext); }
     .rp-empty-state i{
         width:64px; height:64px; border-radius:50%; display:grid; place-items:center; margin:0 auto 1rem;
         background:var(--rp-grad-soft); color:var(--rp-red); font-size:1.6rem; border:1px solid rgba(217,4,41,.2);
     }
 
-    /* Generic glass card helper (usable in child templates) */
+    /* Generic glass card helper */
     .rp-card{
         background:var(--rp-surface); -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px);
         border:1px solid var(--rp-border); border-radius:var(--rp-radius);
         box-shadow:var(--rp-sh-2), var(--rp-hi);
     }
+    .rp-card-header{
+        background:var(--rp-grad); color:#fff; padding:1.1rem 1.4rem;
+        border-radius:var(--rp-radius) var(--rp-radius) 0 0; position:relative; overflow:hidden;
+    }
+    .rp-card-header::after{ content:''; position:absolute; inset:0 0 55% 0; background:linear-gradient(180deg,rgba(255,255,255,.22),transparent); pointer-events:none; }
+    .rp-card-header h5,.rp-card-header h6{ color:#fff; font-family:'Sora',sans-serif; font-weight:800; margin:0; display:flex; align-items:center; gap:.6rem; position:relative; }
+    .rp-card-body{ padding:1.4rem; }
 
     /* ============================================================
        REUSABLE PREMIUM COMPONENTS — usable in ANY child template
-       (dashboard.html / home.html etc.) once you drop these classes
-       onto the matching markup. Nothing here changes automatically
-       on your dashboard until you apply these class names there.
        ============================================================ */
-
-    /* ---- 3D floating icon bubble — use for step/feature icons ---- */
     .rp-icon-3d{
         width:58px; height:58px; border-radius:20px;
         display:grid; place-items:center; font-size:1.4rem; color:#fff;
         background:var(--rp-grad);
         position:relative; flex:0 0 58px;
-        box-shadow:
-            var(--rp-red-glow),
-            inset 0 1px 0 rgba(255,255,255,.5),
-            inset 0 -6px 10px rgba(0,0,0,.25);
+        box-shadow: var(--rp-red-glow), inset 0 1px 0 rgba(255,255,255,.5), inset 0 -6px 10px rgba(0,0,0,.25);
         transform:perspective(600px) rotateX(8deg) rotateY(-10deg);
         transition:transform .5s var(--rp-spring), box-shadow .35s var(--rp-ease);
     }
@@ -787,7 +1134,6 @@
     .rp-icon-3d.is-amber{ background:linear-gradient(135deg,#fbbf24,#d97706); box-shadow:0 10px 24px -8px rgba(217,119,6,.55), inset 0 1px 0 rgba(255,255,255,.5), inset 0 -6px 10px rgba(0,0,0,.22); }
     .rp-icon-3d-host:hover .rp-icon-3d{ transform:perspective(600px) rotateX(0) rotateY(0) scale(1.08) translateY(-3px); }
 
-    /* ---- Feature / "How it works" step card ---- */
     .rp-feature-card{
         background:var(--rp-surface); -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px);
         border:1px solid var(--rp-border); border-radius:var(--rp-radius-lg);
@@ -806,7 +1152,17 @@
         -webkit-text-stroke:1px var(--rp-border); opacity:.6;
     }
 
-    /* ---- Guideline / list card with checkmark bullets ---- */
+    /* 3D tilt card (used with .rp-card-tilt-style tilt JS) */
+    .rp-3d-card{
+        background:var(--rp-surface); -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px);
+        border:1px solid var(--rp-border); border-radius:var(--rp-radius-lg); padding:1.5rem;
+        box-shadow:var(--rp-sh-2), var(--rp-hi);
+        transition:transform .4s var(--rp-spring), box-shadow .3s var(--rp-ease);
+        height:100%; position:relative; overflow:hidden; transform-style:preserve-3d;
+    }
+    .rp-3d-card:hover{ transform:translateY(-10px) rotateX(4deg) rotateY(-2deg); box-shadow:var(--rp-sh-3); }
+    .rp-3d-card .step-num{ position:absolute; top:.9rem; right:1rem; font-family:'Sora',sans-serif; font-weight:800; font-size:2rem; color:var(--rp-border); line-height:1; opacity:.55; }
+
     .rp-guideline-card{
         background:var(--rp-surface); -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px);
         border:1px solid var(--rp-border); border-radius:var(--rp-radius);
@@ -822,10 +1178,7 @@
         background:var(--rp-grad-soft); color:var(--rp-red); border:1px solid rgba(217,4,41,.18); font-size:.85rem;
     }
     .rp-guideline-card ul{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:.55rem; }
-    .rp-guideline-card ul li{
-        display:flex; align-items:flex-start; gap:.6rem;
-        font-size:.875rem; color:var(--rp-subtext);
-    }
+    .rp-guideline-card ul li{ display:flex; align-items:flex-start; gap:.6rem; font-size:.875rem; color:var(--rp-subtext); }
     .rp-guideline-card ul li::before{
         content:'\f00c'; font-family:'Font Awesome 6 Free'; font-weight:900;
         width:20px; height:20px; flex:0 0 20px; border-radius:50%;
@@ -833,7 +1186,6 @@
         display:grid; place-items:center; font-size:.62rem; margin-top:.1rem;
     }
 
-    /* ---- Split info panel (e.g. "For Blood Seekers" / "For Donors") ---- */
     .rp-info-panel{
         border-radius:var(--rp-radius-lg); padding:1.75rem; height:100%; position:relative; overflow:hidden;
         color:#fff; box-shadow:var(--rp-sh-3);
@@ -854,11 +1206,219 @@
         display:grid; place-items:center; flex:0 0 20px;
     }
 
-    /* ------------------------------------------------------- SOS FAB */
+    /* ---- Section headings ---- */
+    .section-tag{ display:inline-flex; align-items:center; gap:.5rem; font-size:.74rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--rp-red); margin-bottom:.6rem; }
+    .section-tag::before,.section-tag::after{ content:''; flex:1; height:1.5px; background:var(--rp-grad); max-width:30px; border-radius:99px; }
+    .section-title{ font-family:'Sora',sans-serif; font-weight:800; font-size:clamp(1.6rem,3.5vw,2.2rem); letter-spacing:-.04em; margin-bottom:.5rem; color:var(--rp-text); }
+    .section-sub{ color:var(--rp-subtext); font-size:.95rem; max-width:52ch; }
+    .section-divider{ border:none; border-top:1px solid var(--rp-border); margin:2.5rem 0; }
+
+    /* ---- Forms (dark-mode safe) ---- */
+    .rp-input{
+        width:100%; padding:.75rem 1rem; border-radius:14px;
+        background:var(--rp-surface-2); border:1.5px solid var(--rp-border);
+        color:var(--rp-text); font-family:inherit; font-size:.9rem; font-weight:500;
+        transition:border .25s var(--rp-ease), box-shadow .25s var(--rp-ease), background .25s var(--rp-ease);
+        outline:none;
+    }
+    .rp-input:focus{ border-color:rgba(217,4,41,.5); background:var(--rp-surface); box-shadow:0 0 0 3px rgba(217,4,41,.15); }
+    .rp-input::placeholder{ color:var(--rp-muted); }
+    [data-theme="dark"] .rp-input{ background:rgba(255,255,255,.05); }
+    [data-theme="dark"] .rp-input:focus{ background:rgba(255,255,255,.08); }
+    .rp-label{ font-size:.82rem; font-weight:700; color:var(--rp-subtext); margin-bottom:.4rem; display:block; }
+    .rp-form-group{ margin-bottom:1.1rem; }
+    .rp-select{
+        appearance:none; -webkit-appearance:none;
+        background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23d90429' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+        background-repeat:no-repeat; background-position:right .9rem center;
+    }
+
+    /* ---- Table (dark-mode safe) ---- */
+    .rp-table{ width:100%; border-collapse:separate; border-spacing:0; }
+    .rp-table thead th{ background:var(--rp-grad); color:#fff; font-family:'Sora',sans-serif; font-weight:800; font-size:.78rem; letter-spacing:.04em; text-transform:uppercase; padding:.75rem 1rem; border:none; }
+    .rp-table thead th:first-child{ border-radius:14px 0 0 0; }
+    .rp-table thead th:last-child{ border-radius:0 14px 0 0; }
+    .rp-table tbody tr{ transition:background .2s var(--rp-ease); }
+    .rp-table tbody tr:hover{ background:var(--rp-surface-2); }
+    .rp-table tbody td{ padding:.7rem 1rem; border-bottom:1px solid var(--rp-border); color:var(--rp-text); font-size:.875rem; vertical-align:middle; }
+    .rp-table tbody tr:last-child td{ border-bottom:none; }
+
+    /* ---- Badges ---- */
+    .rp-badge{ display:inline-flex; align-items:center; gap:.3rem; padding:.32em .75em; border-radius:999px; font-size:.7rem; font-weight:800; letter-spacing:.02em; box-shadow:0 2px 6px -2px rgba(0,0,0,.22); }
+    .rp-badge-red{ background:linear-gradient(135deg,#ff3b5f,#d90429); color:#fff; }
+    .rp-badge-green{ background:linear-gradient(135deg,#34d399,#059669); color:#fff; }
+    .rp-badge-blue{ background:linear-gradient(135deg,#60a5fa,#2563eb); color:#fff; }
+    .rp-badge-amber{ background:linear-gradient(135deg,#fbbf24,#d97706); color:#3a2400; }
+
+    /* ---- Progress track / bar (manual use) ---- */
+    .rp-track{ background:var(--rp-surface-2); border:1px solid var(--rp-border); border-radius:99px; overflow:hidden; box-shadow:inset 0 2px 5px rgba(0,0,0,.18); height:10px; position:relative; }
+    .rp-bar{ height:100%; border-radius:99px; background:var(--rp-grad); position:relative; overflow:hidden; box-shadow:0 0 10px rgba(217,4,41,.5), inset 0 1px 0 rgba(255,255,255,.32); transition:width 1s var(--rp-ease); }
+    .rp-bar::after{ content:''; position:absolute; inset:0; background:linear-gradient(115deg,transparent 20%,rgba(255,255,255,.42) 42%,transparent 60%); transform:translateX(-100%); animation:rpBarShine 2.8s ease-in-out infinite; }
+
+    /* ---- Blood-group chips ---- */
+    .bg-chip{
+        display:inline-flex; align-items:center; justify-content:center; width:52px; height:52px; border-radius:14px;
+        font-family:'Sora',sans-serif; font-weight:800; font-size:.95rem;
+        background:var(--rp-surface-2); border:1.5px solid var(--rp-border); color:var(--rp-text);
+        transition:all .25s var(--rp-spring); cursor:pointer;
+    }
+    .bg-chip:hover,.bg-chip.active{ background:var(--rp-grad); color:#fff; border-color:transparent; box-shadow:var(--rp-red-glow); transform:translateY(-3px); }
+
+    /* ---- Scroll reveal (only hidden when JS is running) ---- */
+    html.rp-js .rp-reveal{ opacity:0; transform:translateY(24px); transition:opacity .6s var(--rp-ease), transform .6s var(--rp-ease); }
+    html.rp-js .rp-reveal.visible{ opacity:1; transform:none; }
+    .rp-counter{ font-family:'Sora',sans-serif; font-weight:800; font-size:1.9rem; color:var(--rp-text); }
+
+    /* ============================================================
+       COMMAND PALETTE  &  EMERGENCY MODAL  (shared layer behaviour)
+       ============================================================ */
+    .rp-layer{
+        position:fixed; inset:0; background:rgba(7,10,18,.74);
+        -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+        opacity:0; visibility:hidden;
+        transition:opacity .25s var(--rp-ease), visibility 0s linear .25s;
+    }
+    .rp-layer.open{ opacity:1; visibility:visible; transition-delay:0s; }
+    #cmdBackdrop{ z-index:9000; }
+    #sosModal{ z-index:8000; display:flex; align-items:center; justify-content:center; padding:1rem; }
+
+    .cmd-modal{
+        position:absolute; top:12%; left:50%; width:min(660px,92vw);
+        background:var(--rp-surface-solid); border-radius:22px;
+        border:1px solid var(--rp-border); box-shadow:var(--rp-sh-3); overflow:hidden;
+        transform:translateX(-50%) translateY(-20px) scale(.96); opacity:0;
+        transition:transform .3s var(--rp-spring), opacity .25s var(--rp-ease);
+    }
+    #cmdBackdrop.open .cmd-modal{ transform:translateX(-50%) translateY(0) scale(1); opacity:1; }
+    .cmd-search-wrap{ display:flex; align-items:center; gap:.8rem; padding:1rem 1.2rem; border-bottom:1px solid var(--rp-border); }
+    .cmd-search-wrap i{ color:var(--rp-red); font-size:1.05rem; }
+    #cmdInput{ border:none; outline:none; background:transparent; color:var(--rp-text); font-size:1rem; font-weight:600; flex:1; min-width:0; font-family:inherit; }
+    #cmdInput::placeholder{ color:var(--rp-muted); }
+    .cmd-kbd{ font-family:inherit; font-size:.72rem; padding:.2em .5em; background:var(--rp-surface-2); border:1px solid var(--rp-border); border-radius:6px; color:var(--rp-muted); }
+    .cmd-results{ max-height:min(360px,55vh); overflow-y:auto; padding:.5rem; }
+    .cmd-item{
+        display:flex; align-items:center; gap:.8rem; padding:.65rem .85rem; border-radius:12px; cursor:pointer;
+        color:var(--rp-text); font-size:.88rem; font-weight:600; transition:background .18s var(--rp-ease), color .18s var(--rp-ease);
+    }
+    .cmd-item.selected{ background:var(--rp-grad-soft); color:var(--rp-red); }
+    .cmd-item i{ width:28px; height:28px; border-radius:9px; background:var(--rp-surface-2); border:1px solid var(--rp-border); display:grid; place-items:center; font-size:.78rem; flex:0 0 28px; }
+    .cmd-item.selected i{ background:var(--rp-grad); color:#fff; border-color:transparent; }
+    .cmd-group-label{ font-size:.7rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--rp-muted); padding:.5rem .85rem .25rem; }
+    .cmd-empty{ text-align:center; padding:2.5rem 1rem; color:var(--rp-muted); font-size:.9rem; }
+    .cmd-empty i{ display:block; font-size:1.4rem; margin-bottom:.5rem; }
+
+    .sos-modal{
+        width:min(540px,100%); max-height:92vh; overflow-y:auto; background:var(--rp-surface-solid); border-radius:28px;
+        border:1px solid rgba(217,4,41,.3); box-shadow:0 0 0 1px rgba(217,4,41,.15), var(--rp-sh-3);
+        transform:translateY(30px) scale(.94); opacity:0;
+        transition:transform .4s var(--rp-spring), opacity .3s var(--rp-ease);
+    }
+    #sosModal.open .sos-modal{ transform:none; opacity:1; }
+    .sos-modal-header{ background:var(--rp-grad); padding:1.4rem 1.6rem; position:relative; overflow:hidden; display:flex; align-items:center; gap:1rem; }
+    .sos-modal-header::after{ content:''; position:absolute; inset:0 0 55% 0; background:linear-gradient(180deg,rgba(255,255,255,.22),transparent); pointer-events:none; }
+    .sos-modal-header h2{ font-family:'Sora',sans-serif; font-weight:800; font-size:1.1rem; margin:0; color:#fff; position:relative; z-index:1; }
+    .sos-modal-header p{ margin:0; color:rgba(255,255,255,.85); font-size:.82rem; position:relative; z-index:1; }
+    .sos-modal-close{ margin-left:auto; background:rgba(255,255,255,.2); border:none; border-radius:10px; width:34px; height:34px; color:#fff; cursor:pointer; position:relative; z-index:1; flex:0 0 34px; }
+    .sos-modal-close:hover{ background:rgba(255,255,255,.32); }
+    .sos-pulse-dot{ width:14px; height:14px; border-radius:50%; background:#fff; position:relative; flex:0 0 14px; z-index:1; }
+    .sos-pulse-dot::after{ content:''; position:absolute; inset:-5px; border:2px solid rgba(255,255,255,.8); border-radius:50%; animation:sosPing 1.4s cubic-bezier(0,0,.2,1) infinite; }
+    .sos-modal-body{ padding:1.4rem 1.6rem .8rem; display:grid; grid-template-columns:1fr 1fr; gap:.9rem; }
+    .sos-action-btn{
+        display:flex; align-items:center; gap:.8rem; padding:1rem 1.1rem; border-radius:16px;
+        border:1px solid var(--rp-border); background:var(--rp-surface-2); color:var(--rp-text)!important;
+        cursor:pointer; text-align:left; transition:all .25s var(--rp-spring);
+    }
+    .sos-action-btn:hover{ border-color:rgba(217,4,41,.4); background:var(--rp-grad-soft); transform:translateY(-3px); box-shadow:var(--rp-sh-2); }
+    .sos-action-btn .sa-ico{ width:38px; height:38px; border-radius:12px; display:grid; place-items:center; background:var(--rp-grad); color:#fff; font-size:.9rem; flex:0 0 38px; box-shadow:var(--rp-red-glow); }
+    .sos-action-btn .sa-txt{ display:flex; flex-direction:column; min-width:0; }
+    .sos-action-btn strong{ font-family:'Sora',sans-serif; font-size:.87rem; }
+    .sos-action-btn small{ color:var(--rp-muted); font-size:.72rem; }
+    .sos-modal-foot{ padding:.3rem 1.6rem 1.4rem; }
+    @media (max-width:480px){ .sos-modal-body{ grid-template-columns:1fr; } }
+
+    /* ============================================================
+       ACCESSIBILITY PANEL
+       ============================================================ */
+    .a11y-panel{
+        position:fixed; bottom:96px; right:22px; z-index:1050;
+        width:min(320px,92vw); background:var(--rp-surface-solid); border-radius:22px;
+        border:1px solid var(--rp-border); box-shadow:var(--rp-sh-3); padding:1.2rem;
+        transform:translateY(20px) scale(.94); opacity:0; visibility:hidden;
+        transition:transform .35s var(--rp-spring), opacity .25s var(--rp-ease), visibility 0s linear .35s;
+    }
+    .a11y-panel.open{ transform:none; opacity:1; visibility:visible; transition-delay:0s; }
+    .a11y-header{ font-family:'Sora',sans-serif; font-weight:800; font-size:.95rem; margin-bottom:.8rem; display:flex; align-items:center; gap:.55rem; color:var(--rp-text); }
+    .a11y-header i{ color:var(--rp-red); }
+    .a11y-header button{ margin-left:auto; background:transparent; border:none; color:var(--rp-muted); cursor:pointer; width:28px; height:28px; border-radius:8px; }
+    .a11y-header button:hover{ color:var(--rp-red); background:var(--rp-surface-2); }
+    .a11y-row{ display:flex; align-items:center; justify-content:space-between; gap:.8rem; padding:.6rem 0; border-bottom:1px solid var(--rp-border-2); }
+    .a11y-row:last-of-type{ border-bottom:none; }
+    .a11y-label{ font-size:.84rem; font-weight:700; color:var(--rp-text); }
+    .a11y-label small{ display:block; font-size:.72rem; color:var(--rp-muted); font-weight:500; }
+    .rp-toggle{ position:relative; width:44px; height:24px; flex:0 0 44px; }
+    .rp-toggle input{ position:absolute; inset:0; width:100%; height:100%; margin:0; opacity:0; cursor:pointer; z-index:2; }
+    .rp-toggle-track{ position:absolute; inset:0; border-radius:99px; background:var(--rp-surface-2); border:1px solid var(--rp-border); transition:background .25s var(--rp-ease); }
+    .rp-toggle-thumb{ position:absolute; top:3px; left:3px; width:18px; height:18px; border-radius:50%; background:#fff; box-shadow:0 1px 4px rgba(0,0,0,.28); transition:transform .25s var(--rp-spring); pointer-events:none; }
+    .rp-toggle input:checked ~ .rp-toggle-track{ background:var(--rp-grad); border-color:transparent; }
+    .rp-toggle input:checked ~ .rp-toggle-thumb{ transform:translateX(20px); }
+    .rp-toggle input:focus-visible ~ .rp-toggle-track{ box-shadow:0 0 0 3px rgba(217,4,41,.4); }
+    .a11y-font-ctrl{ display:flex; align-items:center; gap:.5rem; }
+    .a11y-font-btn{ min-width:32px; height:30px; padding:0 .4rem; border-radius:8px; border:1px solid var(--rp-border); background:var(--rp-surface-2); color:var(--rp-text); cursor:pointer; font-weight:800; font-size:.8rem; transition:all .2s var(--rp-ease); }
+    .a11y-font-btn:hover{ background:var(--rp-grad); color:#fff; border-color:transparent; }
+    .a11y-font-val{ font-weight:700; font-size:.82rem; min-width:2.6rem; text-align:center; color:var(--rp-text); }
+    .a11y-foot{ margin-top:.8rem; padding-top:.8rem; border-top:1px solid var(--rp-border-2); display:flex; gap:.5rem; flex-wrap:wrap; }
+
+    /* ============================================================
+       TOASTS
+       ============================================================ */
+    .rp-toast-container{ position:fixed; top:1.2rem; right:1.2rem; z-index:9500; display:flex; flex-direction:column; gap:.6rem; width:min(360px,calc(100vw - 2.4rem)); pointer-events:none; }
+    .rp-toast{
+        pointer-events:auto; position:relative; display:flex; align-items:flex-start; gap:.7rem;
+        background:var(--rp-surface-solid); border:1px solid var(--rp-border); border-radius:16px;
+        padding:.9rem 2.4rem .9rem 1.1rem; box-shadow:var(--rp-sh-3);
+        animation:toastIn .4s var(--rp-spring) both;
+    }
+    @keyframes toastIn{ from{opacity:0; transform:translateX(40px) scale(.95);} to{opacity:1; transform:none;} }
+    .rp-toast.exit{ animation:toastOut .3s var(--rp-ease) forwards; }
+    @keyframes toastOut{ to{opacity:0; transform:translateX(50px) scale(.92);} }
+    .rp-toast::before{ content:''; position:absolute; left:0; top:10px; bottom:10px; width:3px; border-radius:99px; background:var(--rp-grad); }
+    .rp-toast.t-success::before{ background:linear-gradient(135deg,#34d399,#059669); }
+    .rp-toast.t-warn::before{ background:linear-gradient(135deg,#fbbf24,#d97706); }
+    .rp-toast.t-info::before{ background:linear-gradient(135deg,#60a5fa,#2563eb); }
+    .toast-ico{ width:32px; height:32px; flex:0 0 32px; border-radius:10px; display:grid; place-items:center; background:var(--rp-grad-soft); color:var(--rp-red); border:1px solid rgba(217,4,41,.18); font-size:.8rem; }
+    .rp-toast.t-success .toast-ico{ background:rgba(16,185,129,.14); color:#059669; border-color:rgba(16,185,129,.25); }
+    .rp-toast.t-warn .toast-ico{ background:rgba(245,158,11,.14); color:#d97706; border-color:rgba(245,158,11,.25); }
+    .rp-toast.t-info .toast-ico{ background:rgba(37,99,235,.14); color:#2563eb; border-color:rgba(37,99,235,.25); }
+    .toast-body{ flex:1; min-width:0; }
+    .toast-title{ font-family:'Sora',sans-serif; font-weight:800; font-size:.84rem; color:var(--rp-text); margin-bottom:.15rem; }
+    .toast-msg{ font-size:.8rem; color:var(--rp-subtext); overflow-wrap:anywhere; }
+    .toast-close{ position:absolute; top:.6rem; right:.6rem; width:26px; height:26px; background:transparent; border:none; color:var(--rp-muted); cursor:pointer; font-size:.85rem; border-radius:8px; }
+    .toast-close:hover{ color:var(--rp-red); background:var(--rp-surface-2); }
+
+    /* ============================================================
+       PWA INSTALL BANNER
+       ============================================================ */
+    .pwa-banner{
+        position:fixed; bottom:24px; left:50%; z-index:1046;
+        width:min(420px,92vw); background:var(--rp-surface-solid); border-radius:20px;
+        border:1px solid var(--rp-border); box-shadow:var(--rp-sh-3); padding:1rem 1.2rem;
+        display:flex; align-items:center; gap:.9rem;
+        transform:translateX(-50%) translateY(140%); visibility:hidden;
+        transition:transform .45s var(--rp-spring), visibility 0s linear .45s;
+    }
+    .pwa-banner.show{ transform:translateX(-50%) translateY(0); visibility:visible; transition-delay:0s; }
+    .pwa-icon{ width:46px; height:46px; border-radius:14px; background:var(--rp-grad); color:#fff; display:grid; place-items:center; font-size:1.2rem; flex:0 0 46px; box-shadow:var(--rp-red-glow); }
+    .pwa-text{ flex:1; min-width:0; }
+    .pwa-text strong{ font-family:'Sora',sans-serif; font-size:.88rem; display:block; color:var(--rp-text); }
+    .pwa-text span{ font-size:.75rem; color:var(--rp-muted); }
+    .pwa-close{ background:transparent; border:none; color:var(--rp-muted); cursor:pointer; font-size:.85rem; width:28px; height:28px; border-radius:8px; }
+    .pwa-close:hover{ color:var(--rp-red); background:var(--rp-surface-2); }
+
+    /* ------------------------------------------------------- SOS FAB / DOCK */
     .sos-dock{ position:fixed; right:22px; bottom:22px; z-index:1045; display:flex; flex-direction:column; align-items:flex-end; gap:12px; }
     .sos-fab-3d{
         position:relative; display:flex; align-items:center; gap:11px;
-        padding:.95rem 1.5rem; border-radius:999px;
+        padding:.95rem 1.5rem; border-radius:999px; border:none; cursor:pointer;
         background:var(--rp-grad); color:#fff!important;
         font-family:'Sora',sans-serif; font-weight:800; font-size:.9rem;
         box-shadow:0 14px 34px -8px rgba(217,4,41,.65), inset 0 1px 0 rgba(255,255,255,.45), inset 0 -5px 12px rgba(0,0,0,.25);
@@ -879,15 +1439,52 @@
     @keyframes sosPing{ 70%,100%{ transform:scale(1.9); opacity:0; } }
 
     .rp-top-btn{
-        width:46px; height:46px; border-radius:15px; display:grid; place-items:center;
+        width:46px; height:46px; border-radius:15px; display:grid; place-items:center; cursor:pointer;
         background:var(--rp-surface); -webkit-backdrop-filter:blur(16px); backdrop-filter:blur(16px);
         border:1px solid var(--rp-border); color:var(--rp-text);
         box-shadow:var(--rp-sh-2), var(--rp-hi);
-        opacity:0; transform:translateY(14px) scale(.85); pointer-events:none;
+        opacity:0; transform:translateY(14px) scale(.85); pointer-events:none; visibility:hidden;
         transition:all .35s var(--rp-spring);
     }
-    .rp-top-btn.show{ opacity:1; transform:none; pointer-events:auto; }
+    .rp-top-btn.show{ opacity:1; transform:none; pointer-events:auto; visibility:visible; }
     .rp-top-btn:hover{ color:var(--rp-red); transform:translateY(-4px); }
+
+    /* ---------------------------------------------- MOBILE BOTTOM NAV */
+    .mobile-nav{
+        display:none; position:fixed; bottom:0; left:0; right:0; z-index:1040;
+        background:var(--rp-surface); -webkit-backdrop-filter:blur(22px) saturate(180%); backdrop-filter:blur(22px) saturate(180%);
+        border-top:1px solid var(--rp-border);
+        padding:.5rem .5rem calc(.5rem + env(safe-area-inset-bottom, 0px));
+        box-shadow:0 -8px 30px -8px rgba(0,0,0,.18);
+    }
+    .mobile-nav-inner{ display:flex; align-items:center; justify-content:space-around; }
+    .mob-btn{
+        display:flex; flex-direction:column; align-items:center; gap:.2rem; min-width:56px; max-width:76px;
+        padding:.4rem .5rem; border-radius:14px; color:var(--rp-muted)!important; font-size:.65rem; font-weight:700;
+        border:none; background:transparent; cursor:pointer; transition:all .25s var(--rp-spring);
+    }
+    .mob-btn span:last-child{ max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .mob-btn i{ font-size:1.1rem; transition:transform .25s var(--rp-spring); }
+    .mob-btn.active, .mob-btn:hover{ color:var(--rp-red)!important; }
+    .mob-btn.active i, .mob-btn:hover i{ transform:translateY(-2px); }
+    .mob-ico-wrap{ position:relative; }
+    .mob-btn.active .mob-ico-wrap::after{ content:''; position:absolute; bottom:-5px; left:50%; transform:translateX(-50%); width:4px; height:4px; border-radius:50%; background:var(--rp-red); }
+    .mob-sos-btn{
+        width:54px; height:54px; border-radius:17px; border:none; cursor:pointer;
+        background:var(--rp-grad); color:#fff; font-size:1.25rem; display:grid; place-items:center;
+        box-shadow:var(--rp-red-glow), inset 0 1px 0 rgba(255,255,255,.38), inset 0 -4px 8px rgba(0,0,0,.2);
+        transform:translateY(-10px); transition:transform .3s var(--rp-spring);
+    }
+    .mob-sos-btn:hover{ transform:translateY(-14px) scale(1.06); }
+
+    /* ---------------------------------------------------- SHARE BUTTONS */
+    .share-bar{ display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; }
+    .share-btn{
+        display:inline-flex; align-items:center; gap:.45rem; padding:.42rem .85rem; border-radius:999px;
+        font-size:.76rem; font-weight:700; border:1.5px solid var(--rp-border); background:var(--rp-surface); color:var(--rp-text);
+        cursor:pointer; transition:all .22s var(--rp-spring);
+    }
+    .share-btn:hover{ background:var(--rp-grad); color:#fff; border-color:transparent; box-shadow:var(--rp-red-glow); }
 
     /* --------------------------------------------------------- FOOTER */
     .footer-2026{
@@ -918,7 +1515,6 @@
     .f-heart{ color:var(--rp-red); animation:beat 1.6s ease-in-out infinite; display:inline-block; }
     @keyframes beat{ 0%,100%{transform:scale(1);} 18%{transform:scale(1.28);} 34%{transform:scale(1);} 52%{transform:scale(1.18);} }
 
-    /* ---------- Developer credit avatar (footer) ---------- */
     .dev-credit{
         display:inline-flex; align-items:center; gap:.55rem;
         padding:.3rem .9rem .3rem .3rem; border-radius:999px;
@@ -935,16 +1531,13 @@
         position:relative; overflow:hidden;
     }
     .dev-avatar img{ width:100%; height:100%; object-fit:cover; border-radius:50%; }
-    .dev-avatar::after{
-        content:''; position:absolute; inset:0; border-radius:50%;
-        background:linear-gradient(160deg,rgba(255,255,255,.5),transparent 55%);
-    }
+    .dev-avatar::after{ content:''; position:absolute; inset:0; border-radius:50%; background:linear-gradient(160deg,rgba(255,255,255,.5),transparent 55%); }
 
     /* -------------------------------------------------------- UTILITY */
     .rp-page-fade{ animation:pageIn .55s var(--rp-ease) both; }
     @keyframes pageIn{ from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:none;} }
 
-    /* --------------------------------------------------------- MOBILE */
+    /* --------------------------------------------------------- RESPONSIVE */
     @media (max-width: 1199.98px){
         .navbar-collapse{
             margin-top:.8rem; padding:.85rem; border-radius:22px;
@@ -958,31 +1551,874 @@
         .sos-dock{ right:14px; bottom:14px; }
         .sos-fab-3d{ padding:.85rem 1.15rem; font-size:.82rem; }
         .stat-value{ font-size:1.9rem; }
+        .icon-pill{ width:auto; padding:0 .85rem; }
+    }
+    @media (max-width: 991.98px){
+        .mobile-nav{ display:block; }
+        body{ padding-bottom:calc(74px + env(safe-area-inset-bottom, 0px)); }
+        .sos-dock{ bottom:calc(86px + env(safe-area-inset-bottom, 0px)); right:14px; }
+        .sos-fab-3d{ display:none; }              /* SOS lives in the bottom bar on mobile */
+        .a11y-panel{ bottom:calc(88px + env(safe-area-inset-bottom, 0px)); right:14px; }
+        .pwa-banner{ bottom:calc(90px + env(safe-area-inset-bottom, 0px)); }
     }
     @media (max-width: 575.98px){
-        .sos-fab-3d span:last-child{ display:none; }
-        .sos-fab-3d{ width:58px; height:58px; justify-content:center; padding:0; border-radius:50%; }
         .brand-sub{ display:none; }
+        .rp-toast-container{ top:.8rem; right:.8rem; }
     }
+
+    /* ============================================================
+       MOBILE STRUCTURE PROTECTION + COMPACT 3D ICON SYSTEM
+       Keeps the premium desktop visual language while preventing
+       oversized boxes, overflow and cramped Bootstrap layouts.
+       ============================================================ */
+    *, *::before, *::after{ box-sizing:border-box; }
+
+    main, main .container, main .container-fluid,
+    main .row, main [class*="col-"]{
+        min-width:0;
+    }
+    main img, main video, main iframe, main svg, main canvas{
+        max-width:100%;
+    }
+    main h1, main h2, main h3, main h4, main h5, main h6,
+    main p, main a, main span, main button, main label{
+        overflow-wrap:anywhere;
+    }
+
+    /* Keep 3D effect decorative on touch devices instead of letting it
+       compete with content. */
+    @media (max-width: 991.98px){
+        .rp-3d-bg{
+            opacity:.86;
+            perspective:none;
+        }
+        .rp-depth-plane{
+            width:122vw;
+            height:52vh;
+            top:38%;
+            opacity:.16;
+            transform:translate3d(-50%,-50%,0) rotateX(48deg) !important;
+        }
+        .rp-3d-orbit{
+            width:92vw;
+            max-width:760px;
+            opacity:.30;
+            transform:translate3d(-50%,-50%,0) rotateX(60deg) rotateZ(-10deg) !important;
+        }
+        .rp-3d-orbit.o2{
+            width:68vw;
+            max-width:560px;
+            transform:translate3d(-50%,-50%,0) rotateX(57deg) rotateZ(18deg) translateZ(-50px) !important;
+        }
+        .rp-3d-orbit.o3{
+            width:42vw;
+            max-width:340px;
+            transform:translate3d(-50%,-50%,0) rotateX(68deg) rotateZ(7deg) translateZ(-90px) !important;
+        }
+        .rp-3d-core{
+            width:150px;
+            height:150px;
+            margin:-75px;
+            top:39%;
+            transform:translate3d(0,0,20px) !important;
+            opacity:.58;
+        }
+        .rp-ambient-light{ filter:blur(42px); opacity:.22; }
+
+        /* Generic premium icon boxes */
+        .stat-icon-wrapper,
+        .rp-icon-3d,
+        .rph-icon{
+            width:52px;
+            height:52px;
+            flex:0 0 52px;
+            border-radius:16px;
+            font-size:1.15rem;
+            transform:perspective(500px) rotateX(5deg) rotateY(-7deg);
+        }
+        .stat-icon-wrapper::before,
+        .rp-icon-3d::before,
+        .rp-icon-auto::before{ filter:blur(9px); }
+
+        .rp-icon-auto{
+            width:52px !important;
+            height:52px !important;
+            min-width:52px !important;
+            min-height:52px !important;
+            max-width:52px !important;
+            max-height:52px !important;
+            border-radius:16px !important;
+            font-size:1.08rem !important;
+            transform:perspective(500px) rotateX(5deg) rotateY(-7deg) !important;
+        }
+        .rp-icon-auto i{ font-size:1em !important; }
+
+        .stat-card-modern,
+        .rp-feature-card,
+        .rp-3d-card,
+        .rp-guideline-card,
+        .rp-card{
+            border-radius:20px;
+        }
+        .stat-card-modern,
+        .rp-feature-card,
+        .rp-3d-card{
+            padding:1.1rem;
+        }
+        .stat-card-modern:hover,
+        .rp-feature-card:hover,
+        .rp-3d-card:hover{
+            transform:translateY(-3px) !important;
+        }
+        .stat-value{ font-size:clamp(1.55rem,6vw,1.9rem); }
+
+        .rp-page-hero{
+            gap:.8rem;
+            margin-bottom:1.15rem;
+        }
+        .rp-page-hero h1,.rp-page-hero h2{
+            font-size:clamp(1.35rem,6vw,2rem);
+        }
+        .rp-page-hero p{ font-size:.82rem; }
+
+        .rp-list-row{
+            align-items:flex-start;
+            gap:.8rem;
+            padding:.9rem;
+            border-radius:16px;
+        }
+        .rp-list-row .rlr-icon{
+            width:44px;
+            height:44px;
+            flex:0 0 44px;
+            border-radius:13px;
+            font-size:1rem;
+        }
+        .rp-list-row .rlr-name{ font-size:.92rem; }
+        .rp-list-row .rlr-meta{ font-size:.74rem; }
+        .rp-call-btn{
+            width:100%;
+            justify-content:center;
+            padding:.58rem .9rem;
+            font-size:.78rem;
+        }
+
+        .share-bar{ gap:.35rem; }
+        .share-btn{
+            min-width:0;
+            padding:.4rem .65rem;
+            font-size:.7rem;
+        }
+
+        .btn-rp{
+            min-height:42px;
+            padding:.58rem .9rem;
+            font-size:.78rem;
+            max-width:100%;
+        }
+        .btn-rp-sm{
+            min-height:38px;
+            padding:.42rem .72rem;
+            font-size:.72rem;
+        }
+        .btn-rp-chip{
+            min-height:44px;
+            padding:.65rem .7rem;
+            font-size:.85rem;
+        }
+
+        .card-body{ padding:1.1rem !important; }
+        .rp-card-body{ padding:1.1rem; }
+        .rp-card-header{ padding:.95rem 1.1rem; }
+        .card-header{ padding:.95rem 1.1rem !important; }
+        .rp-guideline-card{ padding:1.05rem; }
+    }
+
+    @media (max-width: 767.98px){
+        .navbar-custom{ min-height:62px; }
+        .navbar-brand{ font-size:1rem; gap:.55rem !important; }
+        .brand-badge{ width:38px; height:38px; border-radius:13px; }
+        .navbar-toggler{ padding:.32rem .48rem; border-radius:11px; }
+
+        .navbar-collapse{
+            margin-top:.55rem;
+            padding:.65rem;
+            border-radius:18px;
+            max-height:70vh;
+        }
+        .navbar-nav .nav-link{
+            padding:.62rem .68rem !important;
+            font-size:.86rem;
+            border-radius:12px;
+        }
+        .navbar-nav .nav-link .nav-ico{
+            width:30px;
+            height:30px;
+            border-radius:10px;
+            font-size:.78rem;
+        }
+        .rp-pill{
+            height:36px;
+            padding:0 .65rem;
+            font-size:.72rem;
+            border-radius:12px;
+        }
+        .theme-toggle-btn{ width:36px; height:36px; border-radius:12px; }
+
+        main .row{
+            --bs-gutter-x: .8rem;
+            --bs-gutter-y: .8rem;
+        }
+        main .container,
+        main .container-fluid{
+            padding-left:.8rem;
+            padding-right:.8rem;
+        }
+
+        .stat-card-modern,
+        .rp-feature-card,
+        .rp-3d-card{
+            padding:1rem;
+            border-radius:18px;
+        }
+        .stat-icon-wrapper,
+        .rp-icon-3d,
+        .rph-icon,
+        .rp-icon-auto{
+            width:48px !important;
+            height:48px !important;
+            min-width:48px !important;
+            min-height:48px !important;
+            max-width:48px !important;
+            max-height:48px !important;
+            border-radius:15px !important;
+            font-size:1rem !important;
+        }
+        .stat-card-modern .stat-icon-wrapper{ margin-bottom:.75rem; }
+        .rp-feature-card .rp-icon-3d{ margin-bottom:.8rem; }
+        .rp-feature-card h5,.rp-feature-card h6{ font-size:.95rem; }
+        .rp-feature-card p{ font-size:.78rem; line-height:1.55; }
+
+        .rp-empty-state{ padding:2rem 1rem; }
+        .rp-empty-state i{ width:54px; height:54px; font-size:1.25rem; }
+
+        .sos-dock{ right:10px; bottom:calc(82px + env(safe-area-inset-bottom,0px)); }
+        .rp-top-btn{ width:42px; height:42px; border-radius:13px; }
+        .a11y-panel{ right:10px !important; }
+    }
+
+    @media (max-width: 575.98px){
+        .rp-3d-bg{ opacity:.72; }
+        .rp-3d-orbit{ width:118vw; opacity:.22; }
+        .rp-3d-orbit.o2{ width:78vw; opacity:.18; }
+        .rp-3d-orbit.o3{ width:48vw; opacity:.13; }
+        .rp-3d-core{
+            width:118px;
+            height:118px;
+            margin:-59px;
+            top:36%;
+            opacity:.40;
+        }
+        .rp-depth-plane{ width:145vw; height:44vh; top:36%; opacity:.11; }
+        .rp-ambient-light{ width:230px; height:230px; opacity:.16; }
+
+        .rp-topstrip{ font-size:.68rem; padding:.38rem .65rem; }
+        .rp-topstrip .container{ padding-left:.35rem; padding-right:.35rem; }
+
+        .navbar-custom{ padding-left:0 !important; padding-right:0 !important; }
+        .navbar-brand{ font-size:.92rem; }
+        .brand-badge{ width:36px; height:36px; border-radius:12px; }
+        .brand-sub{ display:none; }
+
+        .mobile-nav{
+            padding:.42rem .25rem calc(.42rem + env(safe-area-inset-bottom,0px));
+        }
+        .mobile-nav-inner{ gap:.05rem; }
+        .mob-btn{
+            min-width:48px;
+            max-width:64px;
+            padding:.32rem .25rem;
+            font-size:.58rem;
+            gap:.15rem;
+        }
+        .mob-btn i{ font-size:1rem; }
+        .mob-sos-btn{
+            width:48px;
+            height:48px;
+            border-radius:15px;
+            font-size:1.1rem;
+            transform:translateY(-8px);
+        }
+
+        .rp-page-hero .rph-icon{
+            width:44px !important;
+            height:44px !important;
+            min-width:44px !important;
+            min-height:44px !important;
+            max-width:44px !important;
+            max-height:44px !important;
+            border-radius:13px !important;
+            font-size:.95rem !important;
+        }
+        .rp-page-hero h1,.rp-page-hero h2{
+            font-size:1.2rem;
+            letter-spacing:-.025em;
+        }
+        .rp-page-hero p{ font-size:.74rem; }
+
+        .stat-card-modern,
+        .rp-feature-card,
+        .rp-3d-card,
+        .rp-guideline-card,
+        .rp-card{
+            border-radius:16px;
+        }
+        .stat-card-modern,
+        .rp-feature-card,
+        .rp-3d-card{ padding:.85rem; }
+        .stat-card-modern .stat-icon-wrapper,
+        .rp-icon-3d,
+        .rp-icon-auto{
+            width:44px !important;
+            height:44px !important;
+            min-width:44px !important;
+            min-height:44px !important;
+            max-width:44px !important;
+            max-height:44px !important;
+            border-radius:13px !important;
+            font-size:.92rem !important;
+        }
+        .stat-card-modern .stat-icon-wrapper{ margin-bottom:.65rem; }
+        .stat-value{ font-size:1.45rem; }
+        .stat-label{ font-size:.72rem; }
+
+        .rp-list-row{ padding:.78rem; border-radius:14px; }
+        .rp-list-row .rlr-icon{
+            width:40px;
+            height:40px;
+            flex-basis:40px;
+            border-radius:12px;
+            font-size:.92rem;
+        }
+        .rp-list-row .rlr-name{ font-size:.84rem; }
+        .rp-list-row .rlr-meta{ font-size:.7rem; }
+
+        .card-body{ padding:.9rem !important; }
+        .rp-card-body{ padding:.9rem; }
+        .rp-guideline-card{ padding:.9rem; }
+        .card-header{ padding:.82rem .9rem !important; }
+        .rp-card-header{ padding:.82rem .9rem; }
+
+        .btn-rp{ width:auto; max-width:100%; min-height:40px; font-size:.73rem; }
+        .btn-rp-sm{ min-height:36px; font-size:.68rem; }
+        .btn-rp-chip{ min-height:42px; padding:.58rem .55rem; font-size:.8rem; }
+        .share-btn{ padding:.36rem .55rem; font-size:.66rem; }
+    }
+
+    @media (max-width: 380px){
+        main .container,
+        main .container-fluid{ padding-left:.65rem; padding-right:.65rem; }
+        main .row{ --bs-gutter-x:.6rem; --bs-gutter-y:.65rem; }
+        .navbar-brand{ font-size:.84rem; }
+        .brand-badge{ width:34px; height:34px; }
+        .mobile-nav-inner{ gap:0; }
+        .mob-btn{ min-width:44px; max-width:58px; font-size:.53rem; }
+        .mob-sos-btn{ width:45px; height:45px; font-size:1rem; }
+        .stat-icon-wrapper,
+        .rp-icon-3d,
+        .rp-icon-auto{ width:42px !important; height:42px !important; min-width:42px !important; min-height:42px !important; max-width:42px !important; max-height:42px !important; }
+        .stat-value{ font-size:1.32rem; }
+        .rp-page-hero h1,.rp-page-hero h2{ font-size:1.08rem; }
+    }
+
+    /* ---------------------------------------- LOW EFFECTS / REDUCED MOTION */
+    html.rp-lowfx .rp-3d-bg{ opacity:.16; }
+    html.rp-lowfx .rp-ambient-light,
+    html.rp-lowfx .rp-3d-orbit,
+    html.rp-lowfx .rp-depth-shard{ display:none!important; }
+    html.rp-lowfx .rp-3d-core{ animation:none; }
+    html.rp-lowfx .navbar-custom, html.rp-lowfx .rp-card, html.rp-lowfx .footer-2026,
+    html.rp-lowfx .dropdown-menu, html.rp-lowfx .mobile-nav{ -webkit-backdrop-filter:none; backdrop-filter:none; }
+
+    html.rp-nomotion *, html.rp-nomotion *::before, html.rp-nomotion *::after{
+        animation-duration:.001ms!important; animation-iteration-count:1!important;
+        transition-duration:.001ms!important; scroll-behavior:auto!important;
+    }
+    html.rp-nomotion .pulse-dot{ display:none; }
+    html.rp-nomotion .rp-3d-bg *{ animation:none!important; }
+    html.rp-nomotion .rp-3d-bg{ --mx:0; --my:0; }
 
     @media (prefers-reduced-motion: reduce){
         *,*::before,*::after{ animation-duration:.001ms!important; animation-iteration-count:1!important; transition-duration:.001ms!important; scroll-behavior:auto!important; }
     }
+
+
+    /* ============================================================
+       MOBILE NAV + RESPONSIVE CONTENT PATCH
+       Fixes hamburger menu stacking, mobile dropdown overflow, and
+       cards/sections escaping the viewport on small screens.
+       ============================================================ */
+    @media (max-width:1199.98px){
+        .navbar-custom{ overflow:visible; }
+        .navbar-custom > .container-fluid{ flex-wrap:wrap; }
+        .navbar-brand{ min-width:0; max-width:calc(100% - 58px); }
+        .navbar-brand > span:last-child{ min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .navbar-toggler{ flex:0 0 auto; margin-left:auto; z-index:3; }
+        #navbarNav{
+            flex-basis:100%; width:100%; min-width:0;
+            padding:0; margin-left:0; margin-right:0;
+        }
+        #navbarNav.show{ display:block; }
+        #navbarNav.collapsing{ display:block; height:auto!important; overflow:hidden; transition:height .28s ease; }
+        #navbarNav .navbar-nav{
+            width:100%; min-width:0; flex-direction:column; align-items:stretch!important;
+            flex-wrap:nowrap; gap:.25rem!important;
+        }
+        #navbarNav .navbar-nav > .nav-item{ width:100%; min-width:0; }
+        #navbarNav .navbar-nav .nav-link{
+            width:100%; min-height:44px; white-space:normal!important;
+            justify-content:flex-start; text-align:left;
+        }
+        #navbarNav > .navbar-nav:last-child{ margin-top:.55rem!important; padding-top:.55rem; border-top:1px solid var(--rp-border); }
+        #navbarNav > .navbar-nav:last-child .btn-rp{ width:100%; justify-content:center; }
+
+        /* Bootstrap dropdowns become full-width, stacked sections on mobile. */
+        #navbarNav .dropdown-menu,
+        #navbarNav .dropdown-menu.show{
+            position:static!important; inset:auto!important; transform:none!important;
+            width:100%; min-width:0; max-width:100%; margin:.25rem 0 0!important;
+            padding:.35rem; border-radius:14px; box-shadow:none;
+            animation:none; overflow:visible;
+        }
+        #navbarNav .dropdown-menu::before{ display:none; }
+        #navbarNav .dropdown-item{ min-height:44px; width:100%; white-space:normal; }
+        #navbarNav .dropdown-item:hover{ transform:none; }
+        .navbar-collapse{ max-height:calc(100dvh - 78px); overflow-y:auto; overscroll-behavior:contain; }
+    }
+
+    @media (max-width:767.98px){
+        html, body{ max-width:100%; overflow-x:hidden; }
+        main{ width:100%; max-width:100%; overflow-x:clip; }
+        main .container, main .container-fluid{ width:100%; max-width:100%; }
+        main .row{ width:100%; max-width:100%; margin-left:0; margin-right:0; }
+        main .row > *, main [class*="col-"]{ min-width:0; max-width:100%; }
+        main .card, main .rp-card, main .stat-card-modern, main .rp-feature-card,
+        main .rp-3d-card, main .rp-guideline-card{ max-width:100%; min-width:0; overflow:hidden; }
+        main .table-responsive{ max-width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+        main pre, main code{ max-width:100%; overflow-x:auto; white-space:pre-wrap; overflow-wrap:anywhere; }
+        main .d-flex{ min-width:0; }
+        main .d-flex > *{ min-width:0; }
+        .rp-page-hero, .rp-card-header, .card-header{ flex-wrap:wrap; }
+        .rp-page-hero > *, .rp-card-header > *, .card-header > *{ min-width:0; max-width:100%; }
+        .rp-page-hero p, .rp-card p, .rp-feature-card p, .rp-guideline-card li{ overflow-wrap:anywhere; }
+        .share-bar, .btn-group{ max-width:100%; flex-wrap:wrap; }
+        .share-btn, .btn-rp{ white-space:normal; }
+    }
+
+    @media (max-width:380px){
+        #navbarNav .navbar-collapse{ padding:.55rem; }
+        .navbar-brand{ max-width:calc(100% - 52px); }
+        .navbar-brand > span:last-child{ font-size:.8rem; }
+        .navbar-toggler{ padding:.3rem .45rem; }
+    }
+
+
+    /* ============================================================
+       HOMEPAGE POLISH + MOBILE-FIRST SCALE SYSTEM
+       ============================================================ */
+    .rp-page-fade{ animation:rpHomeEnter .7s cubic-bezier(.22,1,.36,1) both; }
+    @keyframes rpHomeEnter{
+        from{ opacity:0; transform:translateY(18px) scale(.992); }
+        to{ opacity:1; transform:translateY(0) scale(1); }
+    }
+    .rp-page-hero{
+        position:relative; isolation:isolate; padding:clamp(1rem,2.5vw,1.65rem);
+        border:1px solid rgba(217,4,41,.12); border-radius:26px;
+        background:linear-gradient(135deg,rgba(255,255,255,.82),rgba(255,255,255,.42));
+        box-shadow:var(--rp-sh-2), inset 0 1px 0 rgba(255,255,255,.85);
+        overflow:hidden;
+    }
+    .rp-page-hero::before{
+        content:''; position:absolute; inset:auto -10% -75% 35%; height:220px; z-index:-1;
+        background:radial-gradient(circle,rgba(217,4,41,.16),transparent 66%);
+        filter:blur(10px); animation:rpHeroGlow 5s ease-in-out infinite alternate;
+    }
+    .rp-page-hero::after{
+        content:''; position:absolute; top:0; left:-40%; width:34%; height:100%;
+        background:linear-gradient(100deg,transparent,rgba(255,255,255,.48),transparent);
+        transform:skewX(-18deg); animation:rpHeroShine 7s ease-in-out infinite;
+        pointer-events:none;
+    }
+    @keyframes rpHeroGlow{ from{transform:translate3d(-12px,4px,0) scale(.9);opacity:.5;} to{transform:translate3d(18px,-8px,0) scale(1.15);opacity:1;} }
+    @keyframes rpHeroShine{ 0%,55%{left:-45%;opacity:0;} 65%{opacity:1;} 85%,100%{left:125%;opacity:0;} }
+    .rp-page-hero .rph-icon{ animation:rpIconFloat 4s ease-in-out infinite; }
+    @keyframes rpIconFloat{ 0%,100%{transform:perspective(600px) rotateX(8deg) rotateY(-10deg) translateY(0);} 50%{transform:perspective(600px) rotateX(0) rotateY(0) translateY(-5px);} }
+    .stat-card-modern, .rp-feature-card, .rp-3d-card, .rp-guideline-card{
+        will-change:transform; animation:rpCardIn .65s cubic-bezier(.22,1,.36,1) both;
+    }
+    .stat-card-modern:nth-child(2), .rp-feature-card:nth-child(2){ animation-delay:.08s; }
+    .stat-card-modern:nth-child(3), .rp-feature-card:nth-child(3){ animation-delay:.16s; }
+    .stat-card-modern:nth-child(4), .rp-feature-card:nth-child(4){ animation-delay:.24s; }
+    @keyframes rpCardIn{ from{opacity:0; transform:translateY(16px) scale(.97);} to{opacity:1; transform:translateY(0) scale(1);} }
+    .stat-card-modern:hover, .rp-feature-card:hover, .rp-3d-card:hover{ transform:translateY(-8px) rotateX(2deg) rotateY(-1deg); }
+    .stat-card-modern .stat-value{ font-variant-numeric:tabular-nums; letter-spacing:-.06em; }
+    .stat-card-modern .stat-label{ line-height:1.45; overflow-wrap:anywhere; }
+    .rp-feature-card{ position:relative; overflow:hidden; }
+    .rp-feature-card::after{
+        content:''; position:absolute; width:120px; height:120px; right:-46px; bottom:-54px;
+        border-radius:50%; background:var(--rp-grad-soft); filter:blur(2px); pointer-events:none;
+    }
+    [data-theme="dark"] .rp-page-hero{ background:linear-gradient(135deg,rgba(19,25,40,.88),rgba(19,25,40,.5)); }
+
+    @media (max-width:767.98px){
+        .rp-page-fade{ animation-duration:.45s; }
+        .rp-page-hero{ display:grid; grid-template-columns:auto minmax(0,1fr); gap:.75rem; align-items:center; padding:.9rem; border-radius:20px; margin-bottom:1rem; }
+        .rp-page-hero .rph-icon{ grid-row:span 2; }
+        .rp-page-hero h1,.rp-page-hero h2{ font-size:clamp(1.05rem,5.8vw,1.42rem); line-height:1.2; }
+        .rp-page-hero p{ grid-column:2; font-size:.76rem; line-height:1.55; }
+        .stat-card-modern, .rp-feature-card, .rp-3d-card, .rp-guideline-card{ animation-duration:.45s; }
+        .stat-card-modern:hover, .rp-feature-card:hover, .rp-3d-card:hover{ transform:translateY(-3px)!important; }
+        .stat-card-modern .stat-value{ font-size:clamp(1.35rem,7vw,1.8rem); }
+        .stat-card-modern .stat-label{ font-size:.68rem; }
+        .rp-feature-card h5,.rp-feature-card h6{ line-height:1.3; }
+    }
+    @media (max-width:380px){
+        .rp-page-hero{ padding:.78rem; gap:.6rem; border-radius:17px; }
+        .rp-page-hero p{ font-size:.7rem; }
+        .stat-card-modern, .rp-feature-card, .rp-3d-card, .rp-guideline-card{ border-radius:15px; padding:.78rem!important; }
+        .stat-card-modern .stat-value{ font-size:1.28rem; }
+        .stat-card-modern .stat-label{ font-size:.63rem; }
+    }
+    @media (prefers-reduced-motion: reduce){
+        .rp-page-fade, .rp-page-hero::before, .rp-page-hero::after, .rp-page-hero .rph-icon,
+        .stat-card-modern, .rp-feature-card, .rp-3d-card, .rp-guideline-card{ animation:none!important; }
+    }
+
+
+    /* ============================================================
+       FINAL MOBILE NAVIGATION FIX
+       Mobile-only: keeps every menu feature in a clean vertical
+       one-item-per-row layout. Desktop styling is untouched.
+       ============================================================ */
+    @media (max-width:1199.98px){
+        /* Main mobile menu = strict vertical stack */
+        #navbarNav{
+            width:100% !important;
+            flex-basis:100% !important;
+        }
+
+        #navbarNav > .navbar-nav,
+        #navbarNav .navbar-nav{
+            display:flex !important;
+            flex-direction:column !important;
+            flex-wrap:nowrap !important;
+            align-items:stretch !important;
+            justify-content:flex-start !important;
+            width:100% !important;
+            gap:.2rem !important;
+            margin-left:0 !important;
+            margin-right:0 !important;
+        }
+
+        #navbarNav .navbar-nav > .nav-item{
+            display:block !important;
+            width:100% !important;
+            max-width:100% !important;
+            flex:0 0 100% !important;
+            min-width:0 !important;
+        }
+
+        #navbarNav .navbar-nav > .nav-item > .nav-link,
+        #navbarNav .navbar-nav > .nav-item > .btn-rp,
+        #navbarNav .navbar-nav > .nav-item > .rp-pill,
+        #navbarNav .navbar-nav > .nav-item > .dropdown > .rp-pill{
+            display:flex !important;
+            width:100% !important;
+            min-width:0 !important;
+            box-sizing:border-box !important;
+        }
+
+        /* More / account / language dropdowns: one item per row */
+        #navbarNav .dropdown{
+            width:100% !important;
+            max-width:100% !important;
+        }
+
+        #navbarNav .dropdown-menu{
+            display:none;
+            position:static !important;
+            inset:auto !important;
+            float:none !important;
+            transform:none !important;
+            width:100% !important;
+            min-width:0 !important;
+            max-width:100% !important;
+            margin:.35rem 0 .1rem !important;
+            padding:.35rem !important;
+            border:1px solid var(--rp-border) !important;
+            border-radius:14px !important;
+            background:var(--rp-surface-2) !important;
+            box-shadow:inset 0 1px 0 rgba(255,255,255,.35), 0 4px 14px rgba(11,18,32,.06) !important;
+            overflow:visible !important;
+        }
+
+        #navbarNav .dropdown-menu.show{
+            display:block !important;
+        }
+
+        #navbarNav .dropdown-menu > li{
+            display:block !important;
+            width:100% !important;
+            max-width:100% !important;
+            margin:0 !important;
+            padding:0 !important;
+        }
+
+        #navbarNav .dropdown-menu > li + li{
+            margin-top:.18rem !important;
+        }
+
+        #navbarNav .dropdown-menu .dropdown-item,
+        #navbarNav .dropdown-menu form,
+        #navbarNav .dropdown-menu form .dropdown-item{
+            display:flex !important;
+            align-items:center !important;
+            flex-direction:row !important;
+            width:100% !important;
+            max-width:100% !important;
+            min-height:46px !important;
+            box-sizing:border-box !important;
+            margin:0 !important;
+            padding:.65rem .7rem !important;
+            white-space:normal !important;
+            text-align:left !important;
+            overflow:hidden !important;
+        }
+
+        #navbarNav .dropdown-menu .dropdown-item > span:last-child{
+            min-width:0 !important;
+            flex:1 1 auto !important;
+            overflow:hidden !important;
+        }
+
+        #navbarNav .dropdown-menu .dropdown-item small{
+            display:block !important;
+            line-height:1.35 !important;
+            overflow-wrap:anywhere !important;
+        }
+
+        #navbarNav .dropdown-menu .dropdown-divider{
+            margin:.3rem 0 !important;
+        }
+
+        /* Right-side controls also become full-width rows */
+        #navbarNav > .navbar-nav:last-child{
+            width:100% !important;
+            margin-top:.65rem !important;
+            padding-top:.65rem !important;
+            border-top:1px solid var(--rp-border) !important;
+        }
+
+        #navbarNav > .navbar-nav:last-child .nav-item{
+            width:100% !important;
+        }
+
+        #navbarNav > .navbar-nav:last-child .rp-pill,
+        #navbarNav > .navbar-nav:last-child .btn-rp{
+            width:100% !important;
+            min-height:44px !important;
+            justify-content:flex-start !important;
+        }
+
+        #navbarNav > .navbar-nav:last-child .theme-toggle-btn{
+            justify-content:flex-start !important;
+            padding-left:.85rem !important;
+        }
+    }
+
+    @media (max-width:575.98px){
+        /* Extra-small phones: compact but still one clean row per item */
+        .navbar-collapse{
+            margin-left:.15rem !important;
+            margin-right:.15rem !important;
+            padding:.55rem !important;
+            border-radius:16px !important;
+        }
+
+        #navbarNav .navbar-nav .nav-link{
+            min-height:44px !important;
+            padding:.58rem .62rem !important;
+            font-size:.82rem !important;
+        }
+
+        #navbarNav .navbar-nav .nav-link .nav-ico{
+            flex:0 0 30px !important;
+        }
+
+        #navbarNav .dropdown-menu .dropdown-item{
+            min-height:44px !important;
+            padding:.58rem .6rem !important;
+            font-size:.82rem !important;
+        }
+
+        #navbarNav .dropdown-menu .dd-ico{
+            flex:0 0 30px !important;
+            width:30px !important;
+            height:30px !important;
+        }
+    }
+
     </style>
 </head>
 <body>
 
-    <!-- Ambient 3D Background Layers -->
-    <div class="rp-aurora" aria-hidden="true">
-        <span class="rp-orb o1"></span>
-        <span class="rp-orb o2"></span>
-        <span class="rp-orb o3"></span>
+    <!-- Accessibility: skip link -->
+    <a href="#main-content" class="rp-skip">{% trans "Skip to main content" %}</a>
+
+    <!-- Premium 3D medical-tech background -->
+    <div class="rp-3d-bg" id="rp3dBg" aria-hidden="true">
+        <div class="rp-ambient-light l1"></div>
+        <div class="rp-ambient-light l2"></div>
+        <div class="rp-ambient-light l3"></div>
+
+        <div class="rp-depth-plane"></div>
+
+        <div class="rp-3d-orbit o1">
+            <span class="rp-orbit-node" style="--angle:18deg;"></span>
+            <span class="rp-orbit-node" style="--angle:152deg;"></span>
+            <span class="rp-orbit-node" style="--angle:286deg;"></span>
+        </div>
+
+        <div class="rp-3d-orbit o2">
+            <span class="rp-orbit-node" style="--angle:74deg;"></span>
+            <span class="rp-orbit-node" style="--angle:242deg;"></span>
+        </div>
+
+        <div class="rp-3d-orbit o3"></div>
+
+        <div class="rp-3d-core"></div>
+
+        <span class="rp-depth-shard s1" style="--left:12%;--top:24%;--z:-30px;--r:-18deg;--o:.30;"></span>
+        <span class="rp-depth-shard s2" style="--left:72%;--top:18%;--z:-80px;--r:14deg;--o:.18;"></span>
+        <span class="rp-depth-shard s3" style="--left:20%;--top:72%;--z:-60px;--r:22deg;--o:.22;"></span>
+        <span class="rp-depth-shard s4" style="--left:77%;--top:68%;--z:-110px;--r:-12deg;--o:.16;"></span>
+
+        <div class="rp-vignette"></div>
     </div>
-    <div class="rp-grid-mask" aria-hidden="true"></div>
-    <div class="rp-grain grain-overlay" aria-hidden="true"></div>
 
     <!-- Scroll Progress -->
     <div class="rp-progress" id="rpProgress" aria-hidden="true"></div>
+
+    <!-- Offline / back-online banner -->
+    <div class="rp-offline-bar" id="offlineBar" role="status" aria-live="polite">
+        <i class="fas fa-triangle-exclamation" id="offlineIcon" aria-hidden="true"></i>
+        <span id="offlineMsg"></span>
+    </div>
+
+    <!-- Toast container -->
+    <div class="rp-toast-container" id="toastContainer" aria-live="polite" aria-atomic="false"></div>
+
+    <!-- ===================== COMMAND PALETTE (Ctrl/⌘ + K) ===================== -->
+    <div class="rp-layer" id="cmdBackdrop" role="dialog" aria-modal="true" aria-label="{% trans 'Search pages and actions' %}" aria-hidden="true">
+        <div class="cmd-modal">
+            <div class="cmd-search-wrap">
+                <i class="fas fa-magnifying-glass" aria-hidden="true"></i>
+                <input type="text" id="cmdInput" role="combobox" aria-expanded="true" aria-controls="cmdResults" aria-autocomplete="list"
+                       placeholder="{% trans 'Search pages, actions…' %}" autocomplete="off" spellcheck="false" aria-label="{% trans 'Search pages and actions' %}">
+                <kbd class="cmd-kbd">ESC</kbd>
+            </div>
+            <div class="cmd-results" id="cmdResults" role="listbox"></div>
+        </div>
+    </div>
+
+    <!-- ======================= EMERGENCY QUICK ACTIONS ======================= -->
+    <div class="rp-layer" id="sosModal" role="dialog" aria-modal="true" aria-labelledby="sosTitle" aria-hidden="true">
+        <div class="sos-modal">
+            <div class="sos-modal-header">
+                <span class="sos-pulse-dot" aria-hidden="true"></span>
+                <div>
+                    <h2 id="sosTitle">{% trans "Emergency Actions" %}</h2>
+                    <p>{% trans "Select what you need right now" %}</p>
+                </div>
+                <button type="button" class="sos-modal-close" data-rp-close aria-label="{% trans 'Close' %}"><i class="fas fa-xmark" aria-hidden="true"></i></button>
+            </div>
+            <div class="sos-modal-body">
+                <a class="sos-action-btn" href="{% url 'submit_blood_request' %}">
+                    <span class="sa-ico"><i class="fas fa-droplet" aria-hidden="true"></i></span>
+                    <span class="sa-txt"><strong>{% trans "Request Blood" %}</strong><small>{% trans "Post an urgent blood need" %}</small></span>
+                </a>
+                <a class="sos-action-btn" href="{% url 'donor_list' %}">
+                    <span class="sa-ico"><i class="fas fa-user-group" aria-hidden="true"></i></span>
+                    <span class="sa-txt"><strong>{% trans "Find Donors" %}</strong><small>{% trans "See available donors" %}</small></span>
+                </a>
+                <a class="sos-action-btn" href="{% url 'hospital_directory' %}">
+                    <span class="sa-ico"><i class="fas fa-hospital-user" aria-hidden="true"></i></span>
+                    <span class="sa-txt"><strong>{% trans "Emergency Contacts" %}</strong><small>{% trans "Hospitals & blood banks" %}</small></span>
+                </a>
+                <a class="sos-action-btn" href="tel:999">
+                    <span class="sa-ico"><i class="fas fa-phone-volume" aria-hidden="true"></i></span>
+                    <span class="sa-txt"><strong>{% trans "Call 999" %}</strong><small>{% trans "National emergency" %}</small></span>
+                </a>
+            </div>
+            <div class="sos-modal-foot">
+                <button type="button" class="btn-rp btn-rp-ghost w-100 justify-content-center" data-rp-close>{% trans "Close" %}</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================= ACCESSIBILITY PANEL ========================= -->
+    <div class="a11y-panel" id="a11yPanel" role="dialog" aria-labelledby="a11yTitle" aria-hidden="true">
+        <div class="a11y-header">
+            <i class="fas fa-universal-access" aria-hidden="true"></i>
+            <span id="a11yTitle">{% trans "Accessibility" %}</span>
+            <button type="button" data-rp-close-a11y aria-label="{% trans 'Close' %}"><i class="fas fa-xmark" aria-hidden="true"></i></button>
+        </div>
+
+        <div class="a11y-row">
+            <div class="a11y-label">{% trans "Dark Mode" %}<small>{% trans "Easier on the eyes at night" %}</small></div>
+            <label class="rp-toggle">
+                <input type="checkbox" id="a11yDark" aria-label="{% trans 'Toggle dark mode' %}">
+                <span class="rp-toggle-track"></span><span class="rp-toggle-thumb"></span>
+            </label>
+        </div>
+        <div class="a11y-row">
+            <div class="a11y-label">{% trans "Reduce Motion" %}<small>{% trans "Turn off animations" %}</small></div>
+            <label class="rp-toggle">
+                <input type="checkbox" id="a11yMotion" aria-label="{% trans 'Reduce motion' %}">
+                <span class="rp-toggle-track"></span><span class="rp-toggle-thumb"></span>
+            </label>
+        </div>
+        <div class="a11y-row">
+            <div class="a11y-label">{% trans "Low Effects" %}<small>{% trans "Lighter background, saves data & battery" %}</small></div>
+            <label class="rp-toggle">
+                <input type="checkbox" id="a11yLowFx" aria-label="{% trans 'Low effects mode' %}">
+                <span class="rp-toggle-track"></span><span class="rp-toggle-thumb"></span>
+            </label>
+        </div>
+        <div class="a11y-row">
+            <div class="a11y-label">{% trans "Text Size" %}<small>{% trans "Make text larger or smaller" %}</small></div>
+            <div class="a11y-font-ctrl">
+                <button type="button" class="a11y-font-btn" id="fontDown" aria-label="{% trans 'Decrease text size' %}">A−</button>
+                <span class="a11y-font-val" id="fontVal" aria-live="polite">100%</span>
+                <button type="button" class="a11y-font-btn" id="fontUp" aria-label="{% trans 'Increase text size' %}">A+</button>
+            </div>
+        </div>
+        <div class="a11y-foot">
+            <button type="button" class="share-btn" data-rp-share="native"><i class="fas fa-share-nodes" aria-hidden="true"></i> {% trans "Share this page" %}</button>
+            <button type="button" class="share-btn" id="a11yReset"><i class="fas fa-rotate-left" aria-hidden="true"></i> {% trans "Reset" %}</button>
+        </div>
+    </div>
+
+    <!-- ============================ PWA INSTALL ============================ -->
+    <div class="pwa-banner" id="pwaBanner" role="region" aria-label="{% trans 'Install app' %}">
+        <div class="pwa-icon" aria-hidden="true"><i class="fas fa-heart-pulse"></i></div>
+        <div class="pwa-text">
+            <strong>{% trans "Install RedPulse App" %}</strong>
+            <span>{% trans "Add to home screen for quick access" %}</span>
+        </div>
+        <button type="button" class="btn-rp btn-rp-primary btn-rp-sm" id="pwaInstallBtn">{% trans "Install" %}</button>
+        <button type="button" class="pwa-close" id="pwaCloseBtn" aria-label="{% trans 'Close' %}"><i class="fas fa-xmark" aria-hidden="true"></i></button>
+    </div>
 
     <!-- Emergency Top Strip -->
     <div class="rp-topstrip d-none d-md-block" aria-hidden="false">
@@ -999,13 +2435,13 @@
     </div>
 
     <!-- ============================ NAVBAR ============================ -->
-    <nav class="navbar navbar-expand-xl sticky-top navbar-custom py-2" id="rpNavbar">
+    <nav class="navbar navbar-expand-xl sticky-top navbar-custom py-2" id="rpNavbar" aria-label="{% trans 'Main navigation' %}">
         <div class="container-fluid px-lg-4">
 
             <!-- Brand -->
             <a class="navbar-brand d-flex align-items-center gap-2 me-3" href="{% url 'home' %}">
                 <span class="brand-badge">
-                    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.9" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;position:relative;z-index:2;">
+                    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.9" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;position:relative;z-index:2;" aria-hidden="true">
                         <path d="M2 17 H9 L12 9 L17 25 L20 17 H30"/>
                     </svg>
                 </span>
@@ -1155,19 +2591,36 @@
                         </li>
                     {% endif %}
 
+                    <!-- Search / Command palette -->
+                    <li class="nav-item">
+                        <button type="button" class="rp-pill" id="cmdTrigger" data-rp-open="cmd"
+                                aria-label="{% trans 'Search pages and actions' %}" title="{% trans 'Search' %} (Ctrl+K)">
+                            <i class="fas fa-magnifying-glass" style="color:var(--rp-red);" aria-hidden="true"></i>
+                            <span class="pill-label">{% trans "Search" %}</span>
+                            <kbd class="pill-kbd" id="cmdKbd">Ctrl K</kbd>
+                        </button>
+                    </li>
+
+                    <!-- Accessibility -->
+                    <li class="nav-item">
+                        <button type="button" class="rp-pill icon-pill" id="a11yTrigger" data-rp-open="a11y" aria-expanded="false" aria-controls="a11yPanel"
+                                aria-label="{% trans 'Accessibility settings' %}" title="{% trans 'Accessibility settings' %}">
+                            <i class="fas fa-universal-access" style="color:var(--rp-red);" aria-hidden="true"></i>
+                            <span class="d-xl-none">{% trans "Accessibility" %}</span>
+                        </button>
+                    </li>
+
                     <!-- Language -->
                     <li class="nav-item">
                         <div class="dropdown">
-                            <button class="rp-pill dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <button class="rp-pill dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="{% trans 'Language' %}">
                                 <i class="fas fa-globe" style="color:var(--rp-red);"></i>
                                 {% if LANGUAGE_CODE == 'bn' %}বাংলা{% else %}EN{% endif %}
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end border-0">
-                                {% get_current_language as CURRENT_LANGUAGE %}
-                                {% get_available_languages as AVAILABLE_LANGUAGES %}
                                 {% for lang_code, lang_name in AVAILABLE_LANGUAGES %}
                                 <li>
-                                    <form action="{% url 'set_language' %}" method="post" class="m-0">
+                                    <form action="{% url 'set_language' %}" method="post" class="m-0" data-lang="{{ lang_code }}">
                                         {% csrf_token %}
                                         <input type="hidden" name="language" value="{{ lang_code }}">
                                         <input type="hidden" name="next" value="{{ request.get_full_path }}">
@@ -1220,7 +2673,7 @@
     </div>
 
     <!-- ============================= MAIN ============================= -->
-    <main class="container mt-4 mb-5 rp-page-fade" style="min-height:68vh;">
+    <main id="main-content" tabindex="-1" class="container mt-4 mb-5 rp-page-fade" style="min-height:68vh;">
         {% if messages %}
             <div class="mb-3">
             {% for message in messages %}
@@ -1245,23 +2698,48 @@
     <!-- ======================== FLOATING DOCK ======================== -->
     <div class="sos-dock">
         <button type="button" id="rpTopBtn" class="rp-top-btn" aria-label="{% trans 'Back to top' %}" title="{% trans 'Back to top' %}">
-            <i class="fas fa-arrow-up"></i>
+            <i class="fas fa-arrow-up" aria-hidden="true"></i>
         </button>
-        <a href="{% url 'submit_blood_request' %}" class="sos-fab-3d rp-ripple-host" title="{% trans 'Submit an emergency blood request' %}">
-            <span class="sos-pulse-ring"></span>
+        <button type="button" class="sos-fab-3d rp-ripple-host" data-rp-open="sos" aria-haspopup="dialog" title="{% trans 'Emergency quick actions' %}">
+            <span class="sos-pulse-ring" aria-hidden="true"></span>
             <span>{% trans "Emergency SOS" %}</span>
-        </a>
+        </button>
     </div>
 
+    <!-- ========================= MOBILE BOTTOM NAV ========================= -->
+    <nav class="mobile-nav" aria-label="{% trans 'Quick navigation' %}">
+        <div class="mobile-nav-inner">
+            <a class="mob-btn" href="{% url 'home' %}">
+                <span class="mob-ico-wrap"><i class="fas fa-house" aria-hidden="true"></i></span>
+                <span>{% trans "Home" %}</span>
+            </a>
+            <a class="mob-btn" href="{% url 'donor_list' %}">
+                <span class="mob-ico-wrap"><i class="fas fa-user-group" aria-hidden="true"></i></span>
+                <span>{% trans "Donors" %}</span>
+            </a>
+            <button type="button" class="mob-sos-btn" data-rp-open="sos" aria-haspopup="dialog" aria-label="{% trans 'Emergency SOS' %}">
+                <i class="fas fa-droplet" aria-hidden="true"></i>
+            </button>
+            <a class="mob-btn" href="{% url 'blood_requests_list' %}">
+                <span class="mob-ico-wrap"><i class="fas fa-notes-medical" aria-hidden="true"></i></span>
+                <span>{% trans "Requests" %}</span>
+            </a>
+            <button type="button" class="mob-btn" data-rp-open="a11y" aria-controls="a11yPanel">
+                <span class="mob-ico-wrap"><i class="fas fa-universal-access" aria-hidden="true"></i></span>
+                <span>{% trans "Access" %}</span>
+            </button>
+        </div>
+    </nav>
+
     <!-- ============================ FOOTER ============================ -->
-    <footer class="footer-2026">
+    <footer class="footer-2026" role="contentinfo">
         <div class="container">
             <div class="row g-4">
 
                 <div class="col-lg-4">
                     <div class="d-flex align-items-center gap-2 mb-3">
                         <span class="brand-badge" style="width:40px;height:40px;border-radius:13px;">
-                            <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;position:relative;z-index:2;">
+                            <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;position:relative;z-index:2;" aria-hidden="true">
                                 <path d="M2 17 H9 L12 9 L17 25 L20 17 H30"/>
                             </svg>
                         </span>
@@ -1270,10 +2748,15 @@
                     <p class="small mb-3" style="color:var(--rp-subtext);max-width:330px;">
                         {% trans "A humanitarian blood donation platform connecting seekers with verified, eligible donors — instantly and directly." %}
                     </p>
-                    <div class="d-flex flex-wrap gap-2">
+                    <div class="d-flex flex-wrap gap-2 mb-3">
                         <span class="f-chip"><i class="fas fa-location-dot" style="color:var(--rp-red);"></i> {% trans "Patiya, Chattogram" %}</span>
                         <span class="f-chip"><i class="fas fa-shield-heart" style="color:#10b981;"></i> {% trans "Non-profit" %}</span>
                         <span class="f-chip"><i class="fas fa-bolt" style="color:#f59e0b;"></i> {% trans "24/7 Active" %}</span>
+                    </div>
+                    <div class="share-bar" role="group" aria-label="{% trans 'Share this platform' %}">
+                        <button type="button" class="share-btn" data-rp-share="native"><i class="fas fa-share-nodes" aria-hidden="true"></i> {% trans "Share" %}</button>
+                        <button type="button" class="share-btn" data-rp-share="copy"><i class="fas fa-copy" aria-hidden="true"></i> {% trans "Copy Link" %}</button>
+                        <button type="button" class="share-btn" data-rp-share="whatsapp" aria-label="WhatsApp"><i class="fab fa-whatsapp" style="color:#25d366;" aria-hidden="true"></i></button>
                     </div>
                 </div>
 
@@ -1334,11 +2817,8 @@
     <!-- ============================ SCRIPTS ============================ -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <!--
-        NOTE: js/theme.js REMOVED intentionally. It was double-handling the
-        dark-mode toggle alongside the inline script below, which caused the
-        "click e light mode e fere ashe na" bug (system/theme.js re-applying
-        dark after user clicked to switch to light). Theme logic is now
-        100% self-contained right here — single source of truth.
+        NOTE: js/theme.js REMOVED intentionally (it double-handled the dark-mode toggle).
+        Theme logic is 100% self-contained below — single source of truth.
     -->
     <script src="{% static 'js/reveal.js' %}"></script>
     <script src="{% static 'js/copy.js' %}"></script>
@@ -1349,66 +2829,471 @@
         'use strict';
         var root = document.documentElement;
 
-        /* ---------- Theme toggle (single, authoritative source) ---------- */
+        /* ============================================================
+           TRANSLATED STRINGS + URLS (rendered by Django)
+           ============================================================ */
+        {% trans "Pages" as t_pages %}{% trans "Actions" as t_actions %}
+        {% trans "Home" as t_home %}{% trans "Find Donors" as t_donors %}{% trans "Request Blood" as t_request %}
+        {% trans "Blood Requests" as t_requests %}{% trans "Compatibility" as t_compat %}
+        {% trans "Emergency Contacts" as t_hosp %}{% trans "FAQ" as t_faq %}{% trans "Awareness" as t_aware %}
+        {% trans "Dashboard" as t_dash %}{% trans "Profile" as t_profile %}{% trans "Admin Panel" as t_admin %}
+        {% trans "Login" as t_login %}{% trans "Register" as t_register %}
+        {% trans "Toggle dark mode" as t_theme %}{% trans "Emergency SOS" as t_sos %}
+        {% trans "Accessibility settings" as t_a11y %}{% trans "Share this page" as t_share %}
+        {% trans "Copy page link" as t_copy %}{% trans "Install App" as t_install %}{% trans "Language" as t_lang %}
+        {% trans "No results found" as t_nores %}{% trans "Link copied to clipboard" as t_copied %}
+        {% trans "Copied" as t_copied_t %}{% trans "Could not copy. Please copy the address manually." as t_copyfail %}
+        {% trans "You are offline — some features may be unavailable." as t_offline %}
+        {% trans "Back online" as t_online %}{% trans "App installed successfully" as t_installed %}
+        {% trans "Open your browser menu and choose Add to Home screen." as t_installhelp %}
+        {% trans "Notification" as t_notif %}{% trans "Close" as t_close %}
+        {% trans "Blood donation network — no middleman, no waiting." as t_sharetext %}
+        {% trans "Search Results" as t_share_t %}
+        {% url 'home' as u_home %}{% url 'donor_list' as u_donors %}{% url 'submit_blood_request' as u_request %}
+        {% url 'blood_requests_list' as u_requests %}{% url 'compatibility_guide' as u_compat %}
+        {% url 'hospital_directory' as u_hosp %}{% url 'faq' as u_faq %}{% url 'awareness_list' as u_aware %}
+        {% url 'dashboard' as u_dash %}{% url 'profile' as u_profile %}{% url 'admin_dashboard' as u_admin %}
+        {% url 'login' as u_login %}{% url 'register' as u_register %}
+
+        var T = {
+            pages:"{{ t_pages|escapejs }}", actions:"{{ t_actions|escapejs }}",
+            theme:"{{ t_theme|escapejs }}", sos:"{{ t_sos|escapejs }}", a11y:"{{ t_a11y|escapejs }}",
+            share:"{{ t_share|escapejs }}", copy:"{{ t_copy|escapejs }}", install:"{{ t_install|escapejs }}",
+            lang:"{{ t_lang|escapejs }}", noRes:"{{ t_nores|escapejs }}",
+            copied:"{{ t_copied|escapejs }}", copiedTitle:"{{ t_copied_t|escapejs }}", copyFail:"{{ t_copyfail|escapejs }}",
+            offline:"{{ t_offline|escapejs }}", online:"{{ t_online|escapejs }}",
+            installed:"{{ t_installed|escapejs }}", installHelp:"{{ t_installhelp|escapejs }}",
+            notif:"{{ t_notif|escapejs }}", close:"{{ t_close|escapejs }}", shareText:"{{ t_sharetext|escapejs }}"
+        };
+        var LANGS = [
+            {% for lang_code, lang_name in AVAILABLE_LANGUAGES %}
+            { code:"{{ lang_code|escapejs }}", name:"{% if lang_code == 'bn' %}বাংলা{% else %}{{ lang_name|escapejs }}{% endif %}" },
+            {% endfor %}
+        ];
+        var CURRENT_LANG = "{{ CURRENT_LANGUAGE|escapejs }}";
+
+        var ITEMS = [
+            { label:"{{ t_home|escapejs }}",     icon:'fas fa-house',                group:T.pages, url:"{{ u_home|escapejs }}" },
+            { label:"{{ t_donors|escapejs }}",   icon:'fas fa-user-group',           group:T.pages, url:"{{ u_donors|escapejs }}" },
+            { label:"{{ t_request|escapejs }}",  icon:'fas fa-hand-holding-medical', group:T.pages, url:"{{ u_request|escapejs }}" },
+            { label:"{{ t_requests|escapejs }}", icon:'fas fa-notes-medical',        group:T.pages, url:"{{ u_requests|escapejs }}" },
+            { label:"{{ t_compat|escapejs }}",   icon:'fas fa-dna',                  group:T.pages, url:"{{ u_compat|escapejs }}" },
+            { label:"{{ t_hosp|escapejs }}",     icon:'fas fa-hospital-user',        group:T.pages, url:"{{ u_hosp|escapejs }}" },
+            { label:"{{ t_aware|escapejs }}",    icon:'fas fa-book-medical',         group:T.pages, url:"{{ u_aware|escapejs }}" },
+            { label:"{{ t_faq|escapejs }}",      icon:'fas fa-circle-question',      group:T.pages, url:"{{ u_faq|escapejs }}" },
+            {% if user.is_authenticated %}
+            { label:"{{ t_dash|escapejs }}",     icon:'fas fa-chart-pie',            group:T.pages, url:"{{ u_dash|escapejs }}" },
+            { label:"{{ t_profile|escapejs }}",  icon:'fas fa-id-badge',             group:T.pages, url:"{{ u_profile|escapejs }}" },
+            {% if user.is_staff %}
+            { label:"{{ t_admin|escapejs }}",    icon:'fas fa-shield-halved',        group:T.pages, url:"{{ u_admin|escapejs }}" },
+            {% endif %}
+            {% else %}
+            { label:"{{ t_login|escapejs }}",    icon:'fas fa-right-to-bracket',     group:T.pages, url:"{{ u_login|escapejs }}" },
+            { label:"{{ t_register|escapejs }}", icon:'fas fa-user-plus',            group:T.pages, url:"{{ u_register|escapejs }}" },
+            {% endif %}
+            { label:T.sos,   icon:'fas fa-heart-pulse',       group:T.actions, fn:function () { openLayer(el('sosModal')); } },
+            { label:T.theme, icon:'fas fa-moon',              group:T.actions, fn:function () { applyTheme(!isDark(), true); } },
+            { label:T.a11y,  icon:'fas fa-universal-access',  group:T.actions, fn:function () { toggleA11y(true); } },
+            { label:T.share, icon:'fas fa-share-nodes',       group:T.actions, fn:function () { doShare(); } },
+            { label:T.copy,  icon:'fas fa-copy',              group:T.actions, fn:function () { copyLink(); } },
+            { label:T.install, icon:'fas fa-download',        group:T.actions, fn:function () { runInstall(); } }
+        ];
+        LANGS.forEach(function (l) {
+            if (l.code === CURRENT_LANG) return;
+            ITEMS.push({ label:T.lang + ': ' + l.name, icon:'fas fa-language', group:T.actions, fn:function () {
+                var f = document.querySelector('form[data-lang="' + l.code + '"]');
+                if (f) f.submit();
+            }});
+        });
+
+        /* ============================================================
+           HELPERS
+           ============================================================ */
+        function el(id) { return document.getElementById(id); }
+        function store(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+        function load(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+        var prefersReduced = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : { matches:false };
+        function motionOff() { return prefersReduced.matches || root.classList.contains('rp-nomotion'); }
+
+        /* ============================================================
+           THEME  (single, authoritative source — key: redpulse-theme)
+           ============================================================ */
+        function isDark() { return root.getAttribute('data-theme') === 'dark'; }
         function applyIcon() {
-            var dark = root.getAttribute('data-theme') === 'dark';
-            var i = document.getElementById('themeIcon');
+            var dark = isDark();
+            var i = el('themeIcon');
             if (i) i.className = dark ? 'fas fa-sun' : 'fas fa-moon';
             var meta = document.querySelector('meta[name="theme-color"]');
             if (meta) meta.setAttribute('content', dark ? '#070a12' : '#d90429');
+            var cb = el('a11yDark');
+            if (cb) cb.checked = dark;
         }
-
-        function toggleTheme(e) {
-            if (e) { e.preventDefault(); e.stopPropagation(); }
-            var isDark = root.getAttribute('data-theme') === 'dark';
-            if (isDark) {
-                root.removeAttribute('data-theme');
-            } else {
-                root.setAttribute('data-theme', 'dark');
-            }
-            try { localStorage.setItem('redpulse-theme', isDark ? 'light' : 'dark'); } catch (err) {}
+        function applyTheme(dark, persist) {
+            if (dark) root.setAttribute('data-theme', 'dark');
+            else root.removeAttribute('data-theme');
+            if (persist !== false) store('redpulse-theme', dark ? 'dark' : 'light');
             applyIcon();
         }
-
-        var themeBtn = document.getElementById('themeToggle');
-        if (themeBtn) {
-            themeBtn.addEventListener('click', toggleTheme);
-        }
+        var themeBtn = el('themeToggle');
+        if (themeBtn) themeBtn.addEventListener('click', function (e) {
+            e.preventDefault(); e.stopPropagation();
+            applyTheme(!isDark());
+        });
+        var a11yDark = el('a11yDark');
+        if (a11yDark) a11yDark.addEventListener('change', function () { applyTheme(this.checked); });
         applyIcon();
 
-        /* ---------- Scroll progress + navbar shrink + back-to-top ---------- */
-        var bar = document.getElementById('rpProgress');
-        var nav = document.getElementById('rpNavbar');
-        var top = document.getElementById('rpTopBtn');
-        var ticking = false;
+        /* ============================================================
+           TOASTS  (exposed as window.RP.toast — and window.showToast if free)
+           ============================================================ */
+        var TOAST_ICONS = { success:'fas fa-circle-check', error:'fas fa-circle-exclamation', warn:'fas fa-triangle-exclamation', info:'fas fa-circle-info', red:'fas fa-droplet' };
+        function dismissToast(t) {
+            if (!t || !t.parentNode) return;
+            t.classList.add('exit');
+            setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 320);
+        }
+        function toast(msg, title, type) {
+            type = TOAST_ICONS[type] ? type : 'red';
+            var box = el('toastContainer');
+            if (!box) return;
+            while (box.children.length >= 4) box.removeChild(box.firstChild);
+            var t = document.createElement('div');
+            t.className = 'rp-toast t-' + type;
+            t.setAttribute('role', 'status');
 
+            var ico = document.createElement('div'); ico.className = 'toast-ico';
+            var ii = document.createElement('i'); ii.className = TOAST_ICONS[type]; ii.setAttribute('aria-hidden', 'true');
+            ico.appendChild(ii);
+
+            var body = document.createElement('div'); body.className = 'toast-body';
+            var tt = document.createElement('div'); tt.className = 'toast-title'; tt.textContent = title || T.notif;
+            var mm = document.createElement('div'); mm.className = 'toast-msg'; mm.textContent = msg;
+            body.appendChild(tt); body.appendChild(mm);
+
+            var x = document.createElement('button'); x.type = 'button'; x.className = 'toast-close';
+            x.setAttribute('aria-label', T.close);
+            x.innerHTML = '<i class="fas fa-xmark" aria-hidden="true"></i>';
+            x.addEventListener('click', function () { dismissToast(t); });
+
+            t.appendChild(ico); t.appendChild(body); t.appendChild(x);
+            box.appendChild(t);
+            setTimeout(function () { dismissToast(t); }, 5500);
+        }
+        window.RP = window.RP || {};
+        window.RP.toast = toast;
+        if (typeof window.showToast !== 'function') window.showToast = toast;
+
+        /* ============================================================
+           LAYERS  (command palette + SOS modal) — focus management
+           ============================================================ */
+        var lastFocus = null;
+        function openLayers() { return document.querySelectorAll('.rp-layer.open'); }
+        function lockScroll(on) { document.body.style.overflow = on ? 'hidden' : ''; }
+        function closeLayer(layer, restore) {
+            if (!layer || !layer.classList.contains('open')) return;
+            layer.classList.remove('open');
+            layer.setAttribute('aria-hidden', 'true');
+            if (!openLayers().length) lockScroll(false);
+            if (restore !== false && lastFocus && lastFocus.focus) { try { lastFocus.focus(); } catch (e) {} }
+        }
+        function closeAllLayers() {
+            Array.prototype.forEach.call(openLayers(), function (l) { closeLayer(l, false); });
+        }
+        function openLayer(layer, focusSelector) {
+            if (!layer) return;
+            var prev = document.activeElement;
+            closeAllLayers();
+            toggleA11y(false, true);
+            lastFocus = prev && prev !== document.body ? prev : lastFocus;
+            layer.classList.add('open');
+            layer.setAttribute('aria-hidden', 'false');
+            lockScroll(true);
+            setTimeout(function () {
+                var f = layer.querySelector(focusSelector || 'a[href],button,input');
+                if (f && f.focus) f.focus();
+            }, 60);
+        }
+        window.RP.openSOS = function () { openLayer(el('sosModal')); };
+        window.RP.closeSOS = function () { closeLayer(el('sosModal')); };
+
+        var sosLayer = el('sosModal'), cmdLayer = el('cmdBackdrop');
+        [sosLayer, cmdLayer].forEach(function (l) {
+            if (!l) return;
+            l.addEventListener('click', function (e) { if (e.target === l) closeLayer(l); });
+        });
+        Array.prototype.forEach.call(document.querySelectorAll('[data-rp-close]'), function (b) {
+            b.addEventListener('click', function () { closeLayer(b.closest('.rp-layer')); });
+        });
+
+        /* ============================================================
+           COMMAND PALETTE
+           ============================================================ */
+        var cmdInput = el('cmdInput'), cmdResults = el('cmdResults');
+        var cmdSel = 0, cmdFiltered = ITEMS.slice();
+
+        function updateSel() {
+            var nodes = cmdResults.querySelectorAll('.cmd-item');
+            Array.prototype.forEach.call(nodes, function (n, i) {
+                var on = i === cmdSel;
+                n.classList.toggle('selected', on);
+                n.setAttribute('aria-selected', on ? 'true' : 'false');
+                if (on) {
+                    cmdInput.setAttribute('aria-activedescendant', n.id);
+                    if (n.scrollIntoView) n.scrollIntoView({ block:'nearest' });
+                }
+            });
+        }
+        function runCmd(idx) {
+            var item = cmdFiltered[idx];
+            if (!item) return;
+            closeLayer(cmdLayer, !!item.fn ? false : true);
+            if (item.url) { window.location.href = item.url; }
+            else if (item.fn) { setTimeout(item.fn, 30); }
+        }
+        function renderCmd(q) {
+            q = (q || '').trim().toLowerCase();
+            cmdFiltered = ITEMS.filter(function (i) { return !q || i.label.toLowerCase().indexOf(q) > -1; });
+            if (cmdSel > cmdFiltered.length - 1) cmdSel = Math.max(cmdFiltered.length - 1, 0);
+            cmdResults.textContent = '';
+            if (!cmdFiltered.length) {
+                var empty = document.createElement('div'); empty.className = 'cmd-empty';
+                empty.innerHTML = '<i class="fas fa-magnifying-glass" aria-hidden="true"></i>';
+                empty.appendChild(document.createTextNode(T.noRes));
+                cmdResults.appendChild(empty);
+                cmdInput.removeAttribute('aria-activedescendant');
+                return;
+            }
+            var lastGroup = null;
+            cmdFiltered.forEach(function (item, idx) {
+                if (item.group !== lastGroup) {
+                    var g = document.createElement('div'); g.className = 'cmd-group-label'; g.setAttribute('role', 'presentation');
+                    g.textContent = item.group; cmdResults.appendChild(g); lastGroup = item.group;
+                }
+                var row = document.createElement('div');
+                row.className = 'cmd-item'; row.id = 'cmdOpt' + idx; row.setAttribute('role', 'option');
+                var ic = document.createElement('i'); ic.className = item.icon; ic.setAttribute('aria-hidden', 'true');
+                var tx = document.createElement('span'); tx.textContent = item.label;
+                row.appendChild(ic); row.appendChild(tx);
+                row.addEventListener('click', function () { runCmd(idx); });
+                row.addEventListener('mousemove', function () { if (cmdSel !== idx) { cmdSel = idx; updateSel(); } });
+                cmdResults.appendChild(row);
+            });
+            updateSel();
+        }
+        function openCmd() {
+            cmdInput.value = ''; cmdSel = 0; renderCmd('');
+            openLayer(cmdLayer, '#cmdInput');
+        }
+        if (cmdInput) {
+            cmdInput.addEventListener('input', function () { cmdSel = 0; renderCmd(this.value); });
+            cmdInput.addEventListener('keydown', function (e) {
+                if (e.key === 'ArrowDown') { e.preventDefault(); if (cmdFiltered.length) { cmdSel = (cmdSel + 1) % cmdFiltered.length; updateSel(); } }
+                else if (e.key === 'ArrowUp') { e.preventDefault(); if (cmdFiltered.length) { cmdSel = (cmdSel - 1 + cmdFiltered.length) % cmdFiltered.length; updateSel(); } }
+                else if (e.key === 'Enter') { e.preventDefault(); runCmd(cmdSel); }
+            });
+        }
+        var isMac = /Mac|iPhone|iPad|iPod/i.test(navigator.platform || navigator.userAgent || '');
+        var kbd = el('cmdKbd'); if (kbd && isMac) kbd.textContent = '⌘K';
+
+        /* ============================================================
+           ACCESSIBILITY PANEL
+           ============================================================ */
+        var a11yPanel = el('a11yPanel'), a11yTrigger = el('a11yTrigger');
+        function toggleA11y(force, silent) {
+            var open = typeof force === 'boolean' ? force : !a11yPanel.classList.contains('open');
+            a11yPanel.classList.toggle('open', open);
+            a11yPanel.setAttribute('aria-hidden', open ? 'false' : 'true');
+            if (a11yTrigger) a11yTrigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+            if (open && !silent) {
+                var cb = el('a11yDark'); setTimeout(function () { if (cb) cb.focus(); }, 60);
+            }
+        }
+        var a11yClose = document.querySelector('[data-rp-close-a11y]');
+        if (a11yClose) a11yClose.addEventListener('click', function () { toggleA11y(false); if (a11yTrigger) a11yTrigger.focus(); });
+
+        function fxChange() { document.dispatchEvent(new CustomEvent('rp:fxchange')); }
+        var chkMotion = el('a11yMotion'), chkLow = el('a11yLowFx');
+        if (chkMotion) {
+            chkMotion.checked = root.classList.contains('rp-nomotion');
+            chkMotion.addEventListener('change', function () {
+                root.classList.toggle('rp-nomotion', this.checked);
+                store('rp-motion', this.checked ? '1' : '0'); fxChange();
+            });
+        }
+        if (chkLow) {
+            chkLow.checked = root.classList.contains('rp-lowfx');
+            chkLow.addEventListener('change', function () {
+                root.classList.toggle('rp-lowfx', this.checked);
+                store('rp-lowfx', this.checked ? '1' : '0'); fxChange();
+            });
+        }
+        var fontScale = 1;
+        var storedFs = parseFloat(load('rp-font'));
+        if (storedFs >= 0.8 && storedFs <= 1.4) fontScale = storedFs;
+        function applyFont(s) {
+            fontScale = Math.max(0.8, Math.min(1.4, Math.round(s * 10) / 10));
+            root.style.setProperty('--rp-fs', fontScale);
+            var fv = el('fontVal'); if (fv) fv.textContent = Math.round(fontScale * 100) + '%';
+            store('rp-font', fontScale);
+        }
+        applyFont(fontScale);
+        el('fontUp').addEventListener('click', function () { applyFont(fontScale + 0.1); });
+        el('fontDown').addEventListener('click', function () { applyFont(fontScale - 0.1); });
+        var reset = el('a11yReset');
+        if (reset) reset.addEventListener('click', function () {
+            applyFont(1);
+            root.classList.remove('rp-nomotion', 'rp-lowfx');
+            if (chkMotion) chkMotion.checked = false;
+            if (chkLow) chkLow.checked = false;
+            store('rp-motion', '0'); store('rp-lowfx', '0'); fxChange();
+        });
+
+        /* ============================================================
+           GLOBAL DELEGATED CLICKS / KEYS
+           ============================================================ */
+        document.addEventListener('click', function (e) {
+            var opener = e.target.closest('[data-rp-open]');
+            if (opener) {
+                var what = opener.getAttribute('data-rp-open');
+                if (what === 'sos') openLayer(sosLayer);
+                else if (what === 'cmd') openCmd();
+                else if (what === 'a11y') { e.stopPropagation(); toggleA11y(); }
+                return;
+            }
+            if (a11yPanel.classList.contains('open') && !a11yPanel.contains(e.target)) toggleA11y(false, true);
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
+                e.preventDefault();
+                if (cmdLayer.classList.contains('open')) closeLayer(cmdLayer); else openCmd();
+                return;
+            }
+            if (e.key === 'Escape') {
+                if (openLayers().length) { closeLayer(openLayers()[0]); return; }
+                if (a11yPanel.classList.contains('open')) { toggleA11y(false); if (a11yTrigger) a11yTrigger.focus(); }
+                return;
+            }
+            if (e.key === 'Tab') {                       /* keep focus inside an open modal */
+                var open = openLayers()[0];
+                if (!open) return;
+                var f = Array.prototype.filter.call(
+                    open.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),[tabindex]:not([tabindex="-1"])'),
+                    function (n) { return n.offsetParent !== null; });
+                if (!f.length) return;
+                var first = f[0], last = f[f.length - 1];
+                if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+                else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+                else if (!open.contains(document.activeElement)) { e.preventDefault(); first.focus(); }
+            }
+        });
+
+        /* ============================================================
+           SHARE + COPY LINK
+           ============================================================ */
+        function copyText(text) {
+            if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
+            return new Promise(function (resolve, reject) {
+                var ta = document.createElement('textarea');
+                ta.value = text; ta.setAttribute('readonly', ''); ta.style.cssText = 'position:fixed;top:-999px;opacity:0;';
+                document.body.appendChild(ta); ta.select();
+                var ok = false; try { ok = document.execCommand('copy'); } catch (err) {}
+                document.body.removeChild(ta);
+                ok ? resolve() : reject();
+            });
+        }
+        function copyLink() {
+            copyText(location.href).then(function () { toast(T.copied, T.copiedTitle, 'success'); })
+                                   .catch(function () { toast(T.copyFail, T.copiedTitle, 'warn'); });
+        }
+        function doShare() {
+            if (navigator.share) {
+                navigator.share({ title: document.title, text: T.shareText, url: location.href }).catch(function () {});
+            } else { copyLink(); }
+        }
+        document.addEventListener('click', function (e) {
+            var b = e.target.closest('[data-rp-share]');
+            if (!b) return;
+            var kind = b.getAttribute('data-rp-share');
+            if (kind === 'copy') copyLink();
+            else if (kind === 'whatsapp') window.open('https://wa.me/?text=' + encodeURIComponent(document.title + ' — ' + location.href), '_blank', 'noopener');
+            else doShare();
+        });
+
+        /* ============================================================
+           PWA INSTALL
+           ============================================================ */
+        var deferredPrompt = null, pwaBanner = el('pwaBanner');
+        function showPwa(on) { if (pwaBanner) pwaBanner.classList.toggle('show', on); }
+        function runInstall() {
+            if (!deferredPrompt) { toast(T.installHelp, T.install, 'info'); return; }
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then(function (r) {
+                if (r && r.outcome === 'accepted') toast(T.installed, T.install, 'success');
+                deferredPrompt = null; showPwa(false);
+            });
+        }
+        window.addEventListener('beforeinstallprompt', function (e) {
+            e.preventDefault(); deferredPrompt = e;
+            if (load('rp-pwa-dismissed') !== '1') setTimeout(function () { if (deferredPrompt) showPwa(true); }, 4000);
+        });
+        window.addEventListener('appinstalled', function () { deferredPrompt = null; showPwa(false); });
+        el('pwaInstallBtn').addEventListener('click', runInstall);
+        el('pwaCloseBtn').addEventListener('click', function () { showPwa(false); store('rp-pwa-dismissed', '1'); });
+
+        /* ============================================================
+           OFFLINE / ONLINE BANNER
+           ============================================================ */
+        var offBar = el('offlineBar'), offMsg = el('offlineMsg'), offIcon = el('offlineIcon'), offTimer = null;
+        function handleOffline() {
+            clearTimeout(offTimer);
+            offMsg.textContent = T.offline; offIcon.className = 'fas fa-triangle-exclamation';
+            offBar.classList.remove('online'); offBar.classList.add('show');
+        }
+        function handleOnline() {
+            offMsg.textContent = T.online; offIcon.className = 'fas fa-circle-check';
+            offBar.classList.add('online', 'show');
+            offTimer = setTimeout(function () { offBar.classList.remove('show'); }, 3000);
+        }
+        window.addEventListener('offline', handleOffline);
+        window.addEventListener('online', handleOnline);
+        if (navigator.onLine === false) handleOffline();
+
+        /* ============================================================
+           SCROLL PROGRESS + NAVBAR SHRINK + BACK-TO-TOP
+           ============================================================ */
+        var bar = el('rpProgress'), nav = el('rpNavbar'), topBtn = el('rpTopBtn'), ticking = false;
         function onScroll() {
             var st = window.pageYOffset || document.documentElement.scrollTop;
             var h = document.documentElement.scrollHeight - window.innerHeight;
             if (bar) bar.style.width = (h > 0 ? (st / h) * 100 : 0) + '%';
             if (nav) nav.classList.toggle('rp-scrolled', st > 24);
-            if (top) top.classList.toggle('show', st > 420);
+            if (topBtn) topBtn.classList.toggle('show', st > 420);
             ticking = false;
         }
         window.addEventListener('scroll', function () {
             if (!ticking) { window.requestAnimationFrame(onScroll); ticking = true; }
         }, { passive: true });
         onScroll();
+        if (topBtn) topBtn.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
 
-        if (top) top.addEventListener('click', function () {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-
-        /* ---------- Active nav link highlight ---------- */
+        /* ============================================================
+           ACTIVE LINK HIGHLIGHT (navbar + mobile bottom bar)
+           ============================================================ */
         var path = window.location.pathname;
-        document.querySelectorAll('.navbar-nav .nav-link[href]').forEach(function (a) {
+        document.querySelectorAll('.navbar-nav .nav-link[href], .mob-btn[href]').forEach(function (a) {
             var href = a.getAttribute('href');
             if (!href || href === '#') return;
-            if (href === path || (href !== '/' && path.indexOf(href) === 0)) a.classList.add('active');
+            if (href === path || (href !== '/' && path.indexOf(href) === 0)) {
+                a.classList.add('active');
+                if (a.classList.contains('mob-btn')) a.setAttribute('aria-current', 'page');
+            }
             if (href === '/' && path === '/') a.classList.add('active');
         });
 
-        /* ---------- Material-style ripple on 3D buttons ---------- */
+        /* ============================================================
+           MATERIAL-STYLE RIPPLE
+           ============================================================ */
         document.addEventListener('click', function (e) {
             var host = e.target.closest('.rp-ripple-host');
             if (!host) return;
@@ -1423,35 +3308,143 @@
             setTimeout(function () { span.remove(); }, 620);
         });
 
-        /* ---------- Auto-dismiss alerts ---------- */
+        /* ============================================================
+           AUTO-DISMISS DJANGO MESSAGES
+           ============================================================ */
         setTimeout(function () {
-            document.querySelectorAll('.rp-alert').forEach(function (el) {
+            document.querySelectorAll('.rp-alert').forEach(function (a) {
                 if (window.bootstrap && bootstrap.Alert) {
-                    try { bootstrap.Alert.getOrCreateInstance(el).close(); } catch (err) {}
+                    try { bootstrap.Alert.getOrCreateInstance(a).close(); } catch (err) {}
                 }
             });
         }, 7000);
 
-        /* ---------- Subtle 3D tilt on stat cards (desktop only) ---------- */
-        if (window.matchMedia('(hover:hover) and (min-width:992px)').matches &&
-            !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            document.querySelectorAll('.stat-card-modern, .rp-card-tilt').forEach(function (card) {
+        /* ============================================================
+           3D TILT (desktop, hover-capable, motion allowed)
+           ============================================================ */
+        if (window.matchMedia('(hover:hover) and (min-width:992px)').matches && !motionOff()) {
+            document.querySelectorAll('.stat-card-modern, .rp-card-tilt, .rp-3d-card').forEach(function (card) {
                 card.addEventListener('mousemove', function (e) {
+                    if (motionOff()) return;
                     var r = card.getBoundingClientRect();
-                    var x = (e.clientX - r.left) / r.width - .5;
-                    var y = (e.clientY - r.top) / r.height - .5;
+                    var x = (e.clientX - r.left) / r.width - 0.5;
+                    var y = (e.clientY - r.top) / r.height - 0.5;
                     card.style.transform = 'translateY(-10px) rotateX(' + (-y * 6) + 'deg) rotateY(' + (x * 8) + 'deg)';
                 });
                 card.addEventListener('mouseleave', function () { card.style.transform = ''; });
             });
         }
 
-        /* ---------- AUTO-DETECT icon boxes anywhere on the page and give
-           them the premium 3D bubble treatment, regardless of what class
-           name the template actually uses. Broadened to catch icons
-           nested one level deeper too, and both <i> and inline <svg>. */
-        function colorFamily(el) {
-            var c = getComputedStyle(el).color;
+        /* ============================================================
+           SCROLL REVEAL  (.rp-reveal) · COUNTERS (.rp-counter[data-target])
+           · ANIMATED BARS (.rp-bar[data-width])
+           ============================================================ */
+        function revealAll() {
+            document.querySelectorAll('.rp-reveal').forEach(function (n) { n.classList.add('visible'); });
+            document.querySelectorAll('.rp-counter[data-target]').forEach(function (n) { n.textContent = Number(n.dataset.target).toLocaleString(); });
+            document.querySelectorAll('.rp-bar[data-width]').forEach(function (b) { b.style.width = b.dataset.width; });
+        }
+        if ('IntersectionObserver' in window) {
+            var io = new IntersectionObserver(function (entries) {
+                entries.forEach(function (en) {
+                    if (!en.isIntersecting) return;
+                    var t = en.target;
+                    if (t.classList.contains('rp-reveal')) t.classList.add('visible');
+                    if (t.classList.contains('rp-counter')) {
+                        var target = parseInt(t.dataset.target, 10) || 0;
+                        if (motionOff()) { t.textContent = target.toLocaleString(); }
+                        else {
+                            var start = Date.now(), dur = 1600;
+                            (function step() {
+                                var p = Math.min((Date.now() - start) / dur, 1);
+                                t.textContent = Math.round((1 - Math.pow(1 - p, 3)) * target).toLocaleString();
+                                if (p < 1) requestAnimationFrame(step);
+                            })();
+                        }
+                    }
+                    if (t.classList.contains('rp-bar')) setTimeout(function () { t.style.width = t.dataset.width; }, 150);
+                    io.unobserve(t);
+                });
+            }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+            document.querySelectorAll('.rp-reveal, .rp-counter[data-target], .rp-bar[data-width]').forEach(function (n) {
+                if (n.classList.contains('rp-bar')) n.style.width = '0';
+                io.observe(n);
+            });
+        } else { revealAll(); }
+
+        /* ============================================================
+           PREMIUM 3D BACKGROUND PARALLAX
+           Mouse / touch subtly moves the depth layers.
+           Pauses when motion is disabled, effects are reduced, or the tab
+           is hidden. The ECG/heart pulse divider remains untouched.
+           ============================================================ */
+        (function init3DBackground() {
+            var bg = el('rp3dBg');
+            if (!bg) return;
+
+            var px = 0, py = 0, tx = 0, ty = 0, scroll = 0, raf = 0;
+
+            function canAnimate() {
+                return !motionOff() &&
+                       !root.classList.contains('rp-lowfx') &&
+                       !document.hidden &&
+                       window.matchMedia('(hover:hover)').matches;
+            }
+
+            function render() {
+                px += (tx - px) * .075;
+                py += (ty - py) * .075;
+                bg.style.setProperty('--mx', px.toFixed(4));
+                bg.style.setProperty('--my', py.toFixed(4));
+                bg.style.setProperty('--scroll', Math.min(scroll, 140).toFixed(1));
+                raf = canAnimate() ? requestAnimationFrame(render) : 0;
+            }
+
+            function start() {
+                if (!raf && canAnimate()) raf = requestAnimationFrame(render);
+                if (!canAnimate()) {
+                    px = py = tx = ty = 0;
+                    bg.style.setProperty('--mx','0');
+                    bg.style.setProperty('--my','0');
+                    bg.style.setProperty('--scroll','0');
+                }
+            }
+
+            function pointerMove(e) {
+                if (!canAnimate()) return;
+                var x = e.clientX / window.innerWidth - .5;
+                var y = e.clientY / window.innerHeight - .5;
+                tx = Math.max(-1, Math.min(1, x * 2));
+                ty = Math.max(-1, Math.min(1, y * 2));
+            }
+
+            function pointerLeave() {
+                tx = 0; ty = 0;
+            }
+
+            function onScroll() {
+                scroll = window.scrollY || window.pageYOffset || 0;
+            }
+
+            window.addEventListener('pointermove', pointerMove, {passive:true});
+            window.addEventListener('pointerleave', pointerLeave, {passive:true});
+            window.addEventListener('scroll', onScroll, {passive:true});
+            document.addEventListener('rp:fxchange', start);
+            document.addEventListener('visibilitychange', function () {
+                if (document.hidden && raf) { cancelAnimationFrame(raf); raf = 0; }
+                start();
+            });
+
+            onScroll();
+            start();
+        })();
+
+        /* ============================================================
+           AUTO-DETECT icon boxes + progress bars inside <main>
+           (gives child templates the premium look with no markup change)
+           ============================================================ */
+        function colorFamily(node) {
+            var c = getComputedStyle(node).color;
             var m = c.match(/\d+/g);
             if (!m) return 'red';
             var r = +m[0], g = +m[1], b = +m[2];
@@ -1460,52 +3453,46 @@
             if (r > 180 && g > 120 && b < 120) return 'amber';
             return 'red';
         }
-        function findLoneIcon(el) {
-            // direct icon child
-            if (el.children.length === 1) {
-                var k = el.children[0];
+        function findLoneIcon(node) {
+            if (node.children.length === 1) {
+                var k = node.children[0];
                 if (k.tagName === 'I' && /(^|\s)fa|fa-/.test(k.className)) return k;
                 if (k.tagName === 'SVG') return k;
             }
-            // icon nested one wrapper deeper (e.g. <span><i></i></span> inside the box)
-            if (el.children.length === 1 && el.children[0].children.length === 1) {
-                var k2 = el.children[0].children[0];
+            if (node.children.length === 1 && node.children[0].children.length === 1) {
+                var k2 = node.children[0].children[0];
                 if (k2.tagName === 'I' && /(^|\s)fa|fa-/.test(k2.className)) return k2;
                 if (k2.tagName === 'SVG') return k2;
             }
             return null;
         }
         function enhanceIconBoxes() {
-            document.querySelectorAll('main *').forEach(function (el) {
-                if (el.classList.contains('rp-icon-auto')) return;
-                if (el.closest('.navbar, .footer-2026, .sos-dock, .dropdown-menu, .rp-topstrip')) return;
-                if (el.classList.contains('nav-ico') || el.classList.contains('dd-ico') || el.classList.contains('a-ico')) return;
-                var icon = findLoneIcon(el);
+            document.querySelectorAll('main *').forEach(function (node) {
+                if (node.classList.contains('rp-icon-auto')) return;
+                if (node.closest('.navbar, .footer-2026, .sos-dock, .dropdown-menu, .rp-topstrip')) return;
+                if (node.classList.contains('nav-ico') || node.classList.contains('dd-ico') || node.classList.contains('a-ico')) return;
+                var icon = findLoneIcon(node);
                 if (!icon) return;
-                var w = el.offsetWidth, h = el.offsetHeight;
+                var w = node.offsetWidth, h = node.offsetHeight;
                 if (w < 22 || w > 110 || h < 22 || h > 110 || Math.abs(w - h) > 22) return;
-                var fam = colorFamily(icon);
-                el.classList.add('rp-icon-auto', 'is-' + fam);
+                node.classList.add('rp-icon-auto', 'is-' + colorFamily(icon));
             });
         }
-
-        /* ---------- AUTO-DETECT blood-group / stat progress bars ---------- */
         function enhanceProgressBars() {
             document.querySelectorAll('main .progress').forEach(function (t) { t.classList.add('rp-progress-track-auto'); });
             document.querySelectorAll('main .progress-bar').forEach(function (b) { b.classList.add('rp-progress-bar-auto'); });
-            document.querySelectorAll('main [style*="width"]').forEach(function (el) {
-                var style = el.getAttribute('style') || '';
+            document.querySelectorAll('main [style*="width"]').forEach(function (node) {
+                var style = node.getAttribute('style') || '';
                 if (!/width\s*:\s*\d+(\.\d+)?%/.test(style)) return;
-                if (el.offsetHeight < 3 || el.offsetHeight > 26) return;
-                el.classList.add('rp-progress-bar-auto');
-                if (el.parentElement) el.parentElement.classList.add('rp-progress-track-auto');
+                if (node.offsetHeight < 3 || node.offsetHeight > 26) return;
+                node.classList.add('rp-progress-bar-auto');
+                if (node.parentElement) node.parentElement.classList.add('rp-progress-track-auto');
             });
         }
-
         enhanceIconBoxes();
         enhanceProgressBars();
         window.addEventListener('load', function () { enhanceIconBoxes(); enhanceProgressBars(); });
-        setTimeout(function () { enhanceIconBoxes(); enhanceProgressBars(); }, 700); // catch late-rendered/AJAX content
+        setTimeout(function () { enhanceIconBoxes(); enhanceProgressBars(); }, 700);
     })();
 
     if ('serviceWorker' in navigator) {
@@ -1517,5 +3504,43 @@
 
     {% block scripts %}
     {% endblock %}
+
+    <script>
+    /* Keep the mobile navigation predictable after tapping a destination. */
+    document.addEventListener('DOMContentLoaded', function () {
+        var nav = document.getElementById('navbarNav');
+        if (!nav || !window.bootstrap) return;
+        nav.querySelectorAll('a:not(.dropdown-toggle)').forEach(function (link) {
+            link.addEventListener('click', function () {
+                if (window.innerWidth < 1200 && nav.classList.contains('show')) {
+                    bootstrap.Collapse.getOrCreateInstance(nav).hide();
+                }
+            });
+        });
+        window.addEventListener('resize', function () {
+            if (window.innerWidth >= 1200 && nav.classList.contains('show')) {
+                bootstrap.Collapse.getOrCreateInstance(nav).hide();
+            }
+        }, { passive:true });
+    });
+    </script>
+
+
+    <script>
+    /* Gentle reveal only when supported; content remains visible if JS is unavailable. */
+    document.addEventListener('DOMContentLoaded', function () {
+        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        var cards = document.querySelectorAll('main .stat-card-modern, main .rp-feature-card, main .rp-3d-card, main .rp-guideline-card');
+        if (!('IntersectionObserver' in window) || !cards.length) return;
+        cards.forEach(function (card) { card.classList.add('rp-reveal-ready'); });
+        var io = new IntersectionObserver(function (entries, observer) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) { entry.target.classList.add('rp-revealed'); observer.unobserve(entry.target); }
+            });
+        }, { rootMargin:'0px 0px -8% 0px', threshold:.08 });
+        cards.forEach(function (card) { io.observe(card); });
+    });
+    </script>
+
 </body>
 </html>
