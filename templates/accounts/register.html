@@ -1,562 +1,1063 @@
 {% extends 'base.html' %}
 {% load i18n %}
+{% get_current_language as CURRENT_LANGUAGE %}
 
-{% block title %}{% trans "Donor Registration" %} — Patiya RedPulse{% endblock %}
+{% block title %}
+    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+        ডোনার নিবন্ধন
+    {% else %}
+        Donor Registration
+    {% endif %}
+    — Patiya RedPulse
+{% endblock %}
 
 {% block extra_head %}
 <style>
-    /* ================================================================
-       PATIYA REDPULSE — PREMIUM DONOR REGISTRATION 2026
-       ================================================================ */
+/* ================================================================
+   PATIYA REDPULSE — PREMIUM DONOR REGISTRATION 2026
+   Fully responsive + Bengali/English safe + mobile optimized
+   ================================================================ */
 
-    .registration-page {
-        --register-red: var(--rp-red, #d90429);
-        --register-text: var(--rp-text, #0f172a);
-        --register-muted: var(--rp-subtext, #64748b);
-        --register-surface: var(--rp-surface, rgba(255,255,255,.82));
-        --register-border: var(--rp-border, rgba(15,23,42,.09));
+.registration-page {
+    --register-red: var(--rp-red, #d90429);
+    --register-red-dark: #8f0018;
+    --register-text: var(--rp-text, #0f172a);
+    --register-muted: var(--rp-subtext, #64748b);
+    --register-surface: var(--rp-surface, rgba(255,255,255,.82));
+    --register-border: var(--rp-border, rgba(15,23,42,.09));
+
+    width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+    color: var(--register-text);
+}
+
+.registration-page,
+.registration-page *,
+.registration-page *::before,
+.registration-page *::after {
+    box-sizing: border-box;
+}
+
+.registration-page .row,
+.registration-page [class*="col-"] {
+    min-width: 0;
+}
+
+.registration-page img,
+.registration-page svg,
+.registration-page iframe {
+    max-width: 100%;
+}
+
+/* ================================================================
+   HERO
+   ================================================================ */
+
+.registration-hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding: clamp(1.6rem, 4vw, 2.8rem);
+    border: 1px solid rgba(217,4,41,.22);
+    border-radius: 30px;
+    color: #fff;
+    background:
+        radial-gradient(
+            circle at 92% 8%,
+            rgba(255,255,255,.28),
+            transparent 27%
+        ),
+        linear-gradient(
+            125deg,
+            #850017 0%,
+            #d90429 50%,
+            #ff3659 100%
+        );
+    box-shadow:
+        0 30px 70px -30px rgba(217,4,41,.7),
+        inset 0 1px 0 rgba(255,255,255,.4),
+        inset 0 -18px 35px rgba(83,0,13,.23);
+}
+
+.registration-hero::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    width: 350px;
+    height: 350px;
+    top: -190px;
+    right: -75px;
+    border: 55px solid rgba(255,255,255,.08);
+    border-radius: 50%;
+    animation: registerOrbit 18s linear infinite;
+}
+
+.registration-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    opacity: .13;
+    background-image:
+        linear-gradient(
+            rgba(255,255,255,.7) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(255,255,255,.7) 1px,
+            transparent 1px
+        );
+    background-size: 42px 42px;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000);
+    mask-image: linear-gradient(90deg, transparent, #000);
+}
+
+@keyframes registerOrbit {
+    to {
+        transform: rotate(360deg);
     }
+}
+
+.registration-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    margin-bottom: .9rem;
+    padding: .42rem .8rem;
+    border: 1px solid rgba(255,255,255,.25);
+    border-radius: 999px;
+    background: rgba(255,255,255,.12);
+    font-size: .7rem;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+}
+
+.registration-pulse {
+    width: 8px;
+    height: 8px;
+    flex: 0 0 8px;
+    border-radius: 50%;
+    background: #9dffca;
+    box-shadow: 0 0 0 0 rgba(157,255,202,.7);
+    animation: registerPulse 1.8s infinite;
+}
+
+@keyframes registerPulse {
+    70% {
+        box-shadow: 0 0 0 9px rgba(157,255,202,0);
+    }
+}
+
+.registration-title {
+    max-width: 720px;
+    margin: 0 0 .65rem;
+    color: #fff;
+    font-family: 'Sora','Noto Sans Bengali',sans-serif;
+    font-size: clamp(2rem,5vw,3.5rem);
+    font-weight: 800;
+    line-height: 1.08;
+    letter-spacing: -.055em;
+    text-shadow: 0 8px 24px rgba(83,0,14,.25);
+}
+
+.registration-description {
+    max-width: 650px;
+    margin: 0;
+    color: rgba(255,255,255,.84);
+    font-size: clamp(.9rem,2vw,1rem);
+    line-height: 1.8;
+}
+
+.registration-hero-badge {
+    position: absolute;
+    right: clamp(1.3rem,4vw,2.7rem);
+    bottom: clamp(1.3rem,4vw,2.2rem);
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+    max-width: calc(100% - 2rem);
+    padding: .85rem 1rem;
+    border: 1px solid rgba(255,255,255,.25);
+    border-radius: 18px;
+    background: rgba(76,0,14,.25);
+    box-shadow:
+        0 18px 34px -18px rgba(0,0,0,.55),
+        inset 0 1px 0 rgba(255,255,255,.25);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+}
+
+.registration-hero-badge-icon {
+    width: 43px;
+    height: 43px;
+    flex: 0 0 43px;
+    display: grid;
+    place-items: center;
+    border-radius: 14px;
+    color: var(--register-red);
+    background: #fff;
+    box-shadow: 0 10px 20px -12px rgba(0,0,0,.5);
+}
+
+.registration-hero-badge strong {
+    display: block;
+    font-size: .82rem;
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+.registration-hero-badge small {
+    display: block;
+    margin-top: .18rem;
+    color: rgba(255,255,255,.7);
+    font-size: .68rem;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+/* Bengali hero typography */
+
+.registration-page:lang(bn) .registration-title {
+    letter-spacing: 0;
+    line-height: 1.28;
+}
+
+.registration-page:lang(bn) .registration-description {
+    line-height: 1.95;
+}
+
+.registration-page:lang(bn) .registration-eyebrow {
+    letter-spacing: 0;
+}
+
+/* ================================================================
+   MAIN LAYOUT
+   ================================================================ */
+
+.registration-layout {
+    position: relative;
+    z-index: 3;
+    margin-top: -34px;
+}
+
+/* ================================================================
+   REFERRER ALERT
+   ================================================================ */
+
+.referrer-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: .7rem;
+    margin-bottom: 1rem;
+    padding: .95rem 1rem;
+    border: 1px solid rgba(37,99,235,.2);
+    border-radius: 17px;
+    color: #1d4ed8;
+    background: rgba(37,99,235,.08);
+    box-shadow: 0 12px 25px -20px rgba(37,99,235,.6);
+    font-size: .8rem;
+    font-weight: 650;
+    line-height: 1.65;
+    overflow-wrap: anywhere;
+}
+
+.referrer-alert i {
+    flex: 0 0 auto;
+    padding-top: .15rem;
+}
+
+/* ================================================================
+   CARD
+   ================================================================ */
+
+.registration-card {
+    overflow: hidden;
+    width: 100%;
+    border: 1px solid var(--register-border);
+    border-radius: 28px;
+    background: var(--register-surface);
+    box-shadow:
+        0 28px 65px -34px rgba(15,23,42,.48),
+        inset 0 1px 0 rgba(255,255,255,.6);
+    backdrop-filter: blur(24px) saturate(170%);
+    -webkit-backdrop-filter: blur(24px) saturate(170%);
+}
+
+.registration-card-header {
+    display: flex;
+    align-items: center;
+    gap: .85rem;
+    padding: 1.25rem 1.4rem;
+    border-bottom: 1px solid var(--register-border);
+    background:
+        linear-gradient(
+            90deg,
+            rgba(217,4,41,.08),
+            transparent 60%
+        );
+}
+
+.registration-header-icon {
+    width: 47px;
+    height: 47px;
+    flex: 0 0 47px;
+    display: grid;
+    place-items: center;
+    border-radius: 15px;
+    color: #fff;
+    background: linear-gradient(
+        145deg,
+        #ff3659,
+        #d90429 60%,
+        #8f0018
+    );
+    box-shadow:
+        0 12px 23px -10px rgba(217,4,41,.68),
+        inset 0 1px 0 rgba(255,255,255,.45);
+}
+
+.registration-card-title {
+    margin: 0;
+    color: var(--register-text);
+    font-family: 'Sora','Noto Sans Bengali',sans-serif;
+    font-size: 1.08rem;
+    font-weight: 800;
+    letter-spacing: -.03em;
+    overflow-wrap: anywhere;
+}
+
+.registration-card-subtitle {
+    margin: .2rem 0 0;
+    color: var(--register-muted);
+    font-size: .74rem;
+    font-weight: 600;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+}
+
+.registration-card-body {
+    padding: clamp(1rem,3vw,1.55rem);
+}
+
+/* Bengali card typography */
+
+.registration-page:lang(bn) .registration-card-title {
+    letter-spacing: 0;
+}
+
+.registration-page:lang(bn) .registration-card-subtitle {
+    line-height: 1.75;
+}
+
+/* ================================================================
+   FORM SECTIONS
+   ================================================================ */
+
+.registration-section {
+    margin-bottom: 1.25rem;
+    padding: 1.1rem;
+    border: 1px solid var(--register-border);
+    border-radius: 21px;
+    background: var(
+        --rp-surface-2,
+        rgba(255,255,255,.38)
+    );
+}
+
+.registration-section:last-of-type {
+    margin-bottom: 0;
+}
+
+.registration-section-heading {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    min-width: 0;
+    margin-bottom: 1rem;
+    padding-bottom: .75rem;
+    border-bottom: 1px dashed var(--register-border);
+}
+
+.registration-section-icon {
+    width: 35px;
+    height: 35px;
+    flex: 0 0 35px;
+    display: grid;
+    place-items: center;
+    border-radius: 11px;
+    color: var(--register-red);
+    background: rgba(217,4,41,.09);
+    border: 1px solid rgba(217,4,41,.15);
+}
+
+.registration-section-heading > div {
+    min-width: 0;
+}
+
+.registration-section-heading h3 {
+    margin: 0;
+    color: var(--register-text);
+    font-family: 'Sora','Noto Sans Bengali',sans-serif;
+    font-size: .9rem;
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+.registration-section-heading p {
+    margin: .15rem 0 0;
+    color: var(--register-muted);
+    font-size: .69rem;
+    font-weight: 600;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+}
+
+/* ================================================================
+   FIELDS
+   ================================================================ */
+
+.registration-field {
+    width: 100%;
+    min-width: 0;
+    margin-bottom: 1rem;
+}
+
+.registration-field:last-child {
+    margin-bottom: 0;
+}
+
+.registration-label {
+    display: flex;
+    align-items: center;
+    gap: .42rem;
+    min-width: 0;
+    margin-bottom: .5rem;
+    color: var(--register-text);
+    font-size: .77rem;
+    font-weight: 800;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.registration-label i {
+    flex: 0 0 auto;
+    color: var(--register-red);
+    font-size: .75rem;
+}
+
+.required-mark {
+    color: var(--register-red);
+    font-weight: 900;
+}
+
+/* Inputs */
+
+.registration-form input:not([type="hidden"]):not([type="file"]),
+.registration-form select,
+.registration-form textarea {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    min-height: 49px;
+    padding: .7rem .85rem;
+    border: 1px solid var(--register-border);
+    border-radius: 14px;
+    outline: none;
+    color: var(--register-text);
+    background: var(
+        --rp-surface-2,
+        rgba(255,255,255,.55)
+    );
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.45),
+        0 7px 16px -14px rgba(15,23,42,.5);
+    font-size: .85rem;
+    font-weight: 600;
+    line-height: 1.45;
+    transition:
+        border-color .25s ease,
+        box-shadow .25s ease,
+        background .25s ease,
+        transform .25s ease;
+}
+
+.registration-form textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+.registration-form input::placeholder,
+.registration-form textarea::placeholder {
+    color: var(--register-muted);
+    opacity: .72;
+}
+
+.registration-form input:not([type="hidden"]):not([type="file"]):focus,
+.registration-form select:focus,
+.registration-form textarea:focus {
+    border-color: rgba(217,4,41,.55);
+    background: var(--rp-surface-solid,#fff);
+    box-shadow:
+        0 0 0 4px rgba(217,4,41,.1),
+        0 13px 24px -18px rgba(217,4,41,.45);
+    transform: translateY(-1px);
+}
+
+/* File input */
+
+.registration-form input[type="file"] {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    padding: .65rem;
+    border: 1px dashed rgba(217,4,41,.32);
+    border-radius: 14px;
+    color: var(--register-muted);
+    background: rgba(217,4,41,.045);
+    font-size: .76rem;
+    font-weight: 600;
+}
+
+.registration-form input[type="file"]::file-selector-button {
+    margin-right: .7rem;
+    padding: .5rem .75rem;
+    border: 0;
+    border-radius: 10px;
+    color: #fff;
+    background: linear-gradient(
+        145deg,
+        #ff3659,
+        #d90429
+    );
+    font-size: .72rem;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+/* Error */
+
+.field-error {
+    display: flex;
+    align-items: flex-start;
+    gap: .4rem;
+    min-width: 0;
+    margin-top: .45rem;
+    color: #dc2626;
+    font-size: .69rem;
+    font-weight: 700;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+}
+
+.field-error::before {
+    content: "\f06a";
+    flex: 0 0 auto;
+    padding-top: 1px;
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+}
+
+/* Bootstrap small text */
+
+.registration-page .form-text {
+    display: block;
+    margin-top: .45rem;
+    color: var(--register-muted) !important;
+    font-size: .68rem;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+/* ================================================================
+   LOCATION BUTTON
+   ================================================================ */
+
+.location-button {
+    width: 100%;
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .55rem;
+    padding: .65rem 1rem;
+    border: 1px solid rgba(37,99,235,.22);
+    border-radius: 14px;
+    color: #2563eb;
+    background: rgba(37,99,235,.08);
+    font-size: .77rem;
+    font-weight: 800;
+    transition:
+        transform .28s cubic-bezier(.34,1.56,.64,1),
+        box-shadow .28s ease,
+        background .28s ease,
+        color .28s ease;
+}
+
+.location-button:hover {
+    color: #fff;
+    border-color: transparent;
+    background: linear-gradient(
+        145deg,
+        #4384ff,
+        #2563eb
+    );
+    box-shadow:
+        0 13px 25px -12px rgba(37,99,235,.7);
+    transform: translateY(-2px);
+}
+
+.location-button:focus-visible {
+    outline: 3px solid rgba(37,99,235,.22);
+    outline-offset: 3px;
+}
+
+/* ================================================================
+   INFORMATION ALERT
+   ================================================================ */
+
+.information-alert {
+    position: relative;
+    overflow: hidden;
+    margin: 1.35rem 0;
+    padding: 1.1rem 1.15rem;
+    border: 1px solid rgba(37,99,235,.2);
+    border-radius: 19px;
+    color: var(--register-muted);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(37,99,235,.1),
+            rgba(217,4,41,.045)
+        );
+    box-shadow:
+        0 12px 25px -20px rgba(37,99,235,.65),
+        inset 0 1px 0 rgba(255,255,255,.45);
+}
+
+.information-alert::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 4px;
+    background: linear-gradient(
+        180deg,
+        #60a5fa,
+        #2563eb
+    );
+}
+
+.information-heading {
+    display: flex;
+    align-items: center;
+    gap: .55rem;
+    margin-bottom: .6rem;
+    color: #2563eb;
+    font-size: .86rem;
+    font-weight: 800;
+}
+
+.information-alert ul {
+    margin: 0;
+    padding-left: 1.25rem;
+    font-size: .75rem;
+    font-weight: 600;
+    line-height: 1.8;
+}
+
+.information-alert li {
+    overflow-wrap: anywhere;
+}
+
+.information-alert li::marker {
+    color: #2563eb;
+}
+
+/* ================================================================
+   SUBMIT
+   ================================================================ */
+
+.registration-submit {
+    width: 100%;
+    min-height: 53px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .55rem;
+    position: relative;
+    overflow: hidden;
+    border: 0;
+    border-radius: 15px;
+    color: #fff;
+    background: linear-gradient(
+        145deg,
+        #ff3659,
+        #d90429 60%,
+        #8f0018
+    );
+    box-shadow:
+        0 15px 28px -11px rgba(217,4,41,.72),
+        inset 0 1px 0 rgba(255,255,255,.45),
+        inset 0 -5px 10px rgba(84,0,16,.22);
+    font-size: .84rem;
+    font-weight: 800;
+    transition:
+        transform .3s cubic-bezier(.34,1.56,.64,1),
+        box-shadow .3s ease;
+}
+
+.registration-submit::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 55%;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255,255,255,.28),
+            transparent
+        );
+    pointer-events: none;
+}
+
+.registration-submit:hover {
+    color: #fff;
+    transform: translateY(-3px);
+    box-shadow:
+        0 21px 37px -12px rgba(217,4,41,.8);
+}
+
+.registration-submit:active {
+    transform: translateY(0) scale(.98);
+}
+
+.registration-submit:disabled {
+    cursor: wait;
+    opacity: .82;
+    transform: none !important;
+}
+
+/* ================================================================
+   LOGIN PROMPT
+   ================================================================ */
+
+.login-prompt {
+    margin: 1.2rem 0 0;
+    color: var(--register-muted);
+    font-size: .78rem;
+    font-weight: 600;
+    line-height: 1.7;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.login-prompt a {
+    color: var(--register-red);
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.login-prompt a:hover {
+    color: var(--register-red-dark);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* ================================================================
+   BENGALI TYPOGRAPHY
+   ================================================================ */
+
+.registration-page:lang(bn),
+.registration-page:lang(bn) input,
+.registration-page:lang(bn) select,
+.registration-page:lang(bn) textarea,
+.registration-page:lang(bn) button,
+.registration-page:lang(bn) a {
+    font-family:
+        'Noto Sans Bengali',
+        'Hind Siliguri',
+        'SolaimanLipi',
+        sans-serif;
+}
+
+.registration-page:lang(bn) .registration-label {
+    font-size: .81rem;
+}
+
+.registration-page:lang(bn)
+.registration-form input,
+.registration-page:lang(bn)
+.registration-form select,
+.registration-page:lang(bn)
+.registration-form textarea {
+    font-size: .9rem;
+}
+
+/* ================================================================
+   DARK MODE
+   ================================================================ */
+
+[data-theme="dark"] .registration-page {
+    --register-text: var(--rp-text,#eef2f9);
+    --register-muted: var(--rp-subtext,#9fb0c9);
+    --register-surface: var(
+        --rp-surface,
+        rgba(19,25,40,.72)
+    );
+    --register-border: var(
+        --rp-border,
+        rgba(255,255,255,.10)
+    );
+}
+
+[data-theme="dark"]
+.registration-form input:not([type="hidden"]):not([type="file"]),
+[data-theme="dark"]
+.registration-form select,
+[data-theme="dark"]
+.registration-form textarea {
+    background: #111827;
+}
+
+[data-theme="dark"]
+.registration-form input:not([type="hidden"]):not([type="file"]):focus,
+[data-theme="dark"]
+.registration-form select:focus,
+[data-theme="dark"]
+.registration-form textarea:focus {
+    background: #121a2b;
+}
+
+/* ================================================================
+   RESPONSIVE
+   ================================================================ */
+
+@media (max-width: 991.98px) {
+
+    .registration-hero-badge {
+        position: static;
+        width: max-content;
+        max-width: 100%;
+        margin-top: 1.35rem;
+    }
+
+    .registration-layout {
+        margin-top: -28px;
+    }
+}
+
+@media (max-width: 767.98px) {
 
     .registration-hero {
-        position: relative;
-        isolation: isolate;
-        overflow: hidden;
-        padding: clamp(1.6rem, 4vw, 2.8rem);
-        border: 1px solid rgba(217,4,41,.22);
-        border-radius: 30px;
-        color: #fff;
-        background:
-            radial-gradient(circle at 92% 8%, rgba(255,255,255,.28), transparent 27%),
-            linear-gradient(125deg, #850017 0%, #d90429 50%, #ff3659 100%);
-        box-shadow:
-            0 30px 70px -30px rgba(217,4,41,.7),
-            inset 0 1px 0 rgba(255,255,255,.4),
-            inset 0 -18px 35px rgba(83,0,13,.23);
-    }
-
-    .registration-hero::before {
-        content: "";
-        position: absolute;
-        z-index: -1;
-        width: 350px;
-        height: 350px;
-        top: -190px;
-        right: -75px;
-        border: 55px solid rgba(255,255,255,.08);
-        border-radius: 50%;
-        animation: registerOrbit 18s linear infinite;
-    }
-
-    .registration-hero::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        z-index: -2;
-        opacity: .13;
-        background-image:
-            linear-gradient(rgba(255,255,255,.7) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,.7) 1px, transparent 1px);
-        background-size: 42px 42px;
-        -webkit-mask-image: linear-gradient(90deg, transparent, #000);
-        mask-image: linear-gradient(90deg, transparent, #000);
-    }
-
-    @keyframes registerOrbit {
-        to { transform: rotate(360deg); }
-    }
-
-    .registration-eyebrow {
-        display: inline-flex;
-        align-items: center;
-        gap: .5rem;
-        margin-bottom: .9rem;
-        padding: .42rem .8rem;
-        border: 1px solid rgba(255,255,255,.25);
-        border-radius: 999px;
-        background: rgba(255,255,255,.12);
-        font-size: .7rem;
-        font-weight: 800;
-        letter-spacing: .12em;
-        text-transform: uppercase;
-    }
-
-    .registration-pulse {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: #9dffca;
-        box-shadow: 0 0 0 0 rgba(157,255,202,.7);
-        animation: registerPulse 1.8s infinite;
-    }
-
-    @keyframes registerPulse {
-        70% { box-shadow: 0 0 0 9px rgba(157,255,202,0); }
+        padding: 1.35rem 1rem;
+        border-radius: 24px;
     }
 
     .registration-title {
-        max-width: 720px;
-        margin: 0 0 .65rem;
-        color: #fff;
-        font-family: 'Sora', 'Noto Sans Bengali', sans-serif;
-        font-size: clamp(2rem, 5vw, 3.5rem);
-        font-weight: 800;
-        line-height: 1.08;
-        letter-spacing: -.055em;
-        text-shadow: 0 8px 24px rgba(83,0,14,.25);
+        font-size: clamp(
+            1.75rem,
+            9vw,
+            2.45rem
+        );
+        line-height: 1.2;
+        letter-spacing: -.025em;
     }
 
     .registration-description {
-        max-width: 650px;
-        margin: 0;
-        color: rgba(255,255,255,.84);
-        font-size: clamp(.9rem, 2vw, 1rem);
+        font-size: .88rem;
         line-height: 1.8;
     }
 
     .registration-hero-badge {
-        position: absolute;
-        right: clamp(1.3rem, 4vw, 2.7rem);
-        bottom: clamp(1.3rem, 4vw, 2.2rem);
-        display: flex;
-        align-items: center;
-        gap: .7rem;
-        padding: .85rem 1rem;
-        border: 1px solid rgba(255,255,255,.25);
-        border-radius: 18px;
-        background: rgba(76,0,14,.25);
-        box-shadow:
-            0 18px 34px -18px rgba(0,0,0,.55),
-            inset 0 1px 0 rgba(255,255,255,.25);
-        backdrop-filter: blur(18px);
-        -webkit-backdrop-filter: blur(18px);
+        width: 100%;
+        padding: .75rem;
     }
 
     .registration-hero-badge-icon {
-        width: 43px;
-        height: 43px;
-        display: grid;
-        place-items: center;
-        border-radius: 14px;
-        color: var(--register-red);
-        background: #fff;
-        box-shadow: 0 10px 20px -12px rgba(0,0,0,.5);
-    }
-
-    .registration-hero-badge strong {
-        display: block;
-        font-size: .82rem;
-        font-weight: 800;
-    }
-
-    .registration-hero-badge small {
-        display: block;
-        margin-top: .18rem;
-        color: rgba(255,255,255,.7);
-        font-size: .68rem;
-        font-weight: 600;
-    }
-
-    .registration-layout {
-        position: relative;
-        z-index: 3;
-        margin-top: -34px;
+        width: 40px;
+        height: 40px;
+        flex-basis: 40px;
     }
 
     .registration-card {
-        overflow: hidden;
-        border: 1px solid var(--register-border);
-        border-radius: 28px;
-        background: var(--register-surface);
-        box-shadow:
-            0 28px 65px -34px rgba(15,23,42,.48),
-            inset 0 1px 0 rgba(255,255,255,.6);
-        backdrop-filter: blur(24px) saturate(170%);
-        -webkit-backdrop-filter: blur(24px) saturate(170%);
+        border-radius: 22px;
     }
 
-    .registration-card-header {
-        display: flex;
-        align-items: center;
-        gap: .85rem;
-        padding: 1.25rem 1.4rem;
-        border-bottom: 1px solid var(--register-border);
-        background: linear-gradient(90deg, rgba(217,4,41,.08), transparent 60%);
-    }
-
-    .registration-header-icon {
-        width: 47px;
-        height: 47px;
-        display: grid;
-        place-items: center;
-        flex: 0 0 47px;
-        border-radius: 15px;
-        color: #fff;
-        background: linear-gradient(145deg, #ff3659, #d90429 60%, #8f0018);
-        box-shadow:
-            0 12px 23px -10px rgba(217,4,41,.68),
-            inset 0 1px 0 rgba(255,255,255,.45);
-    }
-
-    .registration-card-title {
-        margin: 0;
-        color: var(--register-text);
-        font-family: 'Sora', 'Noto Sans Bengali', sans-serif;
-        font-size: 1.08rem;
-        font-weight: 800;
-        letter-spacing: -.03em;
-    }
-
-    .registration-card-subtitle {
-        margin: .2rem 0 0;
-        color: var(--register-muted);
-        font-size: .74rem;
-        font-weight: 600;
-    }
-
+    .registration-card-header,
     .registration-card-body {
-        padding: clamp(1rem, 3vw, 1.55rem);
-    }
-
-    .referrer-alert {
-        display: flex;
-        align-items: flex-start;
-        gap: .7rem;
-        margin-bottom: 1rem;
-        padding: .95rem 1rem;
-        border: 1px solid rgba(37,99,235,.2);
-        border-radius: 17px;
-        color: #1d4ed8;
-        background: rgba(37,99,235,.08);
-        box-shadow: 0 12px 25px -20px rgba(37,99,235,.6);
-        font-size: .8rem;
-        font-weight: 650;
-    }
-
-    .referrer-alert i {
-        padding-top: .15rem;
+        padding: .95rem;
     }
 
     .registration-section {
-        margin-bottom: 1.25rem;
-        padding: 1.1rem;
-        border: 1px solid var(--register-border);
-        border-radius: 21px;
-        background: var(--rp-surface-2, rgba(255,255,255,.38));
-    }
-
-    .registration-section:last-of-type {
-        margin-bottom: 0;
+        padding: .88rem;
+        border-radius: 18px;
     }
 
     .registration-section-heading {
-        display: flex;
-        align-items: center;
-        gap: .65rem;
-        margin-bottom: 1rem;
-        padding-bottom: .75rem;
-        border-bottom: 1px dashed var(--register-border);
-    }
-
-    .registration-section-icon {
-        width: 35px;
-        height: 35px;
-        display: grid;
-        place-items: center;
-        border-radius: 11px;
-        color: var(--register-red);
-        background: rgba(217,4,41,.09);
-        border: 1px solid rgba(217,4,41,.15);
-    }
-
-    .registration-section-heading h3 {
-        margin: 0;
-        color: var(--register-text);
-        font-family: 'Sora', 'Noto Sans Bengali', sans-serif;
-        font-size: .9rem;
-        font-weight: 800;
+        align-items: flex-start;
     }
 
     .registration-section-heading p {
-        margin: .15rem 0 0;
-        color: var(--register-muted);
-        font-size: .69rem;
-        font-weight: 600;
-    }
-
-    .registration-field {
-        margin-bottom: 1rem;
-    }
-
-    .registration-field:last-child {
-        margin-bottom: 0;
-    }
-
-    .registration-label {
-        display: flex;
-        align-items: center;
-        gap: .42rem;
-        margin-bottom: .5rem;
-        color: var(--register-text);
-        font-size: .77rem;
-        font-weight: 800;
-    }
-
-    .registration-label i {
-        color: var(--register-red);
-        font-size: .75rem;
-    }
-
-    .required-mark {
-        color: var(--register-red);
-        font-weight: 900;
+        line-height: 1.65;
     }
 
     .registration-form input:not([type="hidden"]):not([type="file"]),
     .registration-form select,
     .registration-form textarea {
-        width: 100%;
-        min-height: 49px;
-        padding: .7rem .85rem;
-        border: 1px solid var(--register-border);
-        border-radius: 14px;
-        outline: none;
-        color: var(--register-text);
-        background: var(--rp-surface-2, rgba(255,255,255,.55));
-        box-shadow:
-            inset 0 1px 0 rgba(255,255,255,.45),
-            0 7px 16px -14px rgba(15,23,42,.5);
-        font-size: .85rem;
-        font-weight: 600;
-        transition: all .25s ease;
-    }
-
-    .registration-form input:not([type="hidden"]):not([type="file"]):focus,
-    .registration-form select:focus,
-    .registration-form textarea:focus {
-        border-color: rgba(217,4,41,.55);
-        background: var(--rp-surface-solid, #fff);
-        box-shadow:
-            0 0 0 4px rgba(217,4,41,.1),
-            0 13px 24px -18px rgba(217,4,41,.45);
-        transform: translateY(-1px);
+        min-height: 51px;
+        font-size: .88rem;
     }
 
     .registration-form input[type="file"] {
+        overflow: hidden;
+    }
+
+    .location-button,
+    .registration-submit {
         width: 100%;
-        padding: .65rem;
-        border: 1px dashed rgba(217,4,41,.32);
-        border-radius: 14px;
-        color: var(--register-muted);
-        background: rgba(217,4,41,.045);
-        font-size: .76rem;
-        font-weight: 600;
-    }
-
-    .registration-form input[type="file"]::file-selector-button {
-        margin-right: .7rem;
-        padding: .5rem .75rem;
-        border: 0;
-        border-radius: 10px;
-        color: #fff;
-        background: linear-gradient(145deg, #ff3659, #d90429);
-        font-size: .72rem;
-        font-weight: 800;
-        cursor: pointer;
-    }
-
-    .field-error {
-        display: flex;
-        align-items: flex-start;
-        gap: .4rem;
-        margin-top: .45rem;
-        color: #dc2626;
-        font-size: .69rem;
-        font-weight: 700;
-    }
-
-    .field-error::before {
-        content: "\f06a";
-        padding-top: 1px;
-        font-family: "Font Awesome 6 Free";
-        font-weight: 900;
-    }
-
-    .location-button {
-        width: 100%;
-        min-height: 48px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: .55rem;
-        padding: .65rem 1rem;
-        border: 1px solid rgba(37,99,235,.22);
-        border-radius: 14px;
-        color: #2563eb;
-        background: rgba(37,99,235,.08);
-        font-size: .77rem;
-        font-weight: 800;
-        transition: all .28s cubic-bezier(.34,1.56,.64,1);
-    }
-
-    .location-button:hover {
-        color: #fff;
-        border-color: transparent;
-        background: linear-gradient(145deg, #4384ff, #2563eb);
-        box-shadow: 0 13px 25px -12px rgba(37,99,235,.7);
-        transform: translateY(-2px);
     }
 
     .information-alert {
-        position: relative;
-        overflow: hidden;
-        margin: 1.35rem 0;
-        padding: 1.1rem 1.15rem;
-        border: 1px solid rgba(37,99,235,.2);
-        border-radius: 19px;
-        color: var(--register-muted);
-        background: linear-gradient(135deg, rgba(37,99,235,.1), rgba(217,4,41,.045));
-        box-shadow:
-            0 12px 25px -20px rgba(37,99,235,.65),
-            inset 0 1px 0 rgba(255,255,255,.45);
+        padding: .95rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+
+    .registration-page {
+        padding-left: 0;
+        padding-right: 0;
     }
 
-    .information-alert::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        width: 4px;
-        background: linear-gradient(180deg, #60a5fa, #2563eb);
+    .registration-hero {
+        padding: 1.15rem .9rem;
+        border-radius: 20px;
+    }
+
+    .registration-eyebrow {
+        font-size: .62rem;
+    }
+
+    .registration-title {
+        font-size: clamp(
+            1.7rem,
+            9.5vw,
+            2.25rem
+        );
+    }
+
+    .registration-card-header,
+    .registration-card-body {
+        padding: .78rem;
+    }
+
+    .registration-section {
+        padding: .75rem;
+    }
+
+    .registration-header-icon {
+        width: 42px;
+        height: 42px;
+        flex-basis: 42px;
+    }
+
+    .registration-card-title {
+        font-size: .95rem;
+    }
+
+    .registration-card-subtitle {
+        font-size: .67rem;
+    }
+
+    .registration-section-heading h3 {
+        font-size: .82rem;
+    }
+
+    .registration-section-heading p {
+        font-size: .64rem;
+    }
+
+    .registration-label {
+        font-size: .74rem;
+    }
+
+    .information-alert {
+        font-size: .72rem;
     }
 
     .information-heading {
-        display: flex;
-        align-items: center;
-        gap: .55rem;
-        margin-bottom: .6rem;
-        color: #2563eb;
-        font-size: .86rem;
-        font-weight: 800;
+        font-size: .8rem;
     }
 
     .information-alert ul {
-        margin: 0;
-        padding-left: 1.25rem;
-        font-size: .75rem;
-        font-weight: 600;
-        line-height: 1.8;
-    }
-
-    .information-alert li::marker {
-        color: #2563eb;
+        font-size: .69rem;
+        padding-left: 1rem;
     }
 
     .registration-submit {
-        width: 100%;
-        min-height: 53px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: .55rem;
-        position: relative;
-        overflow: hidden;
-        border: 0;
-        border-radius: 15px;
-        color: #fff;
-        background: linear-gradient(145deg, #ff3659, #d90429 60%, #8f0018);
-        box-shadow:
-            0 15px 28px -11px rgba(217,4,41,.72),
-            inset 0 1px 0 rgba(255,255,255,.45),
-            inset 0 -5px 10px rgba(84,0,16,.22);
-        font-size: .84rem;
-        font-weight: 800;
-        transition: all .3s cubic-bezier(.34,1.56,.64,1);
-    }
-
-    .registration-submit::before {
-        content: "";
-        position: absolute;
-        inset: 0 0 55%;
-        background: linear-gradient(180deg, rgba(255,255,255,.28), transparent);
-        pointer-events: none;
-    }
-
-    .registration-submit:hover {
-        color: #fff;
-        transform: translateY(-3px);
-        box-shadow: 0 21px 37px -12px rgba(217,4,41,.8);
-    }
-
-    .registration-submit:active {
-        transform: translateY(0) scale(.98);
+        min-height: 52px;
     }
 
     .login-prompt {
-        margin: 1.2rem 0 0;
-        color: var(--register-muted);
-        font-size: .78rem;
-        font-weight: 600;
-        text-align: center;
+        padding: 0 .6rem;
+    }
+}
+
+@media (max-width: 390px) {
+
+    .registration-hero-badge {
+        align-items: flex-start;
     }
 
-    .login-prompt a {
-        color: var(--register-red);
-        font-weight: 800;
-        text-decoration: none;
+    .registration-hero-badge small {
+        line-height: 1.5;
     }
 
-    .login-prompt a:hover {
-        color: #8f0018;
-        text-decoration: underline;
-        text-underline-offset: 3px;
+    .registration-section-heading {
+        gap: .5rem;
     }
 
-    @media (max-width: 991.98px) {
-        .registration-hero-badge {
-            position: static;
-            width: max-content;
-            max-width: 100%;
-            margin-top: 1.35rem;
-        }
+    .registration-section-icon {
+        width: 32px;
+        height: 32px;
+        flex-basis: 32px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .registration-hero::before,
+    .registration-pulse {
+        animation: none !important;
     }
 
-    @media (max-width: 767.98px) {
-        .registration-hero {
-            padding: 1.45rem 1.15rem;
-            border-radius: 25px;
-        }
-
-        .registration-title {
-            font-size: clamp(1.85rem, 9vw, 2.5rem);
-        }
-
-        .registration-layout {
-            margin-top: -27px;
-        }
-
-        .registration-card-header,
-        .registration-card-body {
-            padding: 1rem;
-        }
-
-        .registration-section {
-            padding: .9rem;
-            border-radius: 18px;
-        }
+    .registration-form input,
+    .registration-form select,
+    .registration-form textarea,
+    .registration-submit,
+    .location-button {
+        transition: none !important;
     }
-
-    @media (prefers-reduced-motion: reduce) {
-        .registration-hero::before,
-        .registration-pulse {
-            animation: none !important;
-        }
-    }
+}
 </style>
 {% endblock %}
 
+
 {% block content %}
-<div class="registration-page">
+
+<div
+    class="registration-page"
+    lang="{{ CURRENT_LANGUAGE|slice:":2" }}"
+    data-language="{{ CURRENT_LANGUAGE|lower }}"
+>
+
+    <!-- ============================================================
+         UNION / UPAZILA DATA
+         ============================================================ -->
 
     <datalist id="patiyaUnions">
         <option value="Kolagaon">
@@ -578,460 +1079,1239 @@
         <option value="Dakshin Bhurshi">
     </datalist>
 
-    <!-- Hero -->
-    <section class="registration-hero reveal">
+
+    <!-- ============================================================
+         HERO
+         ============================================================ -->
+
+    <section
+        class="registration-hero reveal"
+        aria-labelledby="registrationPageTitle"
+    >
+
         <div class="registration-eyebrow">
-            <span class="registration-pulse"></span>
-            {% trans "Join the Life-Saving Network" %}
+            <span
+                class="registration-pulse"
+                aria-hidden="true"
+            ></span>
+
+            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                জীবন বাঁচানোর নেটওয়ার্কে যোগ দিন
+            {% else %}
+                Join the Life-Saving Network
+            {% endif %}
         </div>
 
-        <h1 class="registration-title">
-            {% trans "Become someone’s hope today." %}
+        <h1
+            class="registration-title"
+            id="registrationPageTitle"
+        >
+            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                আজই কারও আশার কারণ হয়ে উঠুন।
+            {% else %}
+                Become someone’s hope today.
+            {% endif %}
         </h1>
 
         <p class="registration-description">
-            {% trans "Register as a blood donor and help patients connect with an eligible donor when every second matters." %}
+
+            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                রক্তদাতা হিসেবে নিবন্ধন করুন এবং যখন প্রতিটি সেকেন্ড গুরুত্বপূর্ণ,
+                তখন রোগীদের একজন যোগ্য রক্তদাতার সঙ্গে সংযুক্ত হতে সাহায্য করুন।
+            {% else %}
+                Register as a blood donor and help patients connect with an eligible donor when every second matters.
+            {% endif %}
+
         </p>
 
         <div class="registration-hero-badge">
+
             <span class="registration-hero-badge-icon">
                 <i class="fas fa-heart-pulse"></i>
             </span>
+
             <div>
-                <strong>{% trans "Your donation can save a life" %}</strong>
-                <small>{% trans "Registration is free and humanitarian" %}</small>
+                <strong>
+                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                        আপনার রক্তদান একটি জীবন বাঁচাতে পারে
+                    {% else %}
+                        Your donation can save a life
+                    {% endif %}
+                </strong>
+
+                <small>
+                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                        নিবন্ধন সম্পূর্ণ বিনামূল্যে ও মানবিক
+                    {% else %}
+                        Registration is free and humanitarian
+                    {% endif %}
+                </small>
             </div>
+
         </div>
+
     </section>
+
+
+    <!-- ============================================================
+         MAIN REGISTRATION AREA
+         ============================================================ -->
 
     <div class="registration-layout">
 
         {% if referrer %}
+
             <div class="referrer-alert reveal">
-                <i class="fas fa-user-plus"></i>
+
+                <i
+                    class="fas fa-user-plus"
+                    aria-hidden="true"
+                ></i>
+
                 <span>
-                    {% blocktrans with name=referrer.full_name %}
-                        You were invited by <strong>{{ name }}</strong> — welcome!
-                    {% endblocktrans %}
+
+                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+
+                        আপনাকে
+                        <strong>{{ referrer.full_name }}</strong>
+                        আমন্ত্রণ জানিয়েছেন — স্বাগতম!
+
+                    {% else %}
+
+                        You were invited by
+                        <strong>{{ referrer.full_name }}</strong>
+                        — welcome!
+
+                    {% endif %}
+
                 </span>
+
             </div>
+
         {% endif %}
 
+
         <section class="registration-card reveal">
+
+            <!-- ====================================================
+                 CARD HEADER
+                 ==================================================== -->
+
             <div class="registration-card-header">
+
                 <span class="registration-header-icon">
                     <i class="fas fa-user-plus"></i>
                 </span>
+
                 <div>
                     <h2 class="registration-card-title">
-                        {% trans "Donor Registration" %}
+
+                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                            ডোনার নিবন্ধন
+                        {% else %}
+                            Donor Registration
+                        {% endif %}
+
                     </h2>
+
                     <p class="registration-card-subtitle">
-                        {% trans "Create your account and complete your donor profile" %}
+
+                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                            আপনার অ্যাকাউন্ট তৈরি করুন এবং ডোনার প্রোফাইল সম্পূর্ণ করুন
+                        {% else %}
+                            Create your account and complete your donor profile
+                        {% endif %}
+
                     </p>
                 </div>
+
             </div>
 
+
             <div class="registration-card-body">
-                <form method="post" enctype="multipart/form-data" class="registration-form" id="registrationForm">
+
+                <form
+                    method="post"
+                    enctype="multipart/form-data"
+                    class="registration-form"
+                    id="registrationForm"
+                >
+
                     {% csrf_token %}
 
                     {{ form.referral_code }}
                     {{ form.latitude }}
                     {{ form.longitude }}
 
+
                     {% if form.non_field_errors %}
+
                         <div class="field-error mb-3">
                             {{ form.non_field_errors }}
                         </div>
+
                     {% endif %}
 
-                    <!-- Account Information -->
+
+                    <!-- =================================================
+                         ACCOUNT INFORMATION
+                         ================================================= -->
+
                     <div class="registration-section">
+
                         <div class="registration-section-heading">
+
                             <span class="registration-section-icon">
                                 <i class="fas fa-lock"></i>
                             </span>
+
                             <div>
-                                <h3>{% trans "Account Information" %}</h3>
-                                <p>{% trans "Use these details to securely access your account" %}</p>
+
+                                <h3>
+
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        অ্যাকাউন্টের তথ্য
+                                    {% else %}
+                                        Account Information
+                                    {% endif %}
+
+                                </h3>
+
+                                <p>
+
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        নিরাপদভাবে অ্যাকাউন্টে প্রবেশের জন্য এই তথ্য ব্যবহার করুন
+                                    {% else %}
+                                        Use these details to securely access your account
+                                    {% endif %}
+
+                                </p>
+
                             </div>
+
                         </div>
 
+
+                        <!-- Username -->
+
                         <div class="registration-field">
-                            <label for="{{ form.username.id_for_label }}" class="registration-label">
+
+                            <label
+                                for="{{ form.username.id_for_label }}"
+                                class="registration-label"
+                            >
                                 <i class="fas fa-user"></i>
-                                {% trans "Username" %}
+
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                    ইউজারনেম
+                                {% else %}
+                                    Username
+                                {% endif %}
+
                                 <span class="required-mark">*</span>
                             </label>
 
                             {{ form.username }}
 
                             {% if form.username.errors %}
-                                <div class="field-error">{{ form.username.errors.0 }}</div>
+                                <div class="field-error">
+                                    {{ form.username.errors.0 }}
+                                </div>
                             {% endif %}
+
                         </div>
 
+
                         <div class="row g-3">
+
+                            <!-- Password -->
+
                             <div class="col-md-6">
+
                                 <div class="registration-field">
-                                    <label for="{{ form.password1.id_for_label }}" class="registration-label">
+
+                                    <label
+                                        for="{{ form.password1.id_for_label }}"
+                                        class="registration-label"
+                                    >
+
                                         <i class="fas fa-key"></i>
-                                        {% trans "Password" %}
+
+                                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                            পাসওয়ার্ড
+                                        {% else %}
+                                            Password
+                                        {% endif %}
+
                                         <span class="required-mark">*</span>
+
                                     </label>
 
                                     {{ form.password1 }}
 
                                     {% if form.password1.errors %}
-                                        <div class="field-error">{{ form.password1.errors.0 }}</div>
+                                        <div class="field-error">
+                                            {{ form.password1.errors.0 }}
+                                        </div>
                                     {% endif %}
+
                                 </div>
+
                             </div>
 
+
+                            <!-- Confirm Password -->
+
                             <div class="col-md-6">
+
                                 <div class="registration-field">
-                                    <label for="{{ form.password2.id_for_label }}" class="registration-label">
+
+                                    <label
+                                        for="{{ form.password2.id_for_label }}"
+                                        class="registration-label"
+                                    >
+
                                         <i class="fas fa-shield-check"></i>
-                                        {% trans "Confirm Password" %}
+
+                                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                            পাসওয়ার্ড নিশ্চিত করুন
+                                        {% else %}
+                                            Confirm Password
+                                        {% endif %}
+
                                         <span class="required-mark">*</span>
+
                                     </label>
 
                                     {{ form.password2 }}
 
                                     {% if form.password2.errors %}
-                                        <div class="field-error">{{ form.password2.errors.0 }}</div>
+                                        <div class="field-error">
+                                            {{ form.password2.errors.0 }}
+                                        </div>
                                     {% endif %}
+
                                 </div>
+
                             </div>
+
                         </div>
+
                     </div>
 
-                    <!-- Personal Information -->
+
+                    <!-- =================================================
+                         PERSONAL INFORMATION
+                         ================================================= -->
+
                     <div class="registration-section">
+
                         <div class="registration-section-heading">
+
                             <span class="registration-section-icon">
                                 <i class="fas fa-id-card"></i>
                             </span>
+
                             <div>
-                                <h3>{% trans "Personal Information" %}</h3>
-                                <p>{% trans "Help seekers identify and contact you correctly" %}</p>
+
+                                <h3>
+
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        ব্যক্তিগত তথ্য
+                                    {% else %}
+                                        Personal Information
+                                    {% endif %}
+
+                                </h3>
+
+                                <p>
+
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        রক্তপ্রার্থীরা যেন আপনাকে সঠিকভাবে শনাক্ত ও যোগাযোগ করতে পারে
+                                    {% else %}
+                                        Help seekers identify and contact you correctly
+                                    {% endif %}
+
+                                </p>
+
                             </div>
+
                         </div>
 
+
+                        <!-- Full Name -->
+
                         <div class="registration-field">
-                            <label for="{{ form.full_name.id_for_label }}" class="registration-label">
+
+                            <label
+                                for="{{ form.full_name.id_for_label }}"
+                                class="registration-label"
+                            >
+
                                 <i class="fas fa-user"></i>
-                                {% trans "Full Name" %}
+
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                    পূর্ণ নাম
+                                {% else %}
+                                    Full Name
+                                {% endif %}
+
                                 <span class="required-mark">*</span>
+
                             </label>
 
                             {{ form.full_name }}
 
                             {% if form.full_name.errors %}
-                                <div class="field-error">{{ form.full_name.errors.0 }}</div>
+                                <div class="field-error">
+                                    {{ form.full_name.errors.0 }}
+                                </div>
                             {% endif %}
+
                         </div>
 
+
                         <div class="row g-3">
+
+                            <!-- Blood Group -->
+
                             <div class="col-md-6">
+
                                 <div class="registration-field">
-                                    <label for="{{ form.blood_group.id_for_label }}" class="registration-label">
+
+                                    <label
+                                        for="{{ form.blood_group.id_for_label }}"
+                                        class="registration-label"
+                                    >
+
                                         <i class="fas fa-droplet"></i>
-                                        {% trans "Blood Group" %}
+
+                                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                            রক্তের গ্রুপ
+                                        {% else %}
+                                            Blood Group
+                                        {% endif %}
+
                                         <span class="required-mark">*</span>
+
                                     </label>
 
                                     {{ form.blood_group }}
 
                                     {% if form.blood_group.errors %}
-                                        <div class="field-error">{{ form.blood_group.errors.0 }}</div>
+                                        <div class="field-error">
+                                            {{ form.blood_group.errors.0 }}
+                                        </div>
                                     {% endif %}
+
                                 </div>
+
                             </div>
 
+
+                            <!-- Gender -->
+
                             <div class="col-md-6">
+
                                 <div class="registration-field">
-                                    <label for="{{ form.gender.id_for_label }}" class="registration-label">
+
+                                    <label
+                                        for="{{ form.gender.id_for_label }}"
+                                        class="registration-label"
+                                    >
+
                                         <i class="fas fa-venus-mars"></i>
-                                        {% trans "Gender" %}
+
+                                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                            লিঙ্গ
+                                        {% else %}
+                                            Gender
+                                        {% endif %}
+
                                         <span class="required-mark">*</span>
+
                                     </label>
 
                                     {{ form.gender }}
 
                                     {% if form.gender.errors %}
-                                        <div class="field-error">{{ form.gender.errors.0 }}</div>
+                                        <div class="field-error">
+                                            {{ form.gender.errors.0 }}
+                                        </div>
                                     {% endif %}
+
                                 </div>
+
                             </div>
 
+
+                            <!-- Age -->
+
                             <div class="col-md-6">
+
                                 <div class="registration-field">
-                                    <label for="{{ form.age.id_for_label }}" class="registration-label">
+
+                                    <label
+                                        for="{{ form.age.id_for_label }}"
+                                        class="registration-label"
+                                    >
+
                                         <i class="fas fa-cake-candles"></i>
-                                        {% trans "Age" %}
+
+                                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                            বয়স
+                                        {% else %}
+                                            Age
+                                        {% endif %}
+
                                         <span class="required-mark">*</span>
+
                                     </label>
 
                                     {{ form.age }}
 
                                     {% if form.age.errors %}
-                                        <div class="field-error">{{ form.age.errors.0 }}</div>
+                                        <div class="field-error">
+                                            {{ form.age.errors.0 }}
+                                        </div>
                                     {% endif %}
 
                                     <small class="form-text text-muted">
-                                        {% trans "You must be 18 or older to register." %}
+
+                                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                            নিবন্ধনের জন্য আপনার বয়স অবশ্যই ১৮ বছর বা তার বেশি হতে হবে।
+                                        {% else %}
+                                            You must be 18 or older to register.
+                                        {% endif %}
+
                                     </small>
+
                                 </div>
+
                             </div>
 
+
+                            <!-- Mobile -->
+
                             <div class="col-md-6">
+
                                 <div class="registration-field">
-                                    <label for="{{ form.mobile_number.id_for_label }}" class="registration-label">
+
+                                    <label
+                                        for="{{ form.mobile_number.id_for_label }}"
+                                        class="registration-label"
+                                    >
+
                                         <i class="fas fa-phone"></i>
-                                        {% trans "Mobile Number" %}
+
+                                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                            মোবাইল নম্বর
+                                        {% else %}
+                                            Mobile Number
+                                        {% endif %}
+
                                         <span class="required-mark">*</span>
+
                                     </label>
 
                                     {{ form.mobile_number }}
 
                                     {% if form.mobile_number.errors %}
-                                        <div class="field-error">{{ form.mobile_number.errors.0 }}</div>
+                                        <div class="field-error">
+                                            {{ form.mobile_number.errors.0 }}
+                                        </div>
                                     {% endif %}
+
                                 </div>
+
                             </div>
+
                         </div>
 
+
+                        <!-- Email -->
+
                         <div class="registration-field">
-                            <label for="{{ form.email.id_for_label }}" class="registration-label">
+
+                            <label
+                                for="{{ form.email.id_for_label }}"
+                                class="registration-label"
+                            >
+
                                 <i class="fas fa-envelope"></i>
-                                {% trans "Email" %}
-                                <span class="text-muted fw-normal">({% trans "Optional" %})</span>
+
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                    ইমেইল
+                                {% else %}
+                                    Email
+                                {% endif %}
+
+                                <span class="text-muted fw-normal">
+                                    (
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        ঐচ্ছিক
+                                    {% else %}
+                                        Optional
+                                    {% endif %}
+                                    )
+                                </span>
+
                             </label>
 
                             {{ form.email }}
 
                             {% if form.email.errors %}
-                                <div class="field-error">{{ form.email.errors.0 }}</div>
+                                <div class="field-error">
+                                    {{ form.email.errors.0 }}
+                                </div>
                             {% endif %}
+
                         </div>
+
                     </div>
 
-                    <!-- Location Information -->
+
+                    <!-- =================================================
+                         LOCATION INFORMATION
+                         ================================================= -->
+
                     <div class="registration-section">
+
                         <div class="registration-section-heading">
+
                             <span class="registration-section-icon">
                                 <i class="fas fa-location-dot"></i>
                             </span>
+
                             <div>
-                                <h3>{% trans "Location Information" %}</h3>
-                                <p>{% trans "Your area helps seekers find nearby donors" %}</p>
+
+                                <h3>
+
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        অবস্থানের তথ্য
+                                    {% else %}
+                                        Location Information
+                                    {% endif %}
+
+                                </h3>
+
+                                <p>
+
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        আপনার এলাকা কাছাকাছি রক্তদাতা খুঁজে পেতে সাহায্য করবে
+                                    {% else %}
+                                        Your area helps seekers find nearby donors
+                                    {% endif %}
+
+                                </p>
+
                             </div>
+
                         </div>
 
+
+                        <!-- Current Location -->
+
                         <div class="registration-field">
+
                             <button
                                 type="button"
                                 class="locate-btn location-button"
                                 data-lat-target="id_latitude"
                                 data-lng-target="id_longitude"
-                                data-success-label="{% trans 'Location set — thank you!' %}"
-                                data-error-label="{% trans 'Could not get your location. Please allow location access and try again.' %}">
+                                data-success-label="{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}লোকেশন সেট হয়েছে — ধন্যবাদ!{% else %}Location set — thank you!{% endif %}"
+                                data-error-label="{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}লোকেশন পাওয়া যায়নি। অনুগ্রহ করে location access অনুমতি দিয়ে আবার চেষ্টা করুন।{% else %}Could not get your location. Please allow location access and try again.{% endif %}"
+                            >
+
                                 <i class="fas fa-location-crosshairs"></i>
-                                {% trans "Use My Location" %}
+
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                    আমার লোকেশন ব্যবহার করুন
+                                {% else %}
+                                    Use My Location
+                                {% endif %}
+
                             </button>
 
                             <small class="form-text text-muted">
-                                <i class="fas fa-circle-info me-1"></i>
-                                {% trans "Optional, but it helps nearby search work better." %}
+
+                                <i
+                                    class="fas fa-circle-info me-1"
+                                    aria-hidden="true"
+                                ></i>
+
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                    এটি ঐচ্ছিক, তবে কাছাকাছি রক্তদাতা খোঁজার জন্য উপকারী।
+                                {% else %}
+                                    Optional, but it helps nearby search work better.
+                                {% endif %}
+
                             </small>
+
                         </div>
 
+
                         <div class="row g-3">
+
+                            <!-- District -->
+
                             <div class="col-md-6">
+
                                 <div class="registration-field">
-                                    <label for="{{ form.district.id_for_label }}" class="registration-label">
+
+                                    <label
+                                        for="{{ form.district.id_for_label }}"
+                                        class="registration-label"
+                                    >
+
                                         <i class="fas fa-map"></i>
-                                        {% trans "District" %}
+
+                                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                            জেলা
+                                        {% else %}
+                                            District
+                                        {% endif %}
+
                                         <span class="required-mark">*</span>
+
                                     </label>
 
                                     {{ form.district }}
 
                                     {% if form.district.errors %}
-                                        <div class="field-error">{{ form.district.errors.0 }}</div>
+                                        <div class="field-error">
+                                            {{ form.district.errors.0 }}
+                                        </div>
                                     {% endif %}
+
                                 </div>
+
                             </div>
 
+
+                            <!-- Upazila -->
+
                             <div class="col-md-6">
+
                                 <div class="registration-field">
-                                    <label for="{{ form.upazila.id_for_label }}" class="registration-label">
+
+                                    <label
+                                        for="{{ form.upazila.id_for_label }}"
+                                        class="registration-label"
+                                    >
+
                                         <i class="fas fa-map-location-dot"></i>
-                                        {% trans "Upazila / Union" %}
+
+                                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                            উপজেলা / ইউনিয়ন
+                                        {% else %}
+                                            Upazila / Union
+                                        {% endif %}
+
                                         <span class="required-mark">*</span>
+
                                     </label>
 
                                     {{ form.upazila }}
 
                                     {% if form.upazila.errors %}
-                                        <div class="field-error">{{ form.upazila.errors.0 }}</div>
+                                        <div class="field-error">
+                                            {{ form.upazila.errors.0 }}
+                                        </div>
                                     {% endif %}
+
                                 </div>
+
                             </div>
+
                         </div>
+
                     </div>
 
-                    <!-- Donation Information -->
+
+                    <!-- =================================================
+                         DONATION INFORMATION
+                         ================================================= -->
+
                     <div class="registration-section">
+
                         <div class="registration-section-heading">
+
                             <span class="registration-section-icon">
                                 <i class="fas fa-heart-pulse"></i>
                             </span>
+
                             <div>
-                                <h3>{% trans "Donation Information" %}</h3>
-                                <p>{% trans "This information helps calculate your eligibility" %}</p>
+
+                                <h3>
+
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        রক্তদানের তথ্য
+                                    {% else %}
+                                        Donation Information
+                                    {% endif %}
+
+                                </h3>
+
+                                <p>
+
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        এই তথ্য আপনার রক্তদানের যোগ্যতা নির্ধারণে সাহায্য করবে
+                                    {% else %}
+                                        This information helps calculate your eligibility
+                                    {% endif %}
+
+                                </p>
+
                             </div>
+
                         </div>
 
+
+                        <!-- Last Donation Date -->
+
                         <div class="registration-field">
-                            <label for="{{ form.last_donation_date.id_for_label }}" class="registration-label">
+
+                            <label
+                                for="{{ form.last_donation_date.id_for_label }}"
+                                class="registration-label"
+                            >
+
                                 <i class="fas fa-calendar-check"></i>
-                                {% trans "Last Blood Donation Date" %}
+
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                    সর্বশেষ রক্তদানের তারিখ
+                                {% else %}
+                                    Last Blood Donation Date
+                                {% endif %}
+
                                 <span class="required-mark">*</span>
+
                             </label>
 
                             {{ form.last_donation_date }}
 
                             {% if form.last_donation_date.errors %}
-                                <div class="field-error">{{ form.last_donation_date.errors.0 }}</div>
+                                <div class="field-error">
+                                    {{ form.last_donation_date.errors.0 }}
+                                </div>
                             {% endif %}
 
                             <small class="form-text text-muted">
-                                <i class="fas fa-circle-info me-1"></i>
-                                {% trans "Eligibility uses a 90-day gap for men and a 120-day gap for women." %}
+
+                                <i
+                                    class="fas fa-circle-info me-1"
+                                    aria-hidden="true"
+                                ></i>
+
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                    যোগ্যতা নির্ধারণে পুরুষের জন্য ৯০ দিন এবং নারীর জন্য ১২০ দিনের ব্যবধান ব্যবহার করা হবে।
+                                {% else %}
+                                    Eligibility uses a 90-day gap for men and a 120-day gap for women.
+                                {% endif %}
+
                             </small>
+
                         </div>
 
+
+                        <!-- Availability -->
+
                         <div class="registration-field">
-                            <label for="{{ form.availability_status.id_for_label }}" class="registration-label">
+
+                            <label
+                                for="{{ form.availability_status.id_for_label }}"
+                                class="registration-label"
+                            >
+
                                 <i class="fas fa-toggle-on"></i>
-                                {% trans "Availability Status" %}
+
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                    রক্তদানের প্রাপ্যতা
+                                {% else %}
+                                    Availability Status
+                                {% endif %}
+
                                 <span class="required-mark">*</span>
+
                             </label>
 
                             {{ form.availability_status }}
 
                             {% if form.availability_status.errors %}
-                                <div class="field-error">{{ form.availability_status.errors.0 }}</div>
+                                <div class="field-error">
+                                    {{ form.availability_status.errors.0 }}
+                                </div>
                             {% endif %}
 
                             <small class="form-text text-muted">
-                                <i class="fas fa-circle-info me-1"></i>
-                                {% trans 'Choose "Not Available" if you cannot donate at this time.' %}
+
+                                <i
+                                    class="fas fa-circle-info me-1"
+                                    aria-hidden="true"
+                                ></i>
+
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                    এই সময়ে রক্ত দিতে না পারলে "Not Available" নির্বাচন করুন।
+                                {% else %}
+                                    Choose "Not Available" if you cannot donate at this time.
+                                {% endif %}
+
                             </small>
+
                         </div>
+
                     </div>
 
-                    <!-- Information Notice -->
+
+                    <!-- =================================================
+                         IMPORTANT INFORMATION
+                         ================================================= -->
+
                     <div class="information-alert">
+
                         <div class="information-heading">
-                            <i class="fas fa-shield-heart"></i>
-                            {% trans "Important Information" %}
+
+                            <i
+                                class="fas fa-shield-heart"
+                                aria-hidden="true"
+                            ></i>
+
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                গুরুত্বপূর্ণ তথ্য
+                            {% else %}
+                                Important Information
+                            {% endif %}
+
                         </div>
 
                         <ul>
-                            <li>{% trans "Your phone number will be visible to blood seekers." %}</li>
-                            <li>{% trans "Eligibility is automatically calculated using your gender and last donation date." %}</li>
-                            <li>{% trans "You can update your availability status anytime from your profile." %}</li>
-                            <li>{% trans "Registration is free and intended for humanitarian purposes only." %}</li>
+
+                            <li>
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                    আপনার মোবাইল নম্বর রক্তপ্রার্থীদের কাছে দৃশ্যমান হতে পারে।
+                                {% else %}
+                                    Your phone number will be visible to blood seekers.
+                                {% endif %}
+                            </li>
+
+                            <li>
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                    আপনার লিঙ্গ ও সর্বশেষ রক্তদানের তারিখ ব্যবহার করে যোগ্যতা স্বয়ংক্রিয়ভাবে নির্ধারণ করা হবে।
+                                {% else %}
+                                    Eligibility is automatically calculated using your gender and last donation date.
+                                {% endif %}
+                            </li>
+
+                            <li>
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                    আপনার প্রোফাইল থেকে যেকোনো সময় রক্তদানের প্রাপ্যতা পরিবর্তন করতে পারবেন।
+                                {% else %}
+                                    You can update your availability status anytime from your profile.
+                                {% endif %}
+                            </li>
+
+                            <li>
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                    নিবন্ধন সম্পূর্ণ বিনামূল্যে এবং শুধুমাত্র মানবিক উদ্দেশ্যে ব্যবহারের জন্য।
+                                {% else %}
+                                    Registration is free and intended for humanitarian purposes only.
+                                {% endif %}
+                            </li>
+
                         </ul>
+
                     </div>
 
-                    <button type="submit" class="registration-submit" id="registerSubmit">
-                        <i class="fas fa-user-plus"></i>
-                        <span>{% trans "Register as Donor" %}</span>
+
+                    <!-- =================================================
+                         SUBMIT
+                         ================================================= -->
+
+                    <button
+                        type="submit"
+                        class="registration-submit"
+                        id="registerSubmit"
+                    >
+
+                        <i
+                            class="fas fa-user-plus"
+                            aria-hidden="true"
+                        ></i>
+
+                        <span>
+
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                রক্তদাতা হিসেবে নিবন্ধন করুন
+                            {% else %}
+                                Register as Donor
+                            {% endif %}
+
+                        </span>
+
                     </button>
+
                 </form>
+
             </div>
+
         </section>
 
+
+        <!-- ========================================================
+             LOGIN LINK
+             ======================================================== -->
+
         <p class="login-prompt">
-            {% trans "Already registered?" %}
+
+            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                ইতোমধ্যে নিবন্ধিত?
+            {% else %}
+                Already registered?
+            {% endif %}
+
             <a href="{% url 'login' %}">
-                {% trans "Login here" %}
+
+                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                    এখানে লগইন করুন
+                {% else %}
+                    Login here
+                {% endif %}
+
             </a>
+
         </p>
+
     </div>
+
 </div>
+
 {% endblock %}
 
+
 {% block scripts %}
+
 <script>
-    (function () {
-        'use strict';
+(function () {
 
-        var form = document.getElementById('registrationForm');
-        var submitButton = document.getElementById('registerSubmit');
+    'use strict';
 
-        if (!form || !submitButton) return;
+    var form = document.getElementById('registrationForm');
+    var submitButton = document.getElementById('registerSubmit');
 
-        form.addEventListener('submit', function () {
-            submitButton.disabled = true;
-            submitButton.setAttribute('aria-busy', 'true');
+    if (!form || !submitButton) {
+        return;
+    }
+
+
+    /* ============================================================
+       SUBMIT BUTTON
+       ============================================================ */
+
+    form.addEventListener('submit', function () {
+
+        submitButton.disabled = true;
+
+        submitButton.setAttribute(
+            'aria-busy',
+            'true'
+        );
+
+        submitButton.innerHTML =
+            '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i>' +
+            '<span>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}অ্যাকাউন্ট তৈরি হচ্ছে…{% else %}Creating account…{% endif %}</span>';
+
+    });
+
+
+    /* ============================================================
+       AUTOCOMPLETE
+       ============================================================ */
+
+    var username =
+        form.querySelector('[name="username"]');
+
+    if (username) {
+        username.setAttribute(
+            'autocomplete',
+            'username'
+        );
+        username.setAttribute(
+            'autocapitalize',
+            'none'
+        );
+    }
+
+
+    var fullName =
+        form.querySelector('[name="full_name"]');
+
+    if (fullName) {
+        fullName.setAttribute(
+            'autocomplete',
+            'name'
+        );
+    }
+
+
+    var phone =
+        form.querySelector('[name="mobile_number"]');
+
+    if (phone) {
+
+        phone.setAttribute(
+            'inputmode',
+            'tel'
+        );
+
+        phone.setAttribute(
+            'autocomplete',
+            'tel'
+        );
+
+    }
+
+
+    var email =
+        form.querySelector('[name="email"]');
+
+    if (email) {
+        email.setAttribute(
+            'autocomplete',
+            'email'
+        );
+    }
+
+
+    /* ============================================================
+       PASSWORD
+       ============================================================ */
+
+    var passwordOne =
+        form.querySelector('[name="password1"]');
+
+    var passwordTwo =
+        form.querySelector('[name="password2"]');
+
+    if (passwordOne) {
+        passwordOne.setAttribute(
+            'autocomplete',
+            'new-password'
+        );
+    }
+
+    if (passwordTwo) {
+        passwordTwo.setAttribute(
+            'autocomplete',
+            'new-password'
+        );
+    }
+
+
+    /* ============================================================
+       AGE
+       ============================================================ */
+
+    var age =
+        form.querySelector('[name="age"]');
+
+    if (age) {
+
+        age.setAttribute(
+            'min',
+            '18'
+        );
+
+        age.setAttribute(
+            'inputmode',
+            'numeric'
+        );
+
+    }
+
+
+    /* ============================================================
+       UPAZILA DATALIST
+       ============================================================ */
+
+    var upazila =
+        form.querySelector('[name="upazila"]');
+
+    if (upazila) {
+
+        upazila.setAttribute(
+            'list',
+            'patiyaUnions'
+        );
+
+    }
+
+
+    /* ============================================================
+       LAST DONATION DATE
+       IMPORTANT:
+       Use LOCAL date instead of UTC to avoid timezone mismatch.
+       ============================================================ */
+
+    var donationDate =
+        form.querySelector('[name="last_donation_date"]');
+
+    if (
+        donationDate &&
+        donationDate.type === 'date'
+    ) {
+
+        var now = new Date();
+
+        var year =
+            now.getFullYear();
+
+        var month =
+            String(
+                now.getMonth() + 1
+            ).padStart(
+                2,
+                '0'
+            );
+
+        var day =
+            String(
+                now.getDate()
+            ).padStart(
+                2,
+                '0'
+            );
+
+        donationDate.setAttribute(
+            'max',
+            year + '-' + month + '-' + day
+        );
+
+    }
+
+
+    /* ============================================================
+       PREVENT DOUBLE SUBMISSION AFTER BACK/FORWARD CACHE
+       ============================================================ */
+
+    window.addEventListener(
+        'pageshow',
+        function () {
+
+            submitButton.disabled = false;
+
+            submitButton.removeAttribute(
+                'aria-busy'
+            );
+
             submitButton.innerHTML =
-                '<i class="fas fa-spinner fa-spin"></i>' +
-                '<span>{% trans "Creating account…" %}</span>';
-        });
+                '<i class="fas fa-user-plus" aria-hidden="true"></i>' +
+                '<span>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রক্তদাতা হিসেবে নিবন্ধন করুন{% else %}Register as Donor{% endif %}</span>';
 
-        var username = form.querySelector('[name="username"]');
-        if (username) {
-            username.setAttribute('autocomplete', 'username');
         }
+    );
 
-        var fullName = form.querySelector('[name="full_name"]');
-        if (fullName) {
-            fullName.setAttribute('autocomplete', 'name');
-        }
-
-        var phone = form.querySelector('[name="mobile_number"]');
-        if (phone) {
-            phone.setAttribute('inputmode', 'tel');
-            phone.setAttribute('autocomplete', 'tel');
-        }
-
-        var email = form.querySelector('[name="email"]');
-        if (email) {
-            email.setAttribute('autocomplete', 'email');
-        }
-
-        var passwordOne = form.querySelector('[name="password1"]');
-        var passwordTwo = form.querySelector('[name="password2"]');
-
-        if (passwordOne) {
-            passwordOne.setAttribute('autocomplete', 'new-password');
-        }
-
-        if (passwordTwo) {
-            passwordTwo.setAttribute('autocomplete', 'new-password');
-        }
-
-        var age = form.querySelector('[name="age"]');
-        if (age) {
-            age.setAttribute('min', '18');
-            age.setAttribute('inputmode', 'numeric');
-        }
-
-        var upazila = form.querySelector('[name="upazila"]');
-        if (upazila) {
-            upazila.setAttribute('list', 'patiyaUnions');
-        }
-
-        var donationDate = form.querySelector('[name="last_donation_date"]');
-        if (donationDate && donationDate.type === 'date') {
-            donationDate.setAttribute('max', new Date().toISOString().split('T')[0]);
-        }
-    })();
+})();
 </script>
+
 {% endblock %}
