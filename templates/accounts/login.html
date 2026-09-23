@@ -1,725 +1,1901 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
-{% block title %}{% trans "Login" %} — Patiya RedPulse{% endblock %}
+{% get_current_language as CURRENT_LANGUAGE %}
+
+{% block title %}
+    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+        লগইন
+    {% else %}
+        Login
+    {% endif %} — Patiya RedPulse
+{% endblock %}
 
 {% block extra_head %}
 <style>
-    /* ================================================================
-       PATIYA REDPULSE — PREMIUM LOGIN PAGE 2026
-       ================================================================ */
+/* ================================================================
+   PATIYA REDPULSE — PREMIUM LOGIN PAGE 2026
+   Clean / Responsive / Glassmorphism / No input icons
+   ================================================================ */
+
+.login-page {
+    --login-red: var(--rp-red, #d90429);
+    --login-red-dark: #8f0018;
+    --login-text: var(--rp-text, #0f172a);
+    --login-muted: var(--rp-subtext, #64748b);
+    --login-surface: var(--rp-surface, rgba(255, 255, 255, .82));
+    --login-solid: var(--rp-surface-solid, #fff);
+    --login-surface-2: var(--rp-surface-2, rgba(255, 255, 255, .5));
+    --login-border: var(--rp-border, rgba(15, 23, 42, .09));
+
+    width: 100%;
+    padding: clamp(1rem, 3vw, 2rem);
+    color: var(--login-text);
+    container-type: inline-size;
+}
+
+.login-page *,
+.login-page *::before,
+.login-page *::after {
+    box-sizing: border-box;
+}
+
+/* =========================
+   MAIN SHELL
+   ========================= */
+
+.login-shell {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+
+    max-width: 1050px;
+    min-height: min(720px, calc(100svh - 2rem));
+
+    margin: 0 auto;
+
+    border: 1px solid var(--login-border);
+    border-radius: 32px;
+
+    background: var(--login-surface);
+
+    box-shadow:
+        0 32px 75px -34px rgba(15, 23, 42, .5),
+        inset 0 1px 0 rgba(255, 255, 255, .6);
+
+    backdrop-filter: blur(24px) saturate(170%);
+    -webkit-backdrop-filter: blur(24px) saturate(170%);
+}
+
+/* =========================
+   BRAND PANEL
+   ========================= */
+
+.login-brand-panel {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+
+    min-height: 570px;
+    height: 100%;
+
+    padding: clamp(1.6rem, 4vw, 3rem);
+
+    color: #fff;
+
+    background:
+        radial-gradient(
+            circle at 88% 9%,
+            rgba(255, 255, 255, .25),
+            transparent 25%
+        ),
+        linear-gradient(
+            145deg,
+            #850017 0%,
+            #d90429 54%,
+            #ff3659 100%
+        );
+}
+
+/* Decorative orbit */
+
+.login-brand-panel::before {
+    content: "";
+
+    position: absolute;
+    z-index: -1;
+
+    width: 360px;
+    height: 360px;
+
+    top: -180px;
+    right: -100px;
+
+    border: 58px solid rgba(255, 255, 255, .08);
+    border-radius: 50%;
+
+    animation: loginOrbit 18s linear infinite;
+}
+
+.login-brand-panel::after {
+    content: "";
+
+    position: absolute;
+    z-index: -2;
+
+    inset: 0;
+
+    opacity: .13;
+
+    background-image:
+        linear-gradient(
+            rgba(255, 255, 255, .7) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, .7) 1px,
+            transparent 1px
+        );
+
+    background-size: 42px 42px;
+
+    -webkit-mask-image:
+        linear-gradient(135deg, #000, transparent 80%);
+
+    mask-image:
+        linear-gradient(135deg, #000, transparent 80%);
+}
+
+@keyframes loginOrbit {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.login-brand-content {
+    position: relative;
+    z-index: 2;
+}
+
+/* =========================
+   LOGO
+   ========================= */
+
+.login-logo-mark {
+    width: 65px;
+    height: 65px;
+
+    display: grid;
+    place-items: center;
+
+    margin-bottom: 1.4rem;
+
+    border: 1px solid rgba(255, 255, 255, .35);
+    border-radius: 22px;
+
+    color: #fff;
+    background: rgba(255, 255, 255, .14);
+
+    box-shadow:
+        0 18px 32px -18px rgba(60, 0, 12, .7),
+        inset 0 1px 0 rgba(255, 255, 255, .45);
+
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+
+    font-size: 1.8rem;
+}
+
+/* =========================
+   EYEBROW
+   ========================= */
+
+.login-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+
+    margin-bottom: .9rem;
+    padding: .42rem .8rem;
+
+    border: 1px solid rgba(255, 255, 255, .25);
+    border-radius: 999px;
+
+    background: rgba(255, 255, 255, .12);
+
+    font-size: .7rem;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+}
+
+.login-live-dot {
+    width: 8px;
+    height: 8px;
+
+    border-radius: 50%;
+    background: #9dffca;
+
+    box-shadow: 0 0 0 0 rgba(157, 255, 202, .7);
+
+    animation: loginPulse 1.8s infinite;
+}
+
+@keyframes loginPulse {
+    70% {
+        box-shadow: 0 0 0 9px rgba(157, 255, 202, 0);
+    }
+}
+
+/* =========================
+   BRAND TEXT
+   ========================= */
+
+.login-brand-title {
+    max-width: 430px;
+
+    margin: 0 0 .8rem;
+
+    color: #fff;
+
+    font-family:
+        'Sora',
+        'Noto Sans Bengali',
+        sans-serif;
+
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 800;
+    line-height: 1.08;
+    letter-spacing: -.055em;
+
+    text-shadow:
+        0 8px 24px rgba(83, 0, 14, .25);
+}
+
+.login-brand-text {
+    max-width: 430px;
+
+    margin: 0;
+
+    color: rgba(255, 255, 255, .83);
+
+    font-size: .92rem;
+    line-height: 1.8;
+}
+
+/* =========================
+   BENEFITS
+   ========================= */
+
+.login-benefits {
+    display: grid;
+    gap: .7rem;
+
+    margin-top: 2rem;
+}
+
+.login-benefit {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+
+    color: rgba(255, 255, 255, .87);
+
+    font-size: .76rem;
+    font-weight: 650;
+}
+
+.login-benefit i {
+    width: 30px;
+    height: 30px;
+
+    display: grid;
+    place-items: center;
+    flex: 0 0 30px;
+
+    border: 1px solid rgba(255, 255, 255, .24);
+    border-radius: 10px;
+
+    color: #fff;
+    background: rgba(255, 255, 255, .13);
+}
+
+/* =========================
+   QUOTE
+   ========================= */
+
+.login-quote {
+    position: absolute;
+
+    right: 2rem;
+    bottom: 2rem;
+    left: 2rem;
+
+    padding: .9rem 1rem;
+
+    border-inline-start: 3px solid rgba(255, 255, 255, .75);
+
+    color: rgba(255, 255, 255, .75);
+    background: rgba(76, 0, 14, .18);
+
+    font-size: .75rem;
+    font-style: italic;
+    line-height: 1.6;
+}
+
+/* =========================
+   FORM PANEL
+   ========================= */
+
+.login-form-panel {
+    display: flex;
+    align-items: center;
+
+    min-height: 570px;
+    height: 100%;
+
+    padding: clamp(1.5rem, 5vw, 3.2rem);
+
+    padding-bottom:
+        max(
+            clamp(1.5rem, 5vw, 3.2rem),
+            env(safe-area-inset-bottom)
+        );
+}
+
+.login-form-wrap {
+    width: 100%;
+    max-width: 430px;
+
+    margin: 0 auto;
+}
+
+.login-form-header {
+    margin-bottom: 1.8rem;
+}
+
+.login-form-header h1,
+.login-form-header h2 {
+    margin: 0 0 .5rem;
+
+    color: var(--login-text);
+
+    font-family:
+        'Sora',
+        'Noto Sans Bengali',
+        sans-serif;
+
+    font-size: clamp(1.7rem, 4vw, 2.25rem);
+    font-weight: 800;
+    letter-spacing: -.05em;
+}
+
+.login-form-header p {
+    margin: 0;
+
+    color: var(--login-muted);
+
+    font-size: .82rem;
+    font-weight: 600;
+    line-height: 1.6;
+}
+
+/* =========================
+   FORM FIELD
+   ========================= */
+
+.login-field {
+    margin-bottom: 1.15rem;
+}
+
+.login-label {
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+
+    margin-bottom: .5rem;
+
+    color: var(--login-text);
+
+    font-size: .78rem;
+    font-weight: 800;
+}
+
+.login-label i {
+    color: var(--login-red);
+}
+
+/* =========================
+   INPUT
+   NO LEFT ICON
+   ========================= */
+
+.login-input-wrap {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+}
+
+/*
+   Important:
+   Input-এর ভিতরের User / Lock icon intentionally removed.
+*/
+
+.login-input,
+.login-password-input {
+    width: 100%;
+    min-height: 53px;
+
+    padding: .75rem 1rem;
+
+    border: 1px solid var(--login-border);
+    border-radius: 15px;
+
+    outline: none;
+
+    color: var(--login-text);
+    background: var(
+        --rp-surface-2,
+        rgba(255, 255, 255, .5)
+    );
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .45),
+        0 8px 17px -15px rgba(15, 23, 42, .55);
+
+    font-size: .86rem;
+    font-weight: 650;
+
+    transition:
+        border-color .25s ease,
+        background .25s ease,
+        box-shadow .25s ease,
+        transform .25s ease;
+}
+
+.login-input::placeholder,
+.login-password-input::placeholder {
+    color: var(--login-muted);
+    opacity: .72;
+}
+
+.login-input:focus,
+.login-password-input:focus {
+    border-color: rgba(217, 4, 41, .55);
+
+    background: var(
+        --rp-surface-solid,
+        #fff
+    );
+
+    box-shadow:
+        0 0 0 4px rgba(217, 4, 41, .1),
+        0 14px 26px -18px rgba(217, 4, 41, .45);
+
+    transform: translateY(-1px);
+}
+
+.login-input[aria-invalid="true"],
+.login-password-input[aria-invalid="true"] {
+    border-color: rgba(185, 28, 28, .48);
+}
+
+.login-input:disabled,
+.login-password-input:disabled {
+    cursor: not-allowed;
+    opacity: .7;
+}
+
+/* =========================
+   PASSWORD FIELD
+   ========================= */
+
+.login-password-input {
+    padding-right: 3.2rem;
+}
+
+.password-toggle {
+    position: absolute;
+
+    z-index: 5;
+
+    top: 50%;
+    right: .65rem;
+
+    width: 32px;
+    height: 32px;
+
+    display: grid;
+    place-items: center;
+
+    border: 0;
+    border-radius: 10px;
+
+    color: var(--login-muted);
+    background: transparent;
+
+    transform: translateY(-50%);
+
+    cursor: pointer;
+
+    transition:
+        color .25s ease,
+        background .25s ease;
+}
+
+.password-toggle:hover {
+    color: var(--login-red);
+    background: rgba(217, 4, 41, .08);
+}
+
+.password-toggle:focus-visible,
+.forgot-link:focus-visible,
+.register-link:focus-visible,
+.remember-label:focus-within,
+.login-submit:focus-visible {
+    outline: 3px solid rgba(217, 4, 41, .24);
+    outline-offset: 3px;
+}
+
+/* =========================
+   FIELD HINT
+   ========================= */
+
+.login-field-hint {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+
+    min-height: 0;
+
+    margin-top: .45rem;
+
+    color: var(--login-muted);
+
+    font-size: .68rem;
+    font-weight: 650;
+    line-height: 1.45;
+}
+
+.login-caps-warning {
+    display: none;
+
+    align-items: center;
+    gap: .4rem;
+
+    color: #b45309;
+    font-weight: 800;
+}
+
+.login-caps-warning.is-visible {
+    display: inline-flex;
+}
+
+/* =========================
+   LANGUAGE
+   ========================= */
+
+.login-page[lang="bn"],
+.login-page[lang="bn"] input,
+.login-page[lang="bn"] button,
+.login-page[lang="bn"] a {
+    font-family:
+        'Noto Sans Bengali',
+        'Hind Siliguri',
+        'SolaimanLipi',
+        sans-serif;
+}
+
+.login-page[lang="bn"] .login-brand-title,
+.login-page[lang="bn"] .login-form-header h1,
+.login-page[lang="bn"] .login-form-header h2 {
+    letter-spacing: 0;
+    line-height: 1.3;
+}
+
+.login-page[lang="bn"] .login-label {
+    font-size: .82rem;
+}
+
+.login-page[lang="bn"] .login-input,
+.login-page[lang="bn"] .login-password-input {
+    font-size: .9rem;
+}
+
+/* =========================
+   OPTIONS
+   ========================= */
+
+.login-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: .8rem;
+
+    margin: -.2rem 0 1.2rem;
+}
+
+.remember-label {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+
+    color: var(--login-muted);
+
+    font-size: .72rem;
+    font-weight: 650;
+
+    cursor: pointer;
+}
+
+.remember-label input {
+    width: 15px;
+    height: 15px;
+
+    accent-color: var(--login-red);
+}
+
+.forgot-link {
+    color: var(--login-red);
+
+    font-size: .72rem;
+    font-weight: 800;
+
+    text-decoration: none;
+}
+
+.forgot-link:hover {
+    color: var(--login-red-dark);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* =========================
+   ERROR
+   ========================= */
+
+.login-error {
+    display: flex;
+    align-items: flex-start;
+    gap: .6rem;
+
+    margin-bottom: 1rem;
+    padding: .85rem .95rem;
+
+    border: 1px solid rgba(220, 38, 38, .2);
+    border-radius: 15px;
+
+    color: #b91c1c;
+    background: rgba(220, 38, 38, .08);
+
+    font-size: .76rem;
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+.login-error i {
+    padding-top: .1rem;
+}
+
+/* =========================
+   SUBMIT BUTTON
+   ========================= */
+
+.login-submit {
+    width: 100%;
+    min-height: 53px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: .55rem;
+
+    position: relative;
+    overflow: hidden;
+
+    border: 0;
+    border-radius: 15px;
+
+    color: #fff;
+
+    background:
+        linear-gradient(
+            145deg,
+            #ff3659,
+            #d90429 60%,
+            #8f0018
+        );
+
+    box-shadow:
+        0 15px 28px -11px rgba(217, 4, 41, .72),
+        inset 0 1px 0 rgba(255, 255, 255, .45),
+        inset 0 -5px 10px rgba(84, 0, 16, .22);
+
+    font-size: .84rem;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        transform .3s cubic-bezier(.34, 1.56, .64, 1),
+        box-shadow .3s ease;
+}
+
+.login-submit::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 0 0 55%;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, .28),
+            transparent
+        );
+
+    pointer-events: none;
+}
+
+.login-submit:hover {
+    color: #fff;
+
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 21px 37px -12px rgba(217, 4, 41, .8);
+}
+
+.login-submit:active {
+    transform: translateY(0) scale(.98);
+}
+
+.login-submit:disabled {
+    cursor: wait;
+    opacity: .88;
+    transform: none !important;
+}
+
+.login-submit.is-loading {
+    pointer-events: none;
+}
+
+/* =========================
+   STATUS
+   ========================= */
+
+.login-form-status {
+    min-height: 1.1rem;
+
+    margin: .75rem 0 0;
+
+    color: var(--login-muted);
+
+    font-size: .68rem;
+    font-weight: 650;
+
+    text-align: center;
+}
+
+/* =========================
+   DIVIDER
+   ========================= */
+
+.login-divider {
+    display: flex;
+    align-items: center;
+
+    gap: .8rem;
+
+    margin: 1.4rem 0;
+
+    color: var(--login-muted);
+
+    font-size: .68rem;
+    font-weight: 700;
+}
+
+.login-divider::before,
+.login-divider::after {
+    content: "";
+
+    height: 1px;
+    flex: 1;
+
+    background: var(--login-border);
+}
+
+/* =========================
+   REGISTER
+   ========================= */
+
+.register-prompt {
+    margin: 0;
+
+    color: var(--login-muted);
+
+    font-size: .78rem;
+    font-weight: 600;
+
+    text-align: center;
+}
+
+.register-link {
+    color: var(--login-red);
+
+    font-weight: 800;
+
+    text-decoration: none;
+}
+
+.register-link:hover {
+    color: var(--login-red-dark);
+
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* =========================
+   SECURITY
+   ========================= */
+
+.login-security {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: .45rem;
+
+    margin-top: 1.2rem;
+
+    color: var(--login-muted);
+
+    font-size: .66rem;
+    font-weight: 650;
+}
+
+.login-security i {
+    color: #059669;
+}
+
+/* =========================
+   DARK MODE
+   ========================= */
+
+@media (prefers-color-scheme: dark) {
 
     .login-page {
-        --login-red: var(--rp-red, #d90429);
-        --login-text: var(--rp-text, #0f172a);
-        --login-muted: var(--rp-subtext, #64748b);
-        --login-surface: var(--rp-surface, rgba(255,255,255,.82));
-        --login-border: var(--rp-border, rgba(15,23,42,.09));
-    }
-
-    .login-shell {
-        position: relative;
-        isolation: isolate;
-        overflow: hidden;
-        max-width: 1050px;
-        margin: 0 auto;
-        border: 1px solid var(--login-border);
-        border-radius: 32px;
-        background: var(--login-surface);
-        box-shadow:
-            0 32px 75px -34px rgba(15,23,42,.5),
-            inset 0 1px 0 rgba(255,255,255,.6);
-        backdrop-filter: blur(24px) saturate(170%);
-        -webkit-backdrop-filter: blur(24px) saturate(170%);
-    }
-
-    .login-brand-panel {
-        position: relative;
-        isolation: isolate;
-        overflow: hidden;
-        min-height: 570px;
-        padding: clamp(1.6rem, 4vw, 3rem);
-        color: #fff;
-        background:
-            radial-gradient(circle at 88% 9%, rgba(255,255,255,.25), transparent 25%),
-            linear-gradient(145deg, #850017 0%, #d90429 54%, #ff3659 100%);
-    }
-
-    .login-brand-panel::before {
-        content: "";
-        position: absolute;
-        z-index: -1;
-        width: 360px;
-        height: 360px;
-        top: -180px;
-        right: -100px;
-        border: 58px solid rgba(255,255,255,.08);
-        border-radius: 50%;
-        animation: loginOrbit 18s linear infinite;
-    }
-
-    .login-brand-panel::after {
-        content: "";
-        position: absolute;
-        z-index: -2;
-        inset: 0;
-        opacity: .13;
-        background-image:
-            linear-gradient(rgba(255,255,255,.7) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,.7) 1px, transparent 1px);
-        background-size: 42px 42px;
-        -webkit-mask-image: linear-gradient(135deg, #000, transparent 80%);
-        mask-image: linear-gradient(135deg, #000, transparent 80%);
-    }
-
-    @keyframes loginOrbit {
-        to { transform: rotate(360deg); }
-    }
-
-    .login-brand-content {
-        position: relative;
-        z-index: 2;
-    }
-
-    .login-logo-mark {
-        width: 65px;
-        height: 65px;
-        display: grid;
-        place-items: center;
-        margin-bottom: 1.4rem;
-        border: 1px solid rgba(255,255,255,.35);
-        border-radius: 22px;
-        color: #fff;
-        background: rgba(255,255,255,.14);
-        box-shadow:
-            0 18px 32px -18px rgba(60,0,12,.7),
-            inset 0 1px 0 rgba(255,255,255,.45);
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
-        font-size: 1.8rem;
-    }
-
-    .login-eyebrow {
-        display: inline-flex;
-        align-items: center;
-        gap: .5rem;
-        margin-bottom: .9rem;
-        padding: .42rem .8rem;
-        border: 1px solid rgba(255,255,255,.25);
-        border-radius: 999px;
-        background: rgba(255,255,255,.12);
-        font-size: .7rem;
-        font-weight: 800;
-        letter-spacing: .12em;
-        text-transform: uppercase;
-    }
-
-    .login-live-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: #9dffca;
-        box-shadow: 0 0 0 0 rgba(157,255,202,.7);
-        animation: loginPulse 1.8s infinite;
-    }
-
-    @keyframes loginPulse {
-        70% { box-shadow: 0 0 0 9px rgba(157,255,202,0); }
-    }
-
-    .login-brand-title {
-        max-width: 430px;
-        margin: 0 0 .8rem;
-        color: #fff;
-        font-family: 'Sora', 'Noto Sans Bengali', sans-serif;
-        font-size: clamp(2rem, 4vw, 3.2rem);
-        font-weight: 800;
-        line-height: 1.08;
-        letter-spacing: -.055em;
-        text-shadow: 0 8px 24px rgba(83,0,14,.25);
-    }
-
-    .login-brand-text {
-        max-width: 430px;
-        margin: 0;
-        color: rgba(255,255,255,.83);
-        font-size: .92rem;
-        line-height: 1.8;
-    }
-
-    .login-benefits {
-        display: grid;
-        gap: .7rem;
-        margin-top: 2rem;
-    }
-
-    .login-benefit {
-        display: flex;
-        align-items: center;
-        gap: .65rem;
-        color: rgba(255,255,255,.87);
-        font-size: .76rem;
-        font-weight: 650;
-    }
-
-    .login-benefit i {
-        width: 30px;
-        height: 30px;
-        display: grid;
-        place-items: center;
-        flex: 0 0 30px;
-        border: 1px solid rgba(255,255,255,.24);
-        border-radius: 10px;
-        color: #fff;
-        background: rgba(255,255,255,.13);
-    }
-
-    .login-quote {
-        position: absolute;
-        right: 2rem;
-        bottom: 2rem;
-        left: 2rem;
-        padding: .9rem 1rem;
-        border-left: 3px solid rgba(255,255,255,.75);
-        color: rgba(255,255,255,.75);
-        background: rgba(76,0,14,.18);
-        font-size: .75rem;
-        font-style: italic;
-        line-height: 1.6;
-    }
-
-    .login-form-panel {
-        display: flex;
-        align-items: center;
-        min-height: 570px;
-        padding: clamp(1.5rem, 5vw, 3.2rem);
-    }
-
-    .login-form-wrap {
-        width: 100%;
-        max-width: 430px;
-        margin: 0 auto;
-    }
-
-    .login-form-header {
-        margin-bottom: 1.8rem;
-    }
-
-    .login-form-header h1 {
-        margin: 0 0 .5rem;
-        color: var(--login-text);
-        font-family: 'Sora', 'Noto Sans Bengali', sans-serif;
-        font-size: clamp(1.7rem, 4vw, 2.25rem);
-        font-weight: 800;
-        letter-spacing: -.05em;
-    }
-
-    .login-form-header p {
-        margin: 0;
-        color: var(--login-muted);
-        font-size: .82rem;
-        font-weight: 600;
-        line-height: 1.6;
-    }
-
-    .login-field {
-        margin-bottom: 1.15rem;
-    }
-
-    .login-label {
-        display: flex;
-        align-items: center;
-        gap: .45rem;
-        margin-bottom: .5rem;
-        color: var(--login-text);
-        font-size: .78rem;
-        font-weight: 800;
-    }
-
-    .login-label i {
-        color: var(--login-red);
-    }
-
-    .login-input-wrap {
-        position: relative;
-    }
-
-    .login-input-icon {
-        position: absolute;
-        z-index: 2;
-        top: 50%;
-        left: .95rem;
-        color: var(--login-muted);
-        transform: translateY(-50%);
-        pointer-events: none;
-        transition: color .25s ease;
-    }
-
-    .login-input,
-    .login-password-input {
-        width: 100%;
-        min-height: 53px;
-        padding: .75rem 3rem .75rem 2.7rem;
-        border: 1px solid var(--login-border);
-        border-radius: 15px;
-        outline: none;
-        color: var(--login-text);
-        background: var(--rp-surface-2, rgba(255,255,255,.5));
-        box-shadow:
-            inset 0 1px 0 rgba(255,255,255,.45),
-            0 8px 17px -15px rgba(15,23,42,.55);
-        font-size: .86rem;
-        font-weight: 650;
-        transition: all .25s ease;
-    }
-
-    .login-input::placeholder,
-    .login-password-input::placeholder {
-        color: var(--login-muted);
-        opacity: .72;
+        --login-text: var(--rp-text, #f8fafc);
+        --login-muted: var(--rp-subtext, #94a3b8);
+        --login-surface: var(
+            --rp-surface,
+            rgba(15, 23, 42, .82)
+        );
+        --login-solid: var(
+            --rp-surface-solid,
+            #0f172a
+        );
+        --login-surface-2: var(
+            --rp-surface-2,
+            rgba(15, 23, 42, .58)
+        );
+        --login-border: var(
+            --rp-border,
+            rgba(255, 255, 255, .1)
+        );
     }
 
     .login-input:focus,
     .login-password-input:focus {
-        border-color: rgba(217,4,41,.55);
-        background: var(--rp-surface-solid, #fff);
+        background: var(--login-solid);
+    }
+
+    .login-shell {
         box-shadow:
-            0 0 0 4px rgba(217,4,41,.1),
-            0 14px 26px -18px rgba(217,4,41,.45);
-        transform: translateY(-1px);
+            0 32px 80px -34px rgba(0, 0, 0, .7),
+            inset 0 1px 0 rgba(255, 255, 255, .05);
+    }
+}
+
+/* =========================
+   TABLET
+   ========================= */
+
+@media (max-width: 991.98px) {
+
+    .login-brand-panel {
+        min-height: 390px;
+        height: auto;
     }
 
-    .login-input-wrap:focus-within .login-input-icon {
-        color: var(--login-red);
+    .login-form-panel {
+        min-height: auto;
+        height: auto;
     }
 
-    .password-toggle {
-        position: absolute;
-        z-index: 3;
-        top: 50%;
-        right: .7rem;
-        width: 32px;
-        height: 32px;
-        display: grid;
-        place-items: center;
-        border: 0;
-        border-radius: 10px;
-        color: var(--login-muted);
-        background: transparent;
-        transform: translateY(-50%);
-        transition: all .25s ease;
+    .login-quote {
+        position: static;
+
+        margin-top: 2rem;
+    }
+}
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media (max-width: 575.98px) {
+
+    .login-page {
+        padding:
+            max(.75rem, env(safe-area-inset-top))
+            max(.75rem, env(safe-area-inset-right))
+            max(.75rem, env(safe-area-inset-bottom))
+            max(.75rem, env(safe-area-inset-left));
     }
 
-    .password-toggle:hover {
-        color: var(--login-red);
-        background: rgba(217,4,41,.08);
+    .login-shell {
+        min-height: auto;
+        border-radius: 25px;
+    }
+
+    .login-brand-panel {
+        min-height: auto;
+        height: auto;
+
+        padding: 1.45rem 1.15rem;
+    }
+
+    .login-brand-title {
+        font-size: clamp(1.9rem, 10vw, 2.55rem);
+    }
+
+    .login-benefits {
+        margin-top: 1.35rem;
+    }
+
+    .login-quote {
+        margin-top: 1.35rem;
+    }
+
+    .login-form-panel {
+        min-height: auto;
+        height: auto;
+
+        padding: 1.25rem 1rem;
     }
 
     .login-options {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: .8rem;
-        margin: -.2rem 0 1.2rem;
-    }
-
-    .remember-label {
-        display: inline-flex;
-        align-items: center;
-        gap: .4rem;
-        color: var(--login-muted);
-        font-size: .72rem;
-        font-weight: 650;
-        cursor: pointer;
-    }
-
-    .remember-label input {
-        width: 15px;
-        height: 15px;
-        accent-color: var(--login-red);
-    }
-
-    .forgot-link {
-        color: var(--login-red);
-        font-size: .72rem;
-        font-weight: 800;
-        text-decoration: none;
-    }
-
-    .forgot-link:hover {
-        color: #8f0018;
-        text-decoration: underline;
-        text-underline-offset: 3px;
-    }
-
-    .login-error {
-        display: flex;
         align-items: flex-start;
-        gap: .6rem;
-        margin-bottom: 1rem;
-        padding: .85rem .95rem;
-        border: 1px solid rgba(220,38,38,.2);
-        border-radius: 15px;
-        color: #b91c1c;
-        background: rgba(220,38,38,.08);
-        font-size: .76rem;
-        font-weight: 700;
-        line-height: 1.5;
+        flex-direction: column;
+    }
+}
+
+/* =========================
+   REDUCED MOTION
+   ========================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .login-brand-panel::before,
+    .login-live-dot {
+        animation: none !important;
     }
 
-    .login-error i {
-        padding-top: .1rem;
-    }
-
+    .login-input,
+    .login-password-input,
+    .password-toggle,
     .login-submit {
-        width: 100%;
-        min-height: 53px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: .55rem;
-        position: relative;
-        overflow: hidden;
-        border: 0;
-        border-radius: 15px;
-        color: #fff;
-        background: linear-gradient(145deg, #ff3659, #d90429 60%, #8f0018);
-        box-shadow:
-            0 15px 28px -11px rgba(217,4,41,.72),
-            inset 0 1px 0 rgba(255,255,255,.45),
-            inset 0 -5px 10px rgba(84,0,16,.22);
-        font-size: .84rem;
-        font-weight: 800;
-        transition: all .3s cubic-bezier(.34,1.56,.64,1);
+        transition: none !important;
     }
+}
 
-    .login-submit::before {
-        content: "";
-        position: absolute;
-        inset: 0 0 55%;
-        background: linear-gradient(180deg, rgba(255,255,255,.28), transparent);
-        pointer-events: none;
+/* =========================
+   HIGH CONTRAST
+   ========================= */
+
+@media (prefers-contrast: more) {
+
+    .login-input,
+    .login-password-input,
+    .login-submit,
+    .password-toggle,
+    .login-shell {
+        border-width: 2px;
     }
-
-    .login-submit:hover {
-        color: #fff;
-        transform: translateY(-3px);
-        box-shadow: 0 21px 37px -12px rgba(217,4,41,.8);
-    }
-
-    .login-submit:active {
-        transform: translateY(0) scale(.98);
-    }
-
-    .login-divider {
-        display: flex;
-        align-items: center;
-        gap: .8rem;
-        margin: 1.4rem 0;
-        color: var(--login-muted);
-        font-size: .68rem;
-        font-weight: 700;
-    }
-
-    .login-divider::before,
-    .login-divider::after {
-        content: "";
-        height: 1px;
-        flex: 1;
-        background: var(--login-border);
-    }
-
-    .register-prompt {
-        margin: 0;
-        color: var(--login-muted);
-        font-size: .78rem;
-        font-weight: 600;
-        text-align: center;
-    }
-
-    .register-link {
-        color: var(--login-red);
-        font-weight: 800;
-        text-decoration: none;
-    }
-
-    .register-link:hover {
-        color: #8f0018;
-        text-decoration: underline;
-        text-underline-offset: 3px;
-    }
-
-    .login-security {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: .45rem;
-        margin-top: 1.2rem;
-        color: var(--login-muted);
-        font-size: .66rem;
-        font-weight: 650;
-    }
-
-    .login-security i {
-        color: #059669;
-    }
-
-    @media (max-width: 991.98px) {
-        .login-brand-panel {
-            min-height: 390px;
-        }
-
-        .login-form-panel {
-            min-height: auto;
-        }
-
-        .login-quote {
-            position: static;
-            margin-top: 2rem;
-        }
-    }
-
-    @media (max-width: 575.98px) {
-        .login-shell {
-            border-radius: 25px;
-        }
-
-        .login-brand-panel {
-            min-height: auto;
-            padding: 1.45rem 1.15rem;
-        }
-
-        .login-brand-title {
-            font-size: clamp(1.9rem, 10vw, 2.55rem);
-        }
-
-        .login-benefits {
-            margin-top: 1.35rem;
-        }
-
-        .login-quote {
-            margin-top: 1.35rem;
-        }
-
-        .login-form-panel {
-            padding: 1.25rem 1rem;
-        }
-
-        .login-options {
-            align-items: flex-start;
-            flex-direction: column;
-        }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-        .login-brand-panel::before,
-        .login-live-dot {
-            animation: none !important;
-        }
-    }
+}
 </style>
 {% endblock %}
 
+
 {% block content %}
-<div class="login-page">
+
+<div
+    class="login-page"
+    lang="{{ CURRENT_LANGUAGE|slice:':2' }}"
+    data-language="{{ CURRENT_LANGUAGE|lower }}"
+>
 
     <div class="login-shell reveal">
+
         <div class="row g-0">
 
-            <!-- Brand Panel -->
+            <!-- =====================================================
+                 BRAND PANEL
+                 ===================================================== -->
+
             <div class="col-lg-6">
+
                 <section class="login-brand-panel">
+
                     <div class="login-brand-content">
-                        <div class="login-logo-mark">
+
+                        <div
+                            class="login-logo-mark"
+                            aria-hidden="true"
+                        >
                             <i class="fas fa-heart-pulse"></i>
                         </div>
 
                         <div class="login-eyebrow">
-                            <span class="login-live-dot"></span>
-                            {% trans "Patiya RedPulse Network" %}
+
+                            <span
+                                class="login-live-dot"
+                                aria-hidden="true"
+                            ></span>
+
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                পটিয়া রেডপালস নেটওয়ার্ক
+                            {% else %}
+                                Patiya RedPulse Network
+                            {% endif %}
+
                         </div>
 
-                        <h1 class="login-brand-title">
-                            {% trans "Welcome back, lifesaver." %}
-                        </h1>
+                        <h2 class="login-brand-title">
+
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                স্বাগতম, জীবনরক্ষক।
+                            {% else %}
+                                Welcome back, lifesaver.
+                            {% endif %}
+
+                        </h2>
 
                         <p class="login-brand-text">
-                            {% trans "Sign in to manage your donor profile, respond to blood requests and stay connected with people who need your help." %}
+
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                আপনার ডোনার প্রোফাইল পরিচালনা করুন,
+                                রক্তের অনুরোধে সাড়া দিন এবং যাদের
+                                সাহায্য প্রয়োজন তাদের সঙ্গে সংযুক্ত থাকুন।
+                            {% else %}
+                                Sign in to manage your donor profile,
+                                respond to blood requests and stay
+                                connected with people who need your help.
+                            {% endif %}
+
                         </p>
 
+
                         <div class="login-benefits">
-                            <div class="login-benefit">
-                                <i class="fas fa-shield-heart"></i>
-                                <span>{% trans "Your profile stays protected and secure" %}</span>
-                            </div>
 
                             <div class="login-benefit">
-                                <i class="fas fa-location-crosshairs"></i>
-                                <span>{% trans "Connect with nearby blood seekers" %}</span>
+
+                                <i
+                                    class="fas fa-shield-heart"
+                                    aria-hidden="true"
+                                ></i>
+
+                                <span>
+
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        আপনার প্রোফাইল সুরক্ষিত ও নিরাপদ থাকে
+                                    {% else %}
+                                        Your profile stays protected and secure
+                                    {% endif %}
+
+                                </span>
+
                             </div>
 
+
                             <div class="login-benefit">
-                                <i class="fas fa-bolt"></i>
-                                <span>{% trans "Respond quickly to emergency requests" %}</span>
+
+                                <i
+                                    class="fas fa-location-crosshairs"
+                                    aria-hidden="true"
+                                ></i>
+
+                                <span>
+
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        কাছাকাছি রক্তপ্রার্থীদের সঙ্গে সংযুক্ত থাকুন
+                                    {% else %}
+                                        Connect with nearby blood seekers
+                                    {% endif %}
+
+                                </span>
+
                             </div>
+
+
+                            <div class="login-benefit">
+
+                                <i
+                                    class="fas fa-bolt"
+                                    aria-hidden="true"
+                                ></i>
+
+                                <span>
+
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        জরুরি রক্তের অনুরোধে দ্রুত সাড়া দিন
+                                    {% else %}
+                                        Respond quickly to emergency requests
+                                    {% endif %}
+
+                                </span>
+
+                            </div>
+
                         </div>
+
                     </div>
+
 
                     <div class="login-quote">
-                        “{% trans "A few minutes of your time can become someone else's second chance." %}”
+
+                        “{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                            আপনার কয়েক মিনিট সময় কারও জীবনের দ্বিতীয়
+                            সুযোগ হয়ে উঠতে পারে।
+                        {% else %}
+                            A few minutes of your time can become
+                            someone else's second chance.
+                        {% endif %}”
+
                     </div>
+
                 </section>
+
             </div>
 
-            <!-- Login Form -->
+
+            <!-- =====================================================
+                 LOGIN FORM
+                 ===================================================== -->
+
             <div class="col-lg-6">
+
                 <section class="login-form-panel">
+
                     <div class="login-form-wrap">
 
                         <div class="login-form-header">
-                            <h2>{% trans "Sign in to your account" %}</h2>
+
+                            <h1>
+
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                    আপনার অ্যাকাউন্টে লগইন করুন
+                                {% else %}
+                                    Sign in to your account
+                                {% endif %}
+
+                            </h1>
+
                             <p>
-                                {% trans "Enter your credentials to continue to your RedPulse account." %}
+
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                    RedPulse অ্যাকাউন্টে যেতে আপনার লগইন তথ্য দিন।
+                                {% else %}
+                                    Enter your credentials to continue
+                                    to your RedPulse account.
+                                {% endif %}
+
                             </p>
+
                         </div>
 
-                        <form method="post" id="loginForm">
+
+                        <form
+                            method="post"
+                            id="loginForm"
+                            data-login-form
+                        >
+
                             {% csrf_token %}
 
+
+                            <!-- USERNAME -->
+
                             <div class="login-field">
-                                <label for="loginUsername" class="login-label">
-                                    <i class="fas fa-user"></i>
-                                    {% trans "Username" %}
+
+                                <label
+                                    for="loginUsername"
+                                    class="login-label"
+                                >
+
+                                    <i
+                                        class="fas fa-user"
+                                        aria-hidden="true"
+                                    ></i>
+
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        ইউজারনেম
+                                    {% else %}
+                                        Username
+                                    {% endif %}
+
                                 </label>
 
+
                                 <div class="login-input-wrap">
-                                    <i class="fas fa-user login-input-icon"></i>
+
+                                    <!-- NO INPUT ICON -->
+
                                     <input
                                         type="text"
                                         name="username"
                                         id="loginUsername"
                                         class="login-input"
-                                        placeholder="{% trans 'Enter your username' %}"
+
+                                        placeholder="{% if CURRENT_LANGUAGE|slice:':2' == 'bn' %}আপনার ইউজারনেম লিখুন{% else %}Enter your username{% endif %}"
+
                                         autocomplete="username"
-                                        required>
+                                        autocapitalize="none"
+                                        spellcheck="false"
+                                        inputmode="text"
+                                        enterkeyhint="next"
+                                        autofocus
+                                        required
+                                        aria-describedby="usernameHint"
+                                    >
+
                                 </div>
+
+
+                                <div
+                                    class="login-field-hint"
+                                    id="usernameHint"
+                                >
+
+                                    <i
+                                        class="fas fa-key"
+                                        aria-hidden="true"
+                                    ></i>
+
+                                    <span>
+
+                                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                            আপনার ব্রাউজার এই সাইটের সংরক্ষিত
+                                            পাসওয়ার্ড বা পাসকি দেখাতে পারে।
+                                        {% else %}
+                                            Your browser may offer a saved
+                                            password or passkey for this site.
+                                        {% endif %}
+
+                                    </span>
+
+                                </div>
+
                             </div>
 
+
+                            <!-- PASSWORD -->
+
                             <div class="login-field">
-                                <label for="loginPassword" class="login-label">
-                                    <i class="fas fa-lock"></i>
-                                    {% trans "Password" %}
+
+                                <label
+                                    for="loginPassword"
+                                    class="login-label"
+                                >
+
+                                    <i
+                                        class="fas fa-lock"
+                                        aria-hidden="true"
+                                    ></i>
+
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        পাসওয়ার্ড
+                                    {% else %}
+                                        Password
+                                    {% endif %}
+
                                 </label>
 
+
                                 <div class="login-input-wrap">
-                                    <i class="fas fa-key login-input-icon"></i>
+
+                                    <!-- NO INPUT ICON -->
+
                                     <input
                                         type="password"
                                         name="password"
                                         id="loginPassword"
                                         class="login-password-input"
-                                        placeholder="{% trans 'Enter your password' %}"
+
+                                        placeholder="{% if CURRENT_LANGUAGE|slice:':2' == 'bn' %}আপনার পাসওয়ার্ড লিখুন{% else %}Enter your password{% endif %}"
+
                                         autocomplete="current-password"
-                                        required>
+                                        enterkeyhint="go"
+                                        required
+                                        aria-describedby="capsWarning"
+                                    >
+
+
+                                    <!-- PASSWORD VISIBILITY BUTTON -->
 
                                     <button
                                         type="button"
                                         class="password-toggle"
                                         id="passwordToggle"
-                                        aria-label="{% trans 'Show password' %}"
-                                        title="{% trans 'Show password' %}">
-                                        <i class="fas fa-eye"></i>
+
+                                        aria-label="{% if CURRENT_LANGUAGE|slice:':2' == 'bn' %}পাসওয়ার্ড দেখুন{% else %}Show password{% endif %}"
+
+                                        title="{% if CURRENT_LANGUAGE|slice:':2' == 'bn' %}পাসওয়ার্ড দেখুন{% else %}Show password{% endif %}"
+
+                                        aria-controls="loginPassword"
+                                        aria-pressed="false"
+
+                                        data-show-label="{% if CURRENT_LANGUAGE|slice:':2' == 'bn' %}পাসওয়ার্ড দেখুন{% else %}Show password{% endif %}"
+
+                                        data-hide-label="{% if CURRENT_LANGUAGE|slice:':2' == 'bn' %}পাসওয়ার্ড লুকান{% else %}Hide password{% endif %}"
+                                    >
+
+                                        <i
+                                            class="fas fa-eye"
+                                            aria-hidden="true"
+                                        ></i>
+
                                     </button>
+
                                 </div>
+
+
+                                <div class="login-field-hint">
+
+                                    <span
+                                        class="login-caps-warning"
+                                        id="capsWarning"
+                                        role="status"
+                                        aria-live="polite"
+                                    >
+
+                                        <i
+                                            class="fas fa-arrow-up-a-z"
+                                            aria-hidden="true"
+                                        ></i>
+
+                                        <span>
+
+                                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                                Caps Lock চালু আছে।
+                                            {% else %}
+                                                Caps Lock is on.
+                                            {% endif %}
+
+                                        </span>
+
+                                    </span>
+
+                                </div>
+
                             </div>
+
+
+                            <!-- OPTIONS -->
 
                             <div class="login-options">
+
                                 <label class="remember-label">
-                                    <input type="checkbox" name="remember_me">
-                                    <span>{% trans "Remember me" %}</span>
+
+                                    <input
+                                        type="checkbox"
+                                        name="remember_me"
+                                        id="rememberMe"
+                                        value="1"
+                                    >
+
+                                    <span>
+
+                                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                            আমাকে মনে রাখুন
+                                        {% else %}
+                                            Remember me
+                                        {% endif %}
+
+                                    </span>
+
                                 </label>
 
-                                <a href="{% url 'password_reset' %}" class="forgot-link">
-                                    {% trans "Forgot Password?" %}
+
+                                <a
+                                    href="{% url 'password_reset' %}"
+                                    class="forgot-link"
+                                >
+
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        পাসওয়ার্ড ভুলে গেছেন?
+                                    {% else %}
+                                        Forgot Password?
+                                    {% endif %}
+
                                 </a>
+
                             </div>
 
+
+                            <!-- LOGIN ERROR -->
+
                             {% if form.errors %}
-                                <div class="login-error" role="alert">
-                                    <i class="fas fa-circle-exclamation"></i>
+
+                                <div
+                                    class="login-error"
+                                    role="alert"
+                                    aria-live="assertive"
+                                >
+
+                                    <i
+                                        class="fas fa-circle-exclamation"
+                                        aria-hidden="true"
+                                    ></i>
+
                                     <span>
-                                        {% trans "Invalid username or password. Please check your details and try again." %}
+
+                                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                            ইউজারনেম বা পাসওয়ার্ড সঠিক নয়।
+                                            তথ্য যাচাই করে আবার চেষ্টা করুন।
+                                        {% else %}
+                                            Invalid username or password.
+                                            Please check your details and try again.
+                                        {% endif %}
+
                                     </span>
+
                                 </div>
+
                             {% endif %}
 
-                            <button type="submit" class="login-submit" id="loginSubmit">
-                                <i class="fas fa-right-to-bracket"></i>
-                                <span>{% trans "Login to RedPulse" %}</span>
+
+                            <!-- SUBMIT -->
+
+                            <button
+                                type="submit"
+                                class="login-submit"
+                                id="loginSubmit"
+
+                                data-loading-label="{% if CURRENT_LANGUAGE|slice:':2' == 'bn' %}লগইন হচ্ছে…{% else %}Signing in…{% endif %}"
+                            >
+
+                                <i
+                                    class="fas fa-right-to-bracket"
+                                    aria-hidden="true"
+                                ></i>
+
+                                <span>
+
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        RedPulse-এ লগইন করুন
+                                    {% else %}
+                                        Login to RedPulse
+                                    {% endif %}
+
+                                </span>
+
                             </button>
+
                         </form>
 
+
+                        <p
+                            class="login-form-status"
+                            id="loginStatus"
+                            aria-live="polite"
+                        ></p>
+
+
                         <div class="login-divider">
-                            {% trans "New to RedPulse?" %}
+
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                RedPulse-এ নতুন?
+                            {% else %}
+                                New to RedPulse?
+                            {% endif %}
+
                         </div>
+
 
                         <p class="register-prompt">
-                            {% trans "Don't have an account?" %}
-                            <a href="{% url 'register' %}" class="register-link">
-                                {% trans "Register here" %}
+
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                অ্যাকাউন্ট নেই?
+                            {% else %}
+                                Don't have an account?
+                            {% endif %}
+
+
+                            <a
+                                href="{% url 'register' %}"
+                                class="register-link"
+                            >
+
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                    এখানে রেজিস্টার করুন
+                                {% else %}
+                                    Register here
+                                {% endif %}
+
                             </a>
+
                         </p>
 
+
                         <div class="login-security">
-                            <i class="fas fa-lock"></i>
-                            {% trans "Your login information is securely protected" %}
+
+                            <i
+                                class="fas fa-lock"
+                                aria-hidden="true"
+                            ></i>
+
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                আপনার লগইন তথ্য নিরাপদভাবে সুরক্ষিত আছে
+                            {% else %}
+                                Your login information is securely protected
+                            {% endif %}
+
                         </div>
+
                     </div>
+
                 </section>
+
             </div>
+
         </div>
+
     </div>
+
 </div>
+
 {% endblock %}
+
 
 {% block scripts %}
 <script>
-    (function () {
-        'use strict';
+(function () {
 
-        var passwordInput = document.getElementById('loginPassword');
-        var passwordToggle = document.getElementById('passwordToggle');
-        var loginForm = document.getElementById('loginForm');
-        var loginSubmit = document.getElementById('loginSubmit');
+    'use strict';
 
-        if (passwordInput && passwordToggle) {
-            passwordToggle.addEventListener('click', function () {
-                var isPassword = passwordInput.type === 'password';
-                passwordInput.type = isPassword ? 'text' : 'password';
+    var passwordInput =
+        document.getElementById('loginPassword');
 
-                var icon = passwordToggle.querySelector('i');
+    var passwordToggle =
+        document.getElementById('passwordToggle');
+
+    var loginForm =
+        document.getElementById('loginForm');
+
+    var loginSubmit =
+        document.getElementById('loginSubmit');
+
+    var loginStatus =
+        document.getElementById('loginStatus');
+
+    var capsWarning =
+        document.getElementById('capsWarning');
+
+
+    /* =========================================================
+       STATUS
+       ========================================================= */
+
+    function setStatus(message) {
+
+        if (loginStatus) {
+            loginStatus.textContent = message || '';
+        }
+
+    }
+
+
+    /* =========================================================
+       CAPS LOCK
+       ========================================================= */
+
+    function updateCapsLock(event) {
+
+        if (!passwordInput || !capsWarning) {
+            return;
+        }
+
+        var isCapsOn = false;
+
+        if (
+            event &&
+            typeof event.getModifierState === 'function'
+        ) {
+            isCapsOn =
+                event.getModifierState('CapsLock');
+        }
+
+        capsWarning.classList.toggle(
+            'is-visible',
+            isCapsOn
+        );
+
+    }
+
+
+    /* =========================================================
+       RESET SUBMIT BUTTON
+       ========================================================= */
+
+    function resetSubmitState() {
+
+        if (!loginSubmit) {
+            return;
+        }
+
+        loginSubmit.disabled = false;
+
+        loginSubmit.removeAttribute(
+            'aria-busy'
+        );
+
+        loginSubmit.classList.remove(
+            'is-loading'
+        );
+
+
+        var icon =
+            loginSubmit.querySelector('i');
+
+        var label =
+            loginSubmit.querySelector('span');
+
+
+        if (icon) {
+
+            icon.className =
+                'fas fa-right-to-bracket';
+
+        }
+
+
+        if (label) {
+
+            label.textContent =
+                loginSubmit.dataset.defaultLabel ||
+                label.textContent;
+
+        }
+
+    }
+
+
+    /* =========================================================
+       STORE DEFAULT BUTTON LABEL
+       ========================================================= */
+
+    if (loginSubmit) {
+
+        var submitLabel =
+            loginSubmit.querySelector('span');
+
+        if (submitLabel) {
+
+            loginSubmit.dataset.defaultLabel =
+                submitLabel.textContent.trim();
+
+        }
+
+    }
+
+
+    /* =========================================================
+       PASSWORD SHOW / HIDE
+       ========================================================= */
+
+    if (
+        passwordInput &&
+        passwordToggle
+    ) {
+
+        passwordToggle.addEventListener(
+            'click',
+            function () {
+
+                var isPassword =
+                    passwordInput.type === 'password';
+
+                var nextType =
+                    isPassword
+                        ? 'text'
+                        : 'password';
+
+
+                passwordInput.type =
+                    nextType;
+
+
+                var icon =
+                    passwordToggle.querySelector('i');
+
+
                 if (icon) {
-                    icon.className = isPassword ? 'fas fa-eye-slash' : 'fas fa-eye';
+
+                    icon.className =
+                        isPassword
+                            ? 'fas fa-eye-slash'
+                            : 'fas fa-eye';
+
                 }
+
 
                 passwordToggle.setAttribute(
                     'aria-label',
                     isPassword
-                        ? '{% trans "Hide password" %}'
-                        : '{% trans "Show password" %}'
+                        ? passwordToggle.dataset.hideLabel
+                        : passwordToggle.dataset.showLabel
                 );
-            });
-        }
 
-        if (loginForm && loginSubmit) {
-            loginForm.addEventListener('submit', function () {
+
+                passwordToggle.setAttribute(
+                    'title',
+                    isPassword
+                        ? passwordToggle.dataset.hideLabel
+                        : passwordToggle.dataset.showLabel
+                );
+
+
+                passwordToggle.setAttribute(
+                    'aria-pressed',
+                    String(isPassword)
+                );
+
+
+                try {
+
+                    passwordInput.focus({
+                        preventScroll: true
+                    });
+
+                } catch (error) {
+
+                    passwordInput.focus();
+
+                }
+
+            }
+        );
+
+
+        passwordInput.addEventListener(
+            'keydown',
+            updateCapsLock
+        );
+
+
+        passwordInput.addEventListener(
+            'keyup',
+            updateCapsLock
+        );
+
+
+        passwordInput.addEventListener(
+            'blur',
+            function () {
+
+                if (capsWarning) {
+
+                    capsWarning.classList.remove(
+                        'is-visible'
+                    );
+
+                }
+
+            }
+        );
+
+
+        passwordInput.addEventListener(
+            'focus',
+            updateCapsLock
+        );
+
+    }
+
+
+    /* =========================================================
+       LOGIN SUBMIT
+       ========================================================= */
+
+    if (
+        loginForm &&
+        loginSubmit
+    ) {
+
+        loginForm.addEventListener(
+            'submit',
+            function (event) {
+
+                if (!loginForm.checkValidity()) {
+                    return;
+                }
+
+
+                if (loginSubmit.disabled) {
+
+                    event.preventDefault();
+                    return;
+
+                }
+
+
                 loginSubmit.disabled = true;
-                loginSubmit.setAttribute('aria-busy', 'true');
-                loginSubmit.innerHTML =
-                    '<i class="fas fa-spinner fa-spin"></i>' +
-                    '<span>{% trans "Signing in…" %}</span>';
-            });
+
+                loginSubmit.setAttribute(
+                    'aria-busy',
+                    'true'
+                );
+
+                loginSubmit.classList.add(
+                    'is-loading'
+                );
+
+
+                var icon =
+                    loginSubmit.querySelector('i');
+
+                var label =
+                    loginSubmit.querySelector('span');
+
+
+                if (icon) {
+
+                    icon.className =
+                        'fas fa-spinner fa-spin';
+
+                }
+
+
+                if (label) {
+
+                    label.textContent =
+                        loginSubmit.dataset.loadingLabel ||
+                        'Signing in…';
+
+                }
+
+
+                setStatus(
+                    '{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}নিরাপদভাবে লগইন করা হচ্ছে…{% else %}Signing you in securely…{% endif %}'
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =========================================================
+       BROWSER BACK / BFCache FIX
+       ========================================================= */
+
+    window.addEventListener(
+        'pageshow',
+        function () {
+
+            resetSubmitState();
+            setStatus('');
+
         }
-    })();
+    );
+
+
+})();
 </script>
 {% endblock %}
