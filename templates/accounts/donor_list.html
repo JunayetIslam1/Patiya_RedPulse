@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 {% load i18n %}
+{% get_current_language as CURRENT_LANGUAGE %}
 
-{% block title %}{% trans "Find Donors" %} — Patiya RedPulse{% endblock %}
+{% block title %}{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রক্তদাতা খুঁজুন{% else %}Find Donors{% endif %} — Patiya RedPulse{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -294,19 +295,6 @@
     gap: .75rem;
 }
 
-.search-heading-icon {
-    width: 42px;
-    height: 42px;
-    display: grid;
-    place-items: center;
-    flex: 0 0 42px;
-    border-radius: 13px;
-    color: #fff;
-    background: linear-gradient(145deg,#d6345c,#b5092a 62%,#85001f);
-    box-shadow:
-        0 10px 21px -8px rgba(181,9,42,.58),
-        inset 0 1px 0 rgba(255,255,255,.42);
-}
 
 .search-panel-title,
 .results-title,
@@ -366,27 +354,10 @@
     position: relative;
 }
 
-.field-icon {
-    position: absolute;
-    z-index: 4;
-    top: 50%;
-    left: 1rem;
-    width: 22px;
-    height: 22px;
-    display: grid;
-    place-items: center;
-    transform: translateY(-50%);
-    color: #7b8798;
-    font-size: .90rem;
-    line-height: 1;
-    pointer-events: none;
-    transition: color .2s ease, transform .2s ease;
-}
-
 .directory-control {
     width: 100%;
     min-height: 55px;
-    padding: .80rem 2.85rem .80rem 3.05rem;
+    padding: .80rem .9rem;
     border: 1px solid var(--directory-border);
     border-radius: 14px;
     outline: none;
@@ -401,6 +372,11 @@
     -webkit-appearance: none;
 }
 
+.directory-control:where(select) {
+    appearance: auto;
+    -webkit-appearance: auto;
+}
+
 .directory-control::placeholder {
     color: var(--directory-muted);
     opacity: .75;
@@ -412,23 +388,6 @@
     box-shadow:
         0 0 0 4px rgba(181,9,42,.08),
         0 10px 22px -18px rgba(181,9,42,.42);
-}
-
-.field-shell:focus-within .field-icon {
-    color: var(--directory-red);
-    transform: translateY(-50%) scale(1.08);
-}
-
-.select-arrow {
-    position: absolute;
-    z-index: 4;
-    top: 50%;
-    right: 1rem;
-    transform: translateY(-50%);
-    color: var(--directory-muted);
-    font-size: .74rem;
-    line-height: 1;
-    pointer-events: none;
 }
 
 .filter-label-spacer {
@@ -741,7 +700,7 @@
 }
 
 .sort-select {
-    padding: .38rem 2rem .38rem .72rem;
+    padding: .38rem .72rem;
     border: 1px solid var(--directory-border);
     color: var(--directory-text);
     background: var(--directory-surface);
@@ -1458,6 +1417,44 @@ body.dark .donor-page .avatar-status-dot,
 }
 
 @media (max-width: 767.98px) {
+    .donor-page {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .search-panel-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: .65rem;
+    }
+
+    .search-heading-content {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .search-panel-title {
+        font-size: .96rem;
+        line-height: 1.35;
+    }
+
+    .search-panel-subtitle {
+        line-height: 1.55;
+    }
+
+    .search-submit-btn {
+        min-height: 53px;
+    }
+
+    .quick-group-row {
+        gap: .4rem;
+    }
+
+    .quick-group-btn {
+        min-width: 42px;
+    }
+
+
     .directory-control {
         min-height: 54px;
         font-size: .94rem;
@@ -1529,6 +1526,22 @@ body.dark .donor-page .avatar-status-dot,
 }
 
 @media (max-width: 460px) {
+    .donor-search-panel {
+        margin-right: .2rem;
+        margin-left: .2rem;
+    }
+
+    .search-heading-content {
+        width: 100%;
+    }
+
+    .directory-control,
+    .search-submit-btn,
+    .directory-locate-btn {
+        width: 100%;
+    }
+
+
     .hero-bottom-row {
         display: none;
     }
@@ -1604,29 +1617,29 @@ body.dark .donor-page .avatar-status-dot,
         <div class="donor-hero-content">
             <div class="hero-eyebrow">
                 <span class="hero-live-dot"></span>
-                {% if LANGUAGE_CODE == 'bn' %}লাইভ রক্তদাতা ডিরেক্টরি{% else %}Live Donor Directory{% endif %}
+                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}লাইভ রক্তদাতা ডিরেক্টরি{% else %}Live Donor Directory{% endif %}
             </div>
 
             <h1 class="donor-hero-title" id="donorPageTitle">
-                {% trans "Find the right blood donor, right when it matters." %}
+                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}প্রয়োজনের মুহূর্তে সঠিক রক্তদাতা খুঁজে নিন।{% else %}Find the right blood donor, right when it matters.{% endif %}
             </h1>
 
             <p class="donor-hero-text">
-                {% trans "Search eligible blood donors across Patiya and connect directly by phone or WhatsApp—fast, simple and transparent." %}
+                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}পটিয়ার যোগ্য রক্তদাতাদের খুঁজে সরাসরি ফোন বা WhatsApp-এ যোগাযোগ করুন—দ্রুত, সহজ ও স্বচ্ছভাবে।{% else %}Search eligible blood donors across Patiya and connect directly by phone or WhatsApp—fast, simple and transparent.{% endif %}
             </p>
 
             <div class="hero-bottom-row">
                 <span class="hero-quick-pill">
                     <i class="fas fa-bolt"></i>
-                    {% trans "Quick contact" %}
+                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}দ্রুত যোগাযোগ{% else %}Quick contact{% endif %}
                 </span>
                 <span class="hero-quick-pill">
                     <i class="fas fa-location-dot"></i>
-                    {% trans "Location-aware search" %}
+                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}লোকেশনভিত্তিক অনুসন্ধান{% else %}Location-aware search{% endif %}
                 </span>
                 <span class="hero-quick-pill">
                     <i class="fas fa-heart"></i>
-                    {% trans "Save trusted donors" %}
+                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}বিশ্বস্ত রক্তদাতা সংরক্ষণ{% else %}Save trusted donors{% endif %}
                 </span>
             </div>
         </div>
@@ -1637,7 +1650,7 @@ body.dark .donor-page .avatar-status-dot,
             </div>
             <div>
                 <span class="hero-stat-number">{{ donors.count }}</span>
-                <span class="hero-stat-label">{% trans "Donors Found" %}</span>
+                <span class="hero-stat-label">{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রক্তদাতা পাওয়া গেছে{% else %}Donors Found{% endif %}</span>
             </div>
         </div>
     </section>
@@ -1646,22 +1659,19 @@ body.dark .donor-page .avatar-status-dot,
     <section class="donor-search-panel reveal" aria-labelledby="searchPanelTitle">
         <div class="search-panel-heading">
             <div class="search-heading-content">
-                <span class="search-heading-icon">
-                    <i class="fas fa-magnifying-glass-location"></i>
-                </span>
                 <div>
                     <h2 class="search-panel-title" id="searchPanelTitle">
-                        {% trans "Smart Donor Search" %}
+                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}স্মার্ট রক্তদাতা অনুসন্ধান{% else %}Smart Donor Search{% endif %}
                     </h2>
                     <p class="search-panel-subtitle">
-                        {% trans "Filter by blood group, district, upazila or your current location" %}
+                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রক্তের গ্রুপ, জেলা, উপজেলা বা বর্তমান লোকেশন অনুযায়ী খুঁজুন{% else %}Filter by blood group, district, upazila or your current location{% endif %}
                     </p>
                 </div>
             </div>
 
             <span class="secure-chip">
                 <i class="fas fa-shield-heart"></i>
-                {% trans "Direct & Secure" %}
+                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}সরাসরি ও নিরাপদ{% else %}Direct & Secure{% endif %}
             </span>
         </div>
 
@@ -1672,18 +1682,17 @@ body.dark .donor-page .avatar-status-dot,
                     <div class="filter-field">
                         <label for="bloodGroupFilter" class="filter-label">
                             <i class="fas fa-droplet"></i>
-                            {% if LANGUAGE_CODE == 'bn' %}রক্তের গ্রুপ{% else %}Blood Group{% endif %}
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রক্তের গ্রুপ{% else %}Blood Group{% endif %}
                         </label>
 
                         <div class="field-shell">
-                            <i class="fas fa-heart-pulse field-icon"></i>
 
                             <select
                                 name="blood_group"
                                 id="bloodGroupFilter"
                                 class="directory-control">
                                 <option value="">
-                                    {% if LANGUAGE_CODE == 'bn' %}সকল রক্তের গ্রুপ{% else %}All Blood Groups{% endif %}
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}সকল রক্তের গ্রুপ{% else %}All Blood Groups{% endif %}
                                 </option>
 
                                 {% for bg in blood_groups %}
@@ -1694,8 +1703,6 @@ body.dark .donor-page .avatar-status-dot,
                                     </option>
                                 {% endfor %}
                             </select>
-
-                            <i class="fas fa-chevron-down select-arrow"></i>
                         </div>
                     </div>
                 </div>
@@ -1704,17 +1711,16 @@ body.dark .donor-page .avatar-status-dot,
                     <div class="filter-field">
                         <label for="districtFilter" class="filter-label">
                             <i class="fas fa-map"></i>
-                            {% if LANGUAGE_CODE == 'bn' %}জেলা{% else %}District{% endif %}
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}জেলা{% else %}District{% endif %}
                         </label>
 
                         <div class="field-shell">
-                            <i class="fas fa-location-dot field-icon"></i>
                             <input
                                 type="text"
                                 name="district"
                                 id="districtFilter"
                                 class="directory-control"
-                                placeholder="{% if LANGUAGE_CODE == 'bn' %}জেলা লিখুন{% else %}Enter district{% endif %}"
+                                placeholder="{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}জেলা লিখুন{% else %}Enter district{% endif %}"
                                 value="{{ selected_district }}"
                                 autocomplete="address-level2">
                         </div>
@@ -1725,18 +1731,17 @@ body.dark .donor-page .avatar-status-dot,
                     <div class="filter-field">
                         <label for="upazilaFilter" class="filter-label">
                             <i class="fas fa-map-location-dot"></i>
-                            {% if LANGUAGE_CODE == 'bn' %}উপজেলা / ইউনিয়ন{% else %}Upazila / Union{% endif %}
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}উপজেলা / ইউনিয়ন{% else %}Upazila / Union{% endif %}
                         </label>
 
                         <div class="field-shell">
-                            <i class="fas fa-building-circle-check field-icon"></i>
                             <input
                                 type="text"
                                 name="upazila"
                                 id="upazilaFilter"
                                 class="directory-control"
                                 list="patiyaUnions"
-                                placeholder="{% if LANGUAGE_CODE == 'bn' %}উপজেলা বা ইউনিয়ন লিখুন{% else %}Enter upazila or union{% endif %}"
+                                placeholder="{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}উপজেলা বা ইউনিয়ন লিখুন{% else %}Enter upazila or union{% endif %}"
                                 value="{{ selected_upazila }}"
                                 autocomplete="address-level3">
                         </div>
@@ -1746,16 +1751,14 @@ body.dark .donor-page .avatar-status-dot,
                 <div class="col-md-6 col-lg-3">
                     <div class="filter-field">
                         <label class="filter-label filter-label-spacer" aria-hidden="true">
-                            <i class="fas fa-wand-magic-sparkles"></i>
-                            {% if LANGUAGE_CODE == 'bn' %}রক্তদাতা খুঁজুন{% else %}Search Donors{% endif %}
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রক্তদাতা খুঁজুন{% else %}Search Donors{% endif %}
                         </label>
 
                         <button
                             type="submit"
                             class="search-submit-btn"
                             id="searchSubmitBtn">
-                            <i class="fas fa-magnifying-glass"></i>
-                            <span>{% if LANGUAGE_CODE == 'bn' %}এখনই খুঁজুন{% else %}Search Now{% endif %}</span>
+                            <span>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}এখনই খুঁজুন{% else %}Search Now{% endif %}</span>
                         </button>
                     </div>
                 </div>
@@ -1766,7 +1769,7 @@ body.dark .donor-page .avatar-status-dot,
                 <div class="col-12">
                     <div class="quick-group-row">
                         <span class="quick-group-label">
-                            {% if LANGUAGE_CODE == 'bn' %}দ্রুত রক্তের গ্রুপ:{% else %}Quick blood group:{% endif %}
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}দ্রুত রক্তের গ্রুপ:{% else %}Quick blood group:{% endif %}
                         </span>
 
                         {% for quick_bg in blood_groups %}
@@ -1785,7 +1788,7 @@ body.dark .donor-page .avatar-status-dot,
                         <div class="near-me-info">
                             <i class="fas fa-circle-info"></i>
                             <span>
-                                {% trans "Use your device location to ask the server for donors nearest to you." %}
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}আপনার নিকটবর্তী রক্তদাতা খুঁজতে ডিভাইসের লোকেশন ব্যবহার করুন।{% else %}Use your device location to ask the server for donors nearest to you.{% endif %}
                             </span>
                         </div>
 
@@ -1796,9 +1799,9 @@ body.dark .donor-page .avatar-status-dot,
                             <i class="fas {% if sorted_by_distance %}fa-location-circle-check{% else %}fa-location-crosshairs{% endif %}"></i>
                             <span id="nearMeLabel">
                                 {% if sorted_by_distance %}
-                                    {% if LANGUAGE_CODE == 'bn' %}দূরত্ব অনুযায়ী সাজানো{% else %}Sorted by Distance{% endif %}
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}দূরত্ব অনুযায়ী সাজানো{% else %}Sorted by Distance{% endif %}
                                 {% else %}
-                                    {% if LANGUAGE_CODE == 'bn' %}আমার কাছাকাছি — দূরত্ব অনুযায়ী{% else %}Near Me — Sort by Distance{% endif %}
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}আমার কাছাকাছি — দূরত্ব অনুযায়ী{% else %}Near Me — Sort by Distance{% endif %}
                                 {% endif %}
                             </span>
                         </button>
@@ -1810,7 +1813,7 @@ body.dark .donor-page .avatar-status-dot,
                     <div class="active-filters-row" id="activeFiltersRow">
 
                         <span class="active-filters-label">
-                            {% trans "Active filters:" %}
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}সক্রিয় ফিল্টার:{% else %}Active filters:{% endif %}
                         </span>
 
                         {% if selected_blood_group %}
@@ -1820,7 +1823,7 @@ body.dark .donor-page .avatar-status-dot,
                                 <button
                                     type="button"
                                     data-remove-param="blood_group"
-                                    aria-label="{% trans 'Remove blood group filter' %}">
+                                    aria-label="{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রক্তের গ্রুপের ফিল্টার সরান{% else %}Remove blood group filter{% endif %}">
                                     &times;
                                 </button>
                             </span>
@@ -1833,7 +1836,7 @@ body.dark .donor-page .avatar-status-dot,
                                 <button
                                     type="button"
                                     data-remove-param="district"
-                                    aria-label="{% trans 'Remove district filter' %}">
+                                    aria-label="{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}জেলার ফিল্টার সরান{% else %}Remove district filter{% endif %}">
                                     &times;
                                 </button>
                             </span>
@@ -1846,7 +1849,7 @@ body.dark .donor-page .avatar-status-dot,
                                 <button
                                     type="button"
                                     data-remove-param="upazila"
-                                    aria-label="{% trans 'Remove upazila filter' %}">
+                                    aria-label="{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}উপজেলার ফিল্টার সরান{% else %}Remove upazila filter{% endif %}">
                                     &times;
                                 </button>
                             </span>
@@ -1855,11 +1858,11 @@ body.dark .donor-page .avatar-status-dot,
                         {% if sorted_by_distance %}
                             <span class="active-filter-chip">
                                 <i class="fas fa-route"></i>
-                                {% trans "Distance mode" %}
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}দূরত্বভিত্তিক মোড{% else %}Distance mode{% endif %}
                                 <button
                                     type="button"
                                     id="removeDistanceMode"
-                                    aria-label="{% trans 'Remove distance mode' %}">
+                                    aria-label="{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}দূরত্ব মোড সরান{% else %}Remove distance mode{% endif %}">
                                     &times;
                                 </button>
                             </span>
@@ -1869,7 +1872,7 @@ body.dark .donor-page .avatar-status-dot,
                             type="button"
                             class="active-filter-clear-all"
                             id="clearAllFiltersBtn">
-                            {% trans "Clear all" %}
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}সব মুছুন{% else %}Clear all{% endif %}
                         </button>
                     </div>
                 </div>
@@ -1889,7 +1892,7 @@ body.dark .donor-page .avatar-status-dot,
 
                 <div>
                     <h2 class="results-title" id="availableDonorsTitle">
-                        {% trans "Available Donors" %}
+                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}উপলভ্য রক্তদাতা{% else %}Available Donors{% endif %}
 
                         <span class="donor-count" id="donorCountBadge">
                             {{ donors.count }}
@@ -1901,7 +1904,7 @@ body.dark .donor-page .avatar-status-dot,
                             style="display:none;">
                             <i class="fas fa-circle-check"></i>
                             <span id="eligibleNowText">
-                                0 {% trans "eligible now" %}
+                                0 {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}জন এখন রক্ত দিতে প্রস্তুত{% else %}eligible now{% endif %}
                             </span>
                         </span>
                     </h2>
@@ -1909,9 +1912,9 @@ body.dark .donor-page .avatar-status-dot,
                     <p class="results-subtitle">
                         {% if sorted_by_distance %}
                             <i class="fas fa-location-arrow me-1"></i>
-                            {% trans "Nearest donors are displayed first" %}
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}নিকটবর্তী রক্তদাতাদের আগে দেখানো হচ্ছে{% else %}Nearest donors are displayed first{% endif %}
                         {% else %}
-                            {% trans "Choose a donor and connect directly" %}
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}একজন রক্তদাতা বেছে নিয়ে সরাসরি যোগাযোগ করুন{% else %}Choose a donor and connect directly{% endif %}
                         {% endif %}
                     </p>
                 </div>
@@ -1922,28 +1925,28 @@ body.dark .donor-page .avatar-status-dot,
                 {% if donors %}
                     <div class="sort-field">
                         <label for="donorSortSelect">
-                            {% trans "Sort:" %}
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}সাজান:{% else %}Sort:{% endif %}
                         </label>
 
                         <select
                             id="donorSortSelect"
                             class="sort-select">
                             <option value="default">
-                                {% trans "Default" %}
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}ডিফল্ট{% else %}Default{% endif %}
                             </option>
                             <option value="name-asc">
-                                {% trans "Name (A–Z)" %}
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}নাম (A–Z){% else %}Name (A–Z){% endif %}
                             </option>
                             <option value="name-desc">
-                                {% trans "Name (Z–A)" %}
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}নাম (Z–A){% else %}Name (Z–A){% endif %}
                             </option>
                             <option value="blood-group">
-                                {% if LANGUAGE_CODE == 'bn' %}রক্তের গ্রুপ{% else %}Blood Group{% endif %}
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রক্তের গ্রুপ{% else %}Blood Group{% endif %}
                             </option>
 
                             {% if sorted_by_distance %}
                                 <option value="distance">
-                                    {% trans "Nearest First" %}
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}নিকটবর্তী আগে{% else %}Nearest First{% endif %}
                                 </option>
                             {% endif %}
                         </select>
@@ -1954,7 +1957,7 @@ body.dark .donor-page .avatar-status-dot,
                         class="saved-toggle-btn"
                         id="savedOnlyToggle">
                         <i class="fas fa-heart"></i>
-                        <span>{% trans "Saved only" %}</span>
+                        <span>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}শুধু সংরক্ষিত{% else %}Saved only{% endif %}</span>
                     </button>
 
                     <button
@@ -1962,7 +1965,7 @@ body.dark .donor-page .avatar-status-dot,
                         class="share-directory-btn"
                         id="shareDirectoryBtn">
                         <i class="fas fa-share-nodes"></i>
-                        <span>{% trans "Share" %}</span>
+                        <span>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}শেয়ার{% else %}Share{% endif %}</span>
                     </button>
                 {% endif %}
 
@@ -1970,7 +1973,7 @@ body.dark .donor-page .avatar-status-dot,
                     href="{% url 'register' %}"
                     class="register-donor-btn">
                     <i class="fas fa-user-plus"></i>
-                    {% trans "Register as Donor" %}
+                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রক্তদাতা হিসেবে নিবন্ধন করুন{% else %}Register as Donor{% endif %}
                 </a>
             </div>
         </div>
@@ -1992,34 +1995,34 @@ body.dark .donor-page .avatar-status-dot,
 
                                 <th>
                                     <i class="fas fa-user me-1"></i>
-                                    {% trans "Donor" %}
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রক্তদাতা{% else %}Donor{% endif %}
                                 </th>
 
                                 <th>
                                     <i class="fas fa-droplet me-1"></i>
-                                    {% if LANGUAGE_CODE == 'bn' %}রক্তের গ্রুপ{% else %}Blood Group{% endif %}
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রক্তের গ্রুপ{% else %}Blood Group{% endif %}
                                 </th>
 
                                 <th>
                                     <i class="fas fa-location-dot me-1"></i>
-                                    {% trans "Location" %}
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}লোকেশন{% else %}Location{% endif %}
                                 </th>
 
                                 {% if sorted_by_distance %}
                                     <th>
                                         <i class="fas fa-route me-1"></i>
-                                        {% trans "Distance" %}
+                                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}দূরত্ব{% else %}Distance{% endif %}
                                     </th>
                                 {% endif %}
 
                                 <th>
                                     <i class="fas fa-heart-circle-check me-1"></i>
-                                    {% trans "Eligibility" %}
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রক্তদানের যোগ্যতা{% else %}Eligibility{% endif %}
                                 </th>
 
                                 <th>
                                     <i class="fas fa-address-book me-1"></i>
-                                    {% trans "Contact Options" %}
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}যোগাযোগের বিকল্প{% else %}Contact Options{% endif %}
                                 </th>
                             </tr>
                         </thead>
@@ -2042,8 +2045,8 @@ body.dark .donor-page .avatar-status-dot,
                                             type="button"
                                             class="save-donor-btn"
                                             data-save-donor="{{ donor.pk }}"
-                                            aria-label="{% trans 'Save donor' %}"
-                                            title="{% trans 'Save donor' %}">
+                                            aria-label="{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রক্তদাতা সংরক্ষণ করুন{% else %}Save donor{% endif %}"
+                                            title="{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রক্তদাতা সংরক্ষণ করুন{% else %}Save donor{% endif %}">
                                             <i class="far fa-heart"></i>
                                         </button>
                                     </td>
@@ -2081,13 +2084,13 @@ body.dark .donor-page .avatar-status-dot,
                                                         <i class="fas fa-award"></i>
 
                                                         {% if donor.lifesaver_tier == 'gold' %}
-                                                            {% trans "Gold" %}
+                                                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}গোল্ড{% else %}Gold{% endif %}
                                                         {% elif donor.lifesaver_tier == 'silver' %}
-                                                            {% trans "Silver" %}
+                                                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}সিলভার{% else %}Silver{% endif %}
                                                         {% elif donor.lifesaver_tier == 'bronze' %}
-                                                            {% trans "Bronze" %}
+                                                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}ব্রোঞ্জ{% else %}Bronze{% endif %}
                                                         {% else %}
-                                                            {% trans "New" %}
+                                                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}নতুন{% else %}New{% endif %}
                                                         {% endif %}
                                                     </span>
                                                 </div>
@@ -2102,7 +2105,7 @@ body.dark .donor-page .avatar-status-dot,
                                                     {% endif %}
 
                                                     <span>
-                                                        {{ donor.age }} {% trans "years old" %}
+                                                        {{ donor.age }} {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}বছর বয়স{% else %}years old{% endif %}
                                                     </span>
                                                 </div>
                                             </div>
@@ -2147,27 +2150,27 @@ body.dark .donor-page .avatar-status-dot,
 
                                             <span class="eligibility-pill ready">
                                                 <i class="fas fa-circle-check"></i>
-                                                {% trans "Eligible to Donate" %}
+                                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রক্তদানের জন্য যোগ্য{% else %}Eligible to Donate{% endif %}
                                             </span>
 
                                             <div class="eligibility-caption ready-text">
                                                 <i class="fas fa-heart"></i>
-                                                {% trans "Ready to help now" %}
+                                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}এখনই সাহায্য করতে প্রস্তুত{% else %}Ready to help now{% endif %}
                                             </div>
 
                                         {% else %}
 
                                             <span class="eligibility-pill waiting">
                                                 <i class="fas fa-hourglass-half"></i>
-                                                {% trans "Temporarily Unavailable" %}
+                                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}সাময়িকভাবে অনুপলভ্য{% else %}Temporarily Unavailable{% endif %}
                                             </span>
 
                                             <div class="eligibility-caption">
                                                 <i class="fas fa-clock"></i>
-                                                {% trans "Available in" %}
+                                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}উপলভ্য হবে{% else %}Available in{% endif %}
                                                 <strong>
                                                     {{ donor.days_until_eligible }}
-                                                    {% trans "days" %}
+                                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}দিনে{% else %}days{% endif %}
                                                 </strong>
                                             </div>
 
@@ -2197,9 +2200,9 @@ body.dark .donor-page .avatar-status-dot,
                                                 type="button"
                                                 class="contact-action contact-copy copy-number-btn"
                                                 data-copy="{{ donor.mobile_number }}"
-                                                data-copied-label="{% trans 'Copied' %}">
+                                                data-copied-label="{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}কপি হয়েছে{% else %}Copied{% endif %}">
                                                 <i class="far fa-copy"></i>
-                                                <span>{% trans "Copy Number" %}</span>
+                                                <span>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}নম্বর কপি করুন{% else %}Copy Number{% endif %}</span>
                                             </button>
 
                                         </div>
@@ -2270,13 +2273,13 @@ body.dark .donor-page .avatar-status-dot,
                                         <i class="fas fa-award"></i>
 
                                         {% if donor.lifesaver_tier == 'gold' %}
-                                            {% trans "Gold" %}
+                                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}গোল্ড{% else %}Gold{% endif %}
                                         {% elif donor.lifesaver_tier == 'silver' %}
-                                            {% trans "Silver" %}
+                                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}সিলভার{% else %}Silver{% endif %}
                                         {% elif donor.lifesaver_tier == 'bronze' %}
-                                            {% trans "Bronze" %}
+                                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}ব্রোঞ্জ{% else %}Bronze{% endif %}
                                         {% else %}
-                                            {% trans "New" %}
+                                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}নতুন{% else %}New{% endif %}
                                         {% endif %}
                                     </span>
                                 </div>
@@ -2288,7 +2291,7 @@ body.dark .donor-page .avatar-status-dot,
                                     type="button"
                                     class="save-donor-btn"
                                     data-save-donor="{{ donor.pk }}"
-                                    aria-label="{% trans 'Save donor' %}">
+                                    aria-label="{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রক্তদাতা সংরক্ষণ করুন{% else %}Save donor{% endif %}">
                                     <i class="far fa-heart"></i>
                                 </button>
 
@@ -2303,7 +2306,7 @@ body.dark .donor-page .avatar-status-dot,
                             <div class="mobile-detail-box">
                                 <span class="mobile-detail-label">
                                     <i class="fas fa-user-clock me-1"></i>
-                                    {% trans "Age & Gender" %}
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}বয়স ও লিঙ্গ{% else %}Age & Gender{% endif %}
                                 </span>
 
                                 <div class="mobile-detail-value">
@@ -2315,14 +2318,14 @@ body.dark .donor-page .avatar-status-dot,
                                         <i class="fas fa-genderless me-1 text-secondary"></i>
                                     {% endif %}
 
-                                    {{ donor.age }} {% trans "years old" %}
+                                    {{ donor.age }} {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}বছর বয়স{% else %}years old{% endif %}
                                 </div>
                             </div>
 
                             <div class="mobile-detail-box">
                                 <span class="mobile-detail-label">
                                     <i class="fas fa-location-dot me-1"></i>
-                                    {% trans "Location" %}
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}লোকেশন{% else %}Location{% endif %}
                                 </span>
 
                                 <div class="mobile-detail-value">
@@ -2337,7 +2340,7 @@ body.dark .donor-page .avatar-status-dot,
                                 <div class="mobile-detail-box">
                                     <span class="mobile-detail-label">
                                         <i class="fas fa-route me-1"></i>
-                                        {% trans "Distance" %}
+                                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}দূরত্ব{% else %}Distance{% endif %}
                                     </span>
 
                                     <div class="mobile-detail-value">
@@ -2353,20 +2356,20 @@ body.dark .donor-page .avatar-status-dot,
                             <div class="mobile-detail-box">
                                 <span class="mobile-detail-label">
                                     <i class="fas fa-heart-circle-check me-1"></i>
-                                    {% trans "Donation Status" %}
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রক্তদানের অবস্থা{% else %}Donation Status{% endif %}
                                 </span>
 
                                 <div class="mobile-detail-value">
                                     {% if donor.is_eligible %}
                                         <span style="color:#059669;">
                                             <i class="fas fa-circle-check me-1"></i>
-                                            {% trans "Ready to donate" %}
+                                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রক্ত দিতে প্রস্তুত{% else %}Ready to donate{% endif %}
                                         </span>
                                     {% else %}
                                         <span style="color:#d97706;">
                                             <i class="fas fa-clock me-1"></i>
                                             {{ donor.days_until_eligible }}
-                                            {% trans "days remaining" %}
+                                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}দিন বাকি{% else %}days remaining{% endif %}
                                         </span>
                                     {% endif %}
                                 </div>
@@ -2379,7 +2382,7 @@ body.dark .donor-page .avatar-status-dot,
                                 href="tel:{{ donor.mobile_number }}"
                                 class="contact-action contact-call">
                                 <i class="fas fa-phone-volume"></i>
-                                {% trans "Call" %}
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}কল{% else %}Call{% endif %}
                             </a>
 
                             <a
@@ -2395,9 +2398,9 @@ body.dark .donor-page .avatar-status-dot,
                                 type="button"
                                 class="contact-action contact-copy copy-number-btn"
                                 data-copy="{{ donor.mobile_number }}"
-                                data-copied-label="{% trans 'Copied' %}">
+                                data-copied-label="{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}কপি হয়েছে{% else %}Copied{% endif %}">
                                 <i class="far fa-copy"></i>
-                                {% trans "Copy Number" %}
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}নম্বর কপি করুন{% else %}Copy Number{% endif %}
                             </button>
                         </div>
                     </article>
@@ -2410,7 +2413,7 @@ body.dark .donor-page .avatar-status-dot,
                 id="savedEmptyNotice"
                 style="display:none;">
                 <i class="fas fa-heart-crack me-1"></i>
-                {% trans "You haven't saved any donors from the current results yet." %}
+                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}বর্তমান ফলাফল থেকে আপনি এখনও কোনো রক্তদাতা সংরক্ষণ করেননি।{% else %}You haven't saved any donors from the current results yet.{% endif %}
             </div>
 
         {% else %}
@@ -2424,11 +2427,11 @@ body.dark .donor-page .avatar-status-dot,
                 </div>
 
                 <h2 class="empty-title">
-                    {% trans "No matching donors found" %}
+                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}মিলে এমন কোনো রক্তদাতা পাওয়া যায়নি{% else %}No matching donors found{% endif %}
                 </h2>
 
                 <p class="empty-text">
-                    {% trans "We could not find a donor matching your current filters. Try another blood group or expand your location search." %}
+                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}আপনার বর্তমান ফিল্টারের সঙ্গে মেলে এমন কোনো রক্তদাতা পাওয়া যায়নি। অন্য রক্তের গ্রুপ চেষ্টা করুন বা লোকেশন অনুসন্ধানটি আরও বিস্তৃত করুন।{% else %}We could not find a donor matching your current filters. Try another blood group or expand your location search.{% endif %}
                 </p>
 
                 <div class="d-flex justify-content-center flex-wrap gap-2">
@@ -2437,7 +2440,7 @@ body.dark .donor-page .avatar-status-dot,
                         href="{% url 'donor_list' %}"
                         class="register-donor-btn">
                         <i class="fas fa-rotate-left"></i>
-                        {% trans "Clear Filters" %}
+                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}ফিল্টার মুছুন{% else %}Clear Filters{% endif %}
                     </a>
 
                     <a
@@ -2445,7 +2448,7 @@ body.dark .donor-page .avatar-status-dot,
                         class="search-submit-btn"
                         style="width:auto;padding-left:1.15rem;padding-right:1.15rem;">
                         <i class="fas fa-user-plus"></i>
-                        {% trans "Register as a Donor" %}
+                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}Register as a Donor{% else %}Register as a Donor{% endif %}
                     </a>
                 </div>
             </div>
@@ -2465,7 +2468,7 @@ body.dark .donor-page .avatar-status-dot,
             </span>
 
             <h2 class="notes-title" id="importantNotesTitle">
-                {% trans "Important Donation Notes" %}
+                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}গুরুত্বপূর্ণ রক্তদান নির্দেশনা{% else %}Important Donation Notes{% endif %}
             </h2>
         </div>
 
@@ -2474,32 +2477,32 @@ body.dark .donor-page .avatar-status-dot,
             <div class="note-item">
                 <span class="note-number">01</span>
                 <div class="note-content">
-                    <strong>{% trans "Eligibility:" %}</strong>
-                    {% trans "Follow your local blood donation guidance and the eligibility status shown on the donor profile." %}
+                    <strong>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}যোগ্যতা:{% else %}Eligibility:{% endif %}</strong>
+                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}স্থানীয় রক্তদান নির্দেশনা এবং রক্তদাতার প্রোফাইলে দেখানো যোগ্যতার অবস্থা অনুসরণ করুন।{% else %}Follow your local blood donation guidance and the eligibility status shown on the donor profile.{% endif %}
                 </div>
             </div>
 
             <div class="note-item">
                 <span class="note-number">02</span>
                 <div class="note-content">
-                    <strong>{% trans "Countdown:" %}</strong>
-                    {% trans "The displayed days are based on the donor records available in Patiya RedPulse." %}
+                    <strong>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}কাউন্টডাউন:{% else %}Countdown:{% endif %}</strong>
+                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}দেখানো দিনের সংখ্যা Patiya RedPulse-এ থাকা রক্তদাতা রেকর্ডের ভিত্তিতে নির্ধারিত।{% else %}The displayed days are based on the donor records available in Patiya RedPulse.{% endif %}
                 </div>
             </div>
 
             <div class="note-item">
                 <span class="note-number">03</span>
                 <div class="note-content">
-                    <strong>{% trans "Contact:" %}</strong>
-                    {% trans "Call first when possible, and use WhatsApp when a quick written message is more convenient." %}
+                    <strong>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}যোগাযোগ:{% else %}Contact:{% endif %}</strong>
+                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}সম্ভব হলে আগে কল করুন, আর দ্রুত লিখিত যোগাযোগের প্রয়োজন হলে WhatsApp ব্যবহার করুন।{% else %}Call first when possible, and use WhatsApp when a quick written message is more convenient.{% endif %}
                 </div>
             </div>
 
             <div class="note-item">
                 <span class="note-number">04</span>
                 <div class="note-content">
-                    <strong>{% trans "Compatibility:" %}</strong>
-                    {% trans "For blood-group compatibility, verify the match with a qualified medical professional or blood bank." %}
+                    <strong>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}সামঞ্জস্যতা:{% else %}Compatibility:{% endif %}</strong>
+                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রক্তের গ্রুপের সামঞ্জস্য নিশ্চিত করতে যোগ্য চিকিৎসা পেশাজীবী বা ব্লাড ব্যাংকের সঙ্গে যাচাই করুন।{% else %}For blood-group compatibility, verify the match with a qualified medical professional or blood bank.{% endif %}
                 </div>
             </div>
 
@@ -2600,7 +2603,7 @@ body.dark .donor-page .avatar-status-dot,
 
                 submitButton.innerHTML =
                     '<i class="fas fa-spinner fa-spin"></i>' +
-                    '<span>{% trans "Searching…" %}</span>';
+                    '<span>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}খোঁজা হচ্ছে…{% else %}Searching…{% endif %}</span>';
             });
         }
 
@@ -2648,7 +2651,7 @@ body.dark .donor-page .avatar-status-dot,
 
                 if (!navigator.geolocation) {
                     alert(
-                        '{% if LANGUAGE_CODE == 'bn' %}এই ব্রাউজারে লোকেশন সুবিধা সমর্থিত নয়।{% else %}Location is not supported by this browser.{% endif %}'
+                        '{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}এই ব্রাউজারে লোকেশন সুবিধা সমর্থিত নয়।{% else %}Location is not supported by this browser.{% endif %}'
                     );
                     return;
                 }
@@ -2664,7 +2667,7 @@ body.dark .donor-page .avatar-status-dot,
 
                 if (nearLabel) {
                     nearLabel.textContent =
-                        '{% if LANGUAGE_CODE == 'bn' %}আপনার লোকেশন নেওয়া হচ্ছে…{% else %}Getting your location…{% endif %}';
+                        '{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}আপনার লোকেশন নেওয়া হচ্ছে…{% else %}Getting your location…{% endif %}';
                 }
 
                 navigator.geolocation.getCurrentPosition(
@@ -2697,15 +2700,15 @@ body.dark .donor-page .avatar-status-dot,
 
                         if (nearLabel) {
                             nearLabel.textContent =
-                                '{% if LANGUAGE_CODE == 'bn' %}আমার কাছাকাছি — আবার চেষ্টা করুন{% else %}Near Me — Try Again{% endif %}';
+                                '{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}আমার কাছাকাছি — আবার চেষ্টা করুন{% else %}Near Me — Try Again{% endif %}';
                         }
 
                         var message =
-                            '{% if LANGUAGE_CODE == 'bn' %}আপনার লোকেশন পাওয়া যায়নি। ব্রাউজারে লোকেশন অনুমতি দিয়ে আবার চেষ্টা করুন।{% else %}Could not get your location. Please allow location access and try again.{% endif %}';
+                            '{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}আপনার লোকেশন পাওয়া যায়নি। ব্রাউজারে লোকেশন অনুমতি দিয়ে আবার চেষ্টা করুন।{% else %}Could not get your location. Please allow location access and try again.{% endif %}';
 
                         if (error && error.code === 1) {
                             message =
-                                '{% if LANGUAGE_CODE == 'bn' %}লোকেশন অনুমতি দেওয়া হয়নি। ব্রাউজারে লোকেশন অনুমতি দিন।{% else %}Location permission was denied. Please allow location access in your browser.{% endif %}';
+                                '{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}লোকেশন অনুমতি দেওয়া হয়নি। ব্রাউজারে লোকেশন অনুমতি দিন।{% else %}Location permission was denied. Please allow location access in your browser.{% endif %}';
                         }
 
                         alert(message);
@@ -2805,7 +2808,9 @@ body.dark .donor-page .avatar-status-dot,
                 }).length;
 
             eligibleText.textContent =
-                eligibleCount + ' {% trans "eligible now" %}';
+                eligibleCount + (
+                    '{% if CURRENT_LANGUAGE|slice:":2" == "bn" %} জন এখন রক্ত দিতে প্রস্তুত{% else %} eligible now{% endif %}'
+                );
 
             eligibleChip.style.display =
                 'inline-flex';
@@ -2828,7 +2833,7 @@ body.dark .donor-page .avatar-status-dot,
                         showCopiedState(button);
                     } else {
                         alert(
-                            '{% if LANGUAGE_CODE == 'bn' %}কপি করা যায়নি। নম্বরটি ম্যানুয়ালি কপি করুন।{% else %}Copy failed. Please copy the number manually.{% endif %}'
+                            '{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}কপি করা যায়নি। নম্বরটি ম্যানুয়ালি কপি করুন।{% else %}Copy failed. Please copy the number manually.{% endif %}'
                         );
                     }
                 });
@@ -3209,7 +3214,7 @@ body.dark .donor-page .avatar-status-dot,
                         title:
                             'Patiya RedPulse — Find Blood Donors',
                         text:
-                            '{% trans "Find blood donors in Patiya through Patiya RedPulse." %}',
+                            '{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}Patiya RedPulse-এর মাধ্যমে পটিয়ায় রক্তদাতা খুঁজুন।{% else %}Find blood donors in Patiya through Patiya RedPulse.{% endif %}',
                         url:
                             window.location.href
                     };
@@ -3230,7 +3235,7 @@ body.dark .donor-page .avatar-status-dot,
 
                                     if (success) {
                                         alert(
-                                            '{% trans "Directory link copied." %}'
+                                            '{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}ডিরেক্টরি লিংক কপি হয়েছে।{% else %}Directory link copied.{% endif %}'
                                         );
                                     }
                                 });
@@ -3246,7 +3251,7 @@ body.dark .donor-page .avatar-status-dot,
 
                         if (success) {
                             alert(
-                                '{% trans "Directory link copied." %}'
+                                '{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}ডিরেক্টরি লিংক কপি হয়েছে।{% else %}Directory link copied.{% endif %}'
                             );
                         } else {
                             alert(
