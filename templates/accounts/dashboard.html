@@ -1,14 +1,24 @@
 {% extends 'base.html' %}
 {% load i18n %}
+{% get_current_language as CURRENT_LANGUAGE %}
 
-{% block title %}{% trans "Dashboard" %} — Patiya RedPulse{% endblock %}
+{% block title %}
+    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+        ড্যাশবোর্ড
+    {% else %}
+        Dashboard
+    {% endif %}
+    — Patiya RedPulse
+{% endblock %}
+
 
 {% block content %}
 
 <style>
 /* =========================================================
-   PATIYA REDPULSE — 2026 DASHBOARD
-   Scoped under .rp-dashboard so it does not break base.html
+   PATIYA REDPULSE — DONOR DASHBOARD
+   Fully responsive • Bengali/English safe • Dark-mode aware
+   Mobile overflow protected
    ========================================================= */
 
 .rp-dashboard {
@@ -16,7 +26,6 @@
     --rp-red-2: #ef233c;
     --rp-coral: #ff5c6a;
     --rp-navy: #0b132b;
-    --rp-navy-2: #101a38;
     --rp-blue: #2563eb;
     --rp-green: #16a34a;
     --rp-amber: #f59e0b;
@@ -24,21 +33,60 @@
     --rp-border: #e8edf5;
     --rp-surface: #ffffff;
     --rp-surface-2: #f7f9fc;
-    --rp-shadow: 0 16px 40px rgba(15, 23, 42, .08);
-    --rp-shadow-hover: 0 22px 50px rgba(15, 23, 42, .14);
+    --rp-shadow: 0 16px 40px rgba(15,23,42,.08);
+    --rp-shadow-hover: 0 22px 50px rgba(15,23,42,.14);
+
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
 }
 
-.rp-dashboard * {
+.rp-dashboard,
+.rp-dashboard *,
+.rp-dashboard *::before,
+.rp-dashboard *::after {
     box-sizing: border-box;
+}
+
+.rp-dashboard img,
+.rp-dashboard svg,
+.rp-dashboard canvas,
+.rp-dashboard iframe {
+    max-width: 100%;
+}
+
+.rp-dashboard .row,
+.rp-dashboard [class*="col-"] {
+    min-width: 0;
+}
+
+.rp-dashboard a,
+.rp-dashboard span,
+.rp-dashboard p,
+.rp-dashboard h1,
+.rp-dashboard h2,
+.rp-dashboard h3,
+.rp-dashboard h4,
+.rp-dashboard h5,
+.rp-dashboard h6,
+.rp-dashboard td,
+.rp-dashboard th,
+.rp-dashboard small {
+    overflow-wrap: anywhere;
 }
 
 .rp-dashboard .card {
     border: 1px solid var(--rp-border);
     border-radius: 20px;
+    background: var(--rp-surface);
+    color: #0f172a;
     box-shadow: var(--rp-shadow);
     overflow: hidden;
-    transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
-    background: var(--rp-surface);
+    transition:
+        transform .22s ease,
+        box-shadow .22s ease,
+        border-color .22s ease;
 }
 
 .rp-dashboard .card:hover {
@@ -46,15 +94,69 @@
     box-shadow: var(--rp-shadow-hover);
 }
 
+/* =========================================================
+   BENGALI TYPOGRAPHY
+   ========================================================= */
+
+.rp-dashboard:lang(bn),
+.rp-dashboard:lang(bn) input,
+.rp-dashboard:lang(bn) select,
+.rp-dashboard:lang(bn) textarea,
+.rp-dashboard:lang(bn) button,
+.rp-dashboard:lang(bn) a {
+    font-family:
+        'Noto Sans Bengali',
+        'Hind Siliguri',
+        'SolaimanLipi',
+        sans-serif;
+}
+
+.rp-dashboard:lang(bn) .rp-hero h2 {
+    line-height: 1.45;
+}
+
+.rp-dashboard:lang(bn) .rp-hero p {
+    line-height: 1.8;
+}
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
 .rp-dashboard .rp-hero {
     position: relative;
-    background:
-        radial-gradient(circle at 12% 15%, rgba(255,255,255,.16), transparent 24%),
-        radial-gradient(circle at 86% 8%, rgba(255,98,112,.23), transparent 22%),
-        linear-gradient(120deg, #5b1220 0%, #8f1730 36%, #cc2b47 68%, #f05a67 100%);
-    border-radius: 24px;
     overflow: hidden;
+    border-radius: 24px;
+    background:
+        radial-gradient(
+            circle at 10% 10%,
+            rgba(255,255,255,.17),
+            transparent 25%
+        ),
+        radial-gradient(
+            circle at 88% 12%,
+            rgba(255,92,106,.25),
+            transparent 23%
+        ),
+        linear-gradient(
+            120deg,
+            #4f1320 0%,
+            #80162d 35%,
+            #c52845 68%,
+            #ef5b69 100%
+        );
     box-shadow: 0 22px 50px rgba(11,19,43,.18);
+}
+
+.rp-dashboard .rp-hero::before {
+    content: "";
+    position: absolute;
+    width: 260px;
+    height: 260px;
+    right: -120px;
+    top: -130px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.06);
 }
 
 .rp-dashboard .rp-hero::after {
@@ -63,77 +165,111 @@
     width: 260px;
     height: 260px;
     right: -100px;
-    bottom: -130px;
+    bottom: -150px;
     border-radius: 50%;
-    background: rgba(239, 35, 60, .17);
-    filter: blur(1px);
+    background: rgba(239,35,60,.18);
 }
 
 .rp-dashboard .rp-hero-inner {
     position: relative;
     z-index: 2;
-    padding: 1.45rem 1.55rem;
+    padding: 1.55rem;
     color: #fff;
 }
 
 .rp-dashboard .rp-eyebrow {
+    margin-bottom: .4rem;
     text-transform: uppercase;
-    letter-spacing: 2px;
-    font-size: .67rem;
+    letter-spacing: 1.8px;
+    font-size: .66rem;
     font-weight: 800;
-    opacity: .75;
+    color: rgba(255,255,255,.72);
+}
+
+.rp-dashboard:lang(bn) .rp-eyebrow {
+    letter-spacing: 0;
 }
 
 .rp-dashboard .rp-hero h2 {
-    margin: .35rem 0 .2rem;
-    font-size: clamp(1.45rem, 2vw, 2rem);
-    font-weight: 800;
+    margin: 0 0 .35rem;
+    font-size: clamp(1.45rem,2.2vw,2rem);
+    font-weight: 850;
+    line-height: 1.2;
 }
 
 .rp-dashboard .rp-hero p {
     margin: 0;
-    color: rgba(255,255,255,.74);
+    color: rgba(255,255,255,.76);
+    font-size: .9rem;
+    line-height: 1.65;
 }
 
 .rp-dashboard .rp-live-pill {
     display: inline-flex;
     align-items: center;
-    gap: .45rem;
-    padding: .48rem .72rem;
-    border: 1px solid rgba(255,255,255,.16);
-    background: rgba(255,255,255,.08);
-    backdrop-filter: blur(10px);
+    gap: .5rem;
+    padding: .48rem .75rem;
+    border: 1px solid rgba(255,255,255,.18);
     border-radius: 999px;
-    font-size: .75rem;
-    font-weight: 700;
+    background: rgba(255,255,255,.09);
+    backdrop-filter: blur(12px);
     color: #fff;
+    font-size: .73rem;
+    font-weight: 800;
+    white-space: nowrap;
 }
 
 .rp-dashboard .rp-live-dot {
     width: 8px;
     height: 8px;
+    flex: 0 0 8px;
     border-radius: 50%;
     background: #4ade80;
-    box-shadow: 0 0 0 6px rgba(74,222,128,.13);
+    box-shadow: 0 0 0 6px rgba(74,222,128,.12);
 }
 
-.rp-dashboard .rp-top-actions {
+/* =========================================================
+   EMERGENCY STRIP
+   ========================================================= */
+
+.rp-dashboard .rp-emergency-strip {
     display: flex;
-    gap: .5rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: .8rem;
+    padding: .75rem .85rem;
+    margin-bottom: 1rem;
+    border-radius: 16px;
+    background:
+        linear-gradient(
+            135deg,
+            #4f1320,
+            #9f1f3b 55%,
+            #671729
+        );
+    color: #fff;
+}
+
+.rp-dashboard .rp-emergency-strip small {
+    display: block;
+    color: rgba(255,255,255,.68);
+    line-height: 1.6;
+}
+
+.rp-dashboard .rp-emergency-actions {
+    display: flex;
+    gap: .45rem;
     flex-wrap: wrap;
 }
 
-.rp-dashboard .rp-glass-btn {
-    border: 1px solid rgba(255,255,255,.18);
-    color: #fff;
-    background: rgba(255,255,255,.08);
-    backdrop-filter: blur(10px);
+.rp-dashboard .rp-emergency-actions .btn {
+    border-radius: 10px;
+    white-space: nowrap;
 }
 
-.rp-dashboard .rp-glass-btn:hover {
-    color: #fff;
-    background: rgba(255,255,255,.16);
-}
+/* =========================================================
+   PROFILE
+   ========================================================= */
 
 .rp-dashboard .rp-profile {
     position: relative;
@@ -142,11 +278,15 @@
 
 .rp-dashboard .rp-profile-topline {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 75px;
-    background: linear-gradient(135deg, #681528 0%, #b51f3b 55%, #ef5263 100%);
+    inset: 0 0 auto 0;
+    height: 76px;
+    background:
+        linear-gradient(
+            135deg,
+            #641526,
+            #b51f3b 55%,
+            #ef5263
+        );
 }
 
 .rp-dashboard .rp-avatar-wrap {
@@ -158,9 +298,9 @@
 .rp-dashboard .rp-avatar {
     width: 92px;
     height: 92px;
-    border-radius: 50%;
     object-fit: cover;
     border: 4px solid #fff;
+    border-radius: 50%;
     background: #eef2f7;
     box-shadow: 0 12px 25px rgba(15,23,42,.14);
 }
@@ -170,7 +310,8 @@
     align-items: center;
     justify-content: center;
     color: #fff;
-    background: linear-gradient(145deg, #8f1730 0%, #ef5263 100%);
+    background:
+        linear-gradient(145deg,#8f1730,#ef5263);
     font-size: 2rem;
 }
 
@@ -179,11 +320,12 @@
     align-items: center;
     justify-content: center;
     min-width: 78px;
+    padding: .5rem .9rem;
     border-radius: 999px;
-    background: linear-gradient(135deg, #8f1730 0%, #ef5263 100%);
+    background:
+        linear-gradient(135deg,#8f1730,#ef5263);
     color: #fff;
     font-weight: 900;
-    letter-spacing: .5px;
     box-shadow: 0 9px 20px rgba(217,4,41,.22);
 }
 
@@ -195,60 +337,74 @@
     border-radius: 999px;
     font-size: .72rem;
     font-weight: 800;
-    border: 1px solid transparent;
+    max-width: 100%;
 }
 
 .rp-dashboard .tier-gold {
     color: #8a5b00;
     background: #fff5cc;
-    border-color: #f4d35e;
+    border: 1px solid #f4d35e;
 }
 
 .rp-dashboard .tier-silver {
     color: #48505a;
     background: #eef1f5;
-    border-color: #cfd5dc;
+    border: 1px solid #cfd5dc;
 }
 
 .rp-dashboard .tier-bronze {
     color: #7a4315;
     background: #f7e4d1;
-    border-color: #dca875;
+    border: 1px solid #dca875;
 }
 
 .rp-dashboard .tier-none {
     color: #475569;
     background: #f1f5f9;
-    border-color: #e2e8f0;
+    border: 1px solid #e2e8f0;
 }
+
+/* =========================================================
+   SECTION / CARD HEADER
+   ========================================================= */
 
 .rp-dashboard .rp-section-title {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: .75rem;
+    gap: .7rem;
     font-weight: 800;
+    min-width: 0;
 }
 
 .rp-dashboard .rp-card-header {
     padding: 1rem 1.15rem;
-    background: var(--rp-surface);
     border-bottom: 1px solid var(--rp-border);
+    background: var(--rp-surface);
 }
 
 .rp-dashboard .rp-card-header.soft {
-    background: linear-gradient(180deg, #fbfcfe, #f7f9fc);
+    background:
+        linear-gradient(
+            180deg,
+            #fbfcfe,
+            #f7f9fc
+        );
 }
+
+/* =========================================================
+   STATUS / READINESS
+   ========================================================= */
 
 .rp-dashboard .rp-status-box {
     padding: .9rem;
-    border-radius: 16px;
     border: 1px solid var(--rp-border);
+    border-radius: 16px;
     background: var(--rp-surface-2);
 }
 
 .rp-dashboard .rp-status-success {
-    border-color: rgba(22,163,74,.20);
+    border-color: rgba(22,163,74,.2);
     background: rgba(22,163,74,.07);
 }
 
@@ -257,69 +413,67 @@
     background: rgba(245,158,11,.08);
 }
 
-.rp-dashboard .rp-status-icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 13px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
-}
-
-.rp-dashboard .rp-success-icon {
-    color: #15803d;
-    background: rgba(34,197,94,.14);
-}
-
-.rp-dashboard .rp-warning-icon {
-    color: #b45309;
-    background: rgba(245,158,11,.16);
-}
-
 .rp-dashboard .rp-readiness {
     display: flex;
     align-items: center;
     gap: .8rem;
+    min-width: 0;
 }
 
 .rp-dashboard .rp-readiness-ring {
-    --rp-progress: 100%;
+    --rp-progress: 0%;
+    position: relative;
     width: 72px;
     height: 72px;
+    flex: 0 0 72px;
     border-radius: 50%;
     background:
-        radial-gradient(circle at center, #fff 54%, transparent 55%),
-        conic-gradient(var(--rp-red) var(--rp-progress), #e9edf3 0);
-    flex: 0 0 auto;
-    position: relative;
+        radial-gradient(
+            circle at center,
+            #fff 54%,
+            transparent 55%
+        ),
+        conic-gradient(
+            var(--rp-red) var(--rp-progress),
+            #e9edf3 0
+        );
 }
 
-.rp-dashboard .rp-readiness-ring .ring-label {
+.rp-dashboard .ring-label {
     position: absolute;
     inset: 0;
     display: grid;
     place-items: center;
+    color: #0f172a;
     font-size: .8rem;
     font-weight: 900;
-    color: #0f172a;
+}
+
+.rp-dashboard .rp-readiness-text {
+    min-width: 0;
 }
 
 .rp-dashboard .rp-readiness-text strong {
     display: block;
-    font-size: .92rem;
     color: #0f172a;
+    font-size: .9rem;
+    line-height: 1.45;
 }
 
 .rp-dashboard .rp-readiness-text span {
     display: block;
-    font-size: .74rem;
     color: var(--rp-muted);
+    font-size: .74rem;
+    line-height: 1.6;
 }
+
+/* =========================================================
+   QUICK ACTIONS
+   ========================================================= */
 
 .rp-dashboard .rp-quick-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2,minmax(0,1fr));
     gap: .65rem;
 }
 
@@ -327,12 +481,13 @@
     display: flex;
     align-items: center;
     gap: .7rem;
+    min-width: 0;
     padding: .8rem;
     border: 1px solid var(--rp-border);
     border-radius: 15px;
+    background: linear-gradient(180deg,#fff,#fafbfd);
     color: inherit;
     text-decoration: none;
-    background: linear-gradient(180deg, #fff, #fafbfd);
     transition: all .22s ease;
 }
 
@@ -343,48 +498,66 @@
     color: inherit;
 }
 
-.rp-dashboard .rp-action-icon {
-    width: 38px;
-    height: 38px;
-    border-radius: 12px;
+.rp-dashboard .rp-action-icon,
+.rp-dashboard .rp-stat-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     flex: 0 0 auto;
+    border-radius: 12px;
+}
+
+.rp-dashboard .rp-action-icon {
+    width: 38px;
+    height: 38px;
+}
+
+.rp-dashboard .rp-stat-icon {
+    width: 42px;
+    height: 42px;
+    margin-bottom: .55rem;
 }
 
 .rp-dashboard .rp-icon-red {
-    background: rgba(217,4,41,.10);
     color: var(--rp-red);
+    background: rgba(217,4,41,.1);
 }
 
 .rp-dashboard .rp-icon-blue {
-    background: rgba(37,99,235,.10);
     color: var(--rp-blue);
+    background: rgba(37,99,235,.1);
 }
 
 .rp-dashboard .rp-icon-green {
-    background: rgba(22,163,74,.10);
     color: var(--rp-green);
+    background: rgba(22,163,74,.1);
 }
 
 .rp-dashboard .rp-icon-amber {
-    background: rgba(245,158,11,.12);
     color: #b45309;
+    background: rgba(245,158,11,.12);
 }
 
+/* =========================================================
+   EMERGENCY CARD
+   ========================================================= */
+
 .rp-dashboard .rp-mini-emergency {
-    border: 1px solid rgba(217,4,41,.14);
+    border-color: rgba(217,4,41,.14);
     background:
-        radial-gradient(circle at 85% 10%, rgba(255,92,106,.13), transparent 25%),
-        linear-gradient(135deg, #fff8f8, #ffffff);
+        radial-gradient(
+            circle at 85% 10%,
+            rgba(255,92,106,.13),
+            transparent 25%
+        ),
+        linear-gradient(135deg,#fff8f8,#fff);
 }
 
 .rp-dashboard .rp-blood-big {
-    font-size: clamp(2.7rem, 6vw, 4.25rem);
+    color: var(--rp-red);
+    font-size: clamp(2.7rem,6vw,4.25rem);
     font-weight: 900;
     line-height: .95;
-    color: var(--rp-red);
     letter-spacing: -2px;
 }
 
@@ -394,9 +567,9 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: #fff;
-    border-radius: 14px;
     padding: 4px;
+    border-radius: 14px;
+    background: #fff;
     box-shadow: inset 0 0 0 1px #e8edf5;
 }
 
@@ -404,86 +577,73 @@
     display: flex;
     align-items: center;
     gap: .55rem;
+    min-width: 0;
     padding: .65rem .7rem .65rem .85rem;
     border: 1px dashed #cbd5e1;
-    background: #f8fafc;
     border-radius: 13px;
+    background: #f8fafc;
 }
 
-.rp-dashboard .rp-copy-box .rp-copy-text {
+.rp-dashboard .rp-copy-text {
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
 }
 
 .rp-dashboard .rp-copy-btn {
     flex: 0 0 auto;
-    border: 0;
-    background: #fff;
-    color: #334155;
     border: 1px solid #e2e8f0;
     border-radius: 10px;
     padding: .42rem .65rem;
+    background: #fff;
+    color: #334155;
     font-size: .76rem;
     font-weight: 700;
 }
 
 .rp-dashboard .rp-copy-btn:hover {
-    border-color: #cbd5e1;
     background: #f1f5f9;
 }
 
-.rp-dashboard .rp-referral {
-    background:
-        radial-gradient(circle at 10% 10%, rgba(37,99,235,.09), transparent 25%),
-        linear-gradient(180deg, #ffffff, #f9fbff);
-}
-
-.rp-dashboard .rp-referral-badge {
-    font-size: .7rem;
-    padding: .35rem .55rem;
-    border-radius: 999px;
-}
+/* =========================================================
+   STATS
+   ========================================================= */
 
 .rp-dashboard .rp-stat-card {
     height: 100%;
-    position: relative;
     padding: 1rem;
-    background: linear-gradient(180deg, #fff, #fbfcfe);
-}
-
-.rp-dashboard .rp-stat-icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 13px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: .55rem;
+    background: linear-gradient(180deg,#fff,#fbfcfe);
 }
 
 .rp-dashboard .rp-stat-number {
-    font-size: 1.35rem;
-    line-height: 1;
-    font-weight: 900;
     margin-bottom: .28rem;
+    font-size: 1.35rem;
+    line-height: 1.15;
+    font-weight: 900;
+    overflow-wrap: anywhere;
 }
 
 .rp-dashboard .rp-stat-label {
-    font-size: .72rem;
     color: var(--rp-muted);
+    font-size: .72rem;
+    line-height: 1.5;
 }
+
+/* =========================================================
+   HISTORY
+   ========================================================= */
 
 .rp-dashboard .rp-history-tools {
     display: flex;
     align-items: center;
     gap: .55rem;
     flex-wrap: wrap;
+    min-width: 0;
 }
 
 .rp-dashboard .rp-history-search {
-    max-width: 210px;
+    width: 210px;
+    max-width: 100%;
     border-radius: 11px;
 }
 
@@ -495,67 +655,62 @@
 .rp-dashboard .rp-empty-icon {
     width: 72px;
     height: 72px;
-    margin: 0 auto .9rem;
-    border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin: 0 auto .9rem;
+    border-radius: 20px;
     background: #f1f5f9;
     color: #94a3b8;
     font-size: 1.7rem;
 }
 
+/* =========================================================
+   PROGRESS
+   ========================================================= */
+
 .rp-dashboard .rp-progress {
     height: 8px;
+    overflow: hidden;
     border-radius: 999px;
     background: #e9edf3;
-    overflow: hidden;
 }
 
 .rp-dashboard .rp-progress > div {
     height: 100%;
+    max-width: 100%;
     border-radius: inherit;
-    background: linear-gradient(90deg, #8f1730 0%, #d93652 52%, #f47a88 100%);
+    background:
+        linear-gradient(
+            90deg,
+            #8f1730,
+            #d93652 52%,
+            #f47a88
+        );
 }
 
-.rp-dashboard .rp-emergency-strip {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: .75rem;
-    padding: .72rem .8rem;
-    border-radius: 15px;
-    background: linear-gradient(135deg, #4f1320 0%, #9f1f3b 55%, #6b1729 100%);
-    color: #fff;
-    margin-bottom: 1rem;
-}
-
-.rp-dashboard .rp-emergency-strip small {
-    color: rgba(255,255,255,.68);
-}
-
-.rp-dashboard .rp-emergency-actions {
-    display: flex;
-    gap: .45rem;
-    flex-wrap: wrap;
-}
-
-.rp-dashboard .rp-emergency-actions .btn {
-    border-radius: 10px;
-}
+/* =========================================================
+   MODAL
+   ========================================================= */
 
 .rp-dashboard .rp-modal-hero {
-    border-radius: 18px;
     padding: 1rem;
-    background: linear-gradient(135deg, #4f1320 0%, #9f1f3b 48%, #ef5263 100%);
+    border-radius: 18px;
+    background:
+        linear-gradient(
+            135deg,
+            #4f1320,
+            #9f1f3b 48%,
+            #ef5263
+        );
     color: #fff;
 }
 
 .rp-dashboard .rp-modal-blood {
-    font-size: 3.5rem;
-    line-height: 1;
-    font-weight: 900;
     color: #fff;
+    font-size: 3.5rem;
+    font-weight: 900;
+    line-height: 1;
 }
 
 .rp-dashboard .rp-modal-info {
@@ -569,37 +724,49 @@
     align-items: flex-start;
     gap: .55rem;
     font-size: .84rem;
+    line-height: 1.55;
 }
 
 .rp-dashboard .rp-modal-row i {
-    color: #ff7b87;
     width: 16px;
-    flex: 0 0 auto;
+    flex: 0 0 16px;
     margin-top: 2px;
+    color: #ff7b87;
 }
 
-.rp-dashboard .rp-shortcut {
-    font-size: .65rem;
-    padding: .18rem .38rem;
-    border: 1px solid #cbd5e1;
-    border-bottom-width: 2px;
-    border-radius: 6px;
-    color: #64748b;
-    background: #fff;
-}
+/* =========================================================
+   ANIMATION
+   ========================================================= */
 
 .rp-dashboard .rp-fade-up {
-    animation: rpFadeUp .55s ease both;
+    animation: rpFadeUp .5s ease both;
 }
 
-.rp-dashboard .rp-delay-1 { animation-delay: .05s; }
-.rp-dashboard .rp-delay-2 { animation-delay: .10s; }
-.rp-dashboard .rp-delay-3 { animation-delay: .15s; }
-.rp-dashboard .rp-delay-4 { animation-delay: .20s; }
+.rp-dashboard .rp-delay-1 {
+    animation-delay: .05s;
+}
+
+.rp-dashboard .rp-delay-2 {
+    animation-delay: .10s;
+}
+
+.rp-dashboard .rp-delay-3 {
+    animation-delay: .15s;
+}
+
+.rp-dashboard .rp-delay-4 {
+    animation-delay: .20s;
+}
 
 @keyframes rpFadeUp {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .rp-dashboard .rp-hidden {
@@ -607,159 +774,448 @@
 }
 
 /* =========================================================
-   EXISTING SITE-WIDE DARK MODE INTEGRATION
-   No dashboard-specific theme button or local theme state.
-   The dashboard follows the theme already controlled by base.html.
+   DARK MODE
    ========================================================= */
 
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard {
+:is(
+    body.dark-mode,
+    body.dark,
+    html.dark,
+    html[data-theme="dark"],
+    body[data-theme="dark"],
+    html[data-bs-theme="dark"],
+    body[data-bs-theme="dark"]
+) .rp-dashboard {
     --rp-border: #293548;
     --rp-surface: #111827;
     --rp-surface-2: #0f172a;
     --rp-muted: #94a3b8;
-    --rp-shadow: 0 16px 40px rgba(0, 0, 0, .24);
-    --rp-shadow-hover: 0 22px 50px rgba(0, 0, 0, .34);
+    --rp-shadow: 0 16px 40px rgba(0,0,0,.24);
+    --rp-shadow-hover: 0 22px 50px rgba(0,0,0,.34);
 }
 
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard .card,
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard .rp-action-tile,
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard .rp-stat-card,
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard .rp-referral,
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard .rp-mini-emergency {
+:is(
+    body.dark-mode,
+    body.dark,
+    html.dark,
+    html[data-theme="dark"],
+    body[data-theme="dark"],
+    html[data-bs-theme="dark"],
+    body[data-bs-theme="dark"]
+) .rp-dashboard .card,
+:is(
+    body.dark-mode,
+    body.dark,
+    html.dark,
+    html[data-theme="dark"],
+    body[data-theme="dark"],
+    html[data-bs-theme="dark"],
+    body[data-bs-theme="dark"]
+) .rp-dashboard .rp-action-tile,
+:is(
+    body.dark-mode,
+    body.dark,
+    html.dark,
+    html[data-theme="dark"],
+    body[data-theme="dark"],
+    html[data-bs-theme="dark"],
+    body[data-bs-theme="dark"]
+) .rp-dashboard .rp-stat-card,
+:is(
+    body.dark-mode,
+    body.dark,
+    html.dark,
+    html[data-theme="dark"],
+    body[data-theme="dark"],
+    html[data-bs-theme="dark"],
+    body[data-bs-theme="dark"]
+) .rp-dashboard .rp-mini-emergency {
     background: var(--rp-surface);
     color: #e5e7eb;
     border-color: var(--rp-border);
 }
 
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard .rp-card-header {
+:is(
+    body.dark-mode,
+    body.dark,
+    html.dark,
+    html[data-theme="dark"],
+    body[data-theme="dark"],
+    html[data-bs-theme="dark"],
+    body[data-bs-theme="dark"]
+) .rp-dashboard .rp-card-header,
+:is(
+    body.dark-mode,
+    body.dark,
+    html.dark,
+    html[data-theme="dark"],
+    body[data-theme="dark"],
+    html[data-bs-theme="dark"],
+    body[data-bs-theme="dark"]
+) .rp-dashboard .rp-card-header.soft {
     background: var(--rp-surface);
     border-color: var(--rp-border);
 }
 
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard .rp-card-header.soft,
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard .rp-action-tile,
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard .rp-stat-card,
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard .rp-referral {
-    background-image: none;
-}
-
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard h1,
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard h2,
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard h3,
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard h4,
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard h5,
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard h6,
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard .list-group-item,
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard .form-label {
+:is(
+    body.dark-mode,
+    body.dark,
+    html.dark,
+    html[data-theme="dark"],
+    body[data-theme="dark"],
+    html[data-bs-theme="dark"],
+    body[data-bs-theme="dark"]
+) .rp-dashboard h1,
+:is(
+    body.dark-mode,
+    body.dark,
+    html.dark,
+    html[data-theme="dark"],
+    body[data-theme="dark"],
+    html[data-bs-theme="dark"],
+    body[data-bs-theme="dark"]
+) .rp-dashboard h2,
+:is(
+    body.dark-mode,
+    body.dark,
+    html.dark,
+    html[data-theme="dark"],
+    body[data-theme="dark"],
+    html[data-bs-theme="dark"],
+    body[data-bs-theme="dark"]
+) .rp-dashboard h3,
+:is(
+    body.dark-mode,
+    body.dark,
+    html.dark,
+    html[data-theme="dark"],
+    body[data-theme="dark"],
+    html[data-bs-theme="dark"],
+    body[data-bs-theme="dark"]
+) .rp-dashboard h4,
+:is(
+    body.dark-mode,
+    body.dark,
+    html.dark,
+    html[data-theme="dark"],
+    body[data-theme="dark"],
+    html[data-theme="dark"]
+) .rp-dashboard h5,
+:is(
+    body.dark-mode,
+    body.dark,
+    html.dark,
+    html[data-theme="dark"],
+    body[data-theme="dark"],
+    html[data-bs-theme="dark"],
+    body[data-bs-theme="dark"]
+) .rp-dashboard h6,
+:is(
+    body.dark-mode,
+    body.dark,
+    html.dark,
+    html[data-theme="dark"],
+    body[data-theme="dark"],
+    html[data-bs-theme="dark"],
+    body[data-bs-theme="dark"]
+) .rp-dashboard .form-label {
     color: #f8fafc;
 }
 
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard .text-muted,
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard .rp-stat-label,
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard .rp-readiness-text span {
+:is(
+    body.dark-mode,
+    body.dark,
+    html.dark,
+    html[data-theme="dark"],
+    body[data-theme="dark"],
+    html[data-bs-theme="dark"],
+    body[data-bs-theme="dark"]
+) .rp-dashboard .text-muted {
     color: #94a3b8 !important;
 }
 
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard .text-dark {
+:is(
+    body.dark-mode,
+    body.dark,
+    html.dark,
+    html[data-theme="dark"],
+    body[data-theme="dark"],
+    html[data-bs-theme="dark"],
+    body[data-bs-theme="dark"]
+) .rp-dashboard .text-dark {
     color: #f8fafc !important;
 }
 
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard .list-group-item {
+:is(
+    body.dark-mode,
+    body.dark,
+    html.dark,
+    html[data-theme="dark"],
+    body[data-theme="dark"],
+    html[data-bs-theme="dark"],
+    body[data-bs-theme="dark"]
+) .rp-dashboard .list-group-item {
     background: var(--rp-surface);
-    border-color: var(--rp-border);
-}
-
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard .table {
-    --bs-table-color: #e5e7eb;
-    --bs-table-bg: transparent;
     color: #e5e7eb;
-}
-
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard .table-light {
-    --bs-table-bg: #172033;
-    --bs-table-color: #f8fafc;
-}
-
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard .table > :not(caption) > * > * {
     border-color: var(--rp-border);
 }
 
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard .form-control,
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard .form-select {
-    background-color: #0f172a;
+:is(
+    body.dark-mode,
+    body.dark,
+    html.dark,
+    html[data-theme="dark"],
+    body[data-theme="dark"],
+    html[data-bs-theme="dark"],
+    body[data-bs-theme="dark"]
+) .rp-dashboard .form-control,
+:is(
+    body.dark-mode,
+    body.dark,
+    html.dark,
+    html[data-theme="dark"],
+    body[data-theme="dark"],
+    html[data-bs-theme="dark"],
+    body[data-bs-theme="dark"]
+) .rp-dashboard .form-select {
+    background: #0f172a;
     color: #e5e7eb;
     border-color: #334155;
 }
 
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard .form-control::placeholder {
+:is(
+    body.dark-mode,
+    body.dark,
+    html.dark,
+    html[data-theme="dark"],
+    body[data-theme="dark"],
+    html[data-bs-theme="dark"],
+    body[data-bs-theme="dark"]
+) .rp-dashboard .form-control::placeholder {
     color: #64748b;
 }
 
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard .bg-light {
-    background-color: #0f172a !important;
-    color: #e5e7eb !important;
-}
-
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard .border-end,
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard .border-top {
-    border-color: var(--rp-border) !important;
-}
-
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard .rp-empty-icon {
-    background: #172033;
-    color: #64748b;
-}
-
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard .rp-copy-box {
+:is(
+    body.dark-mode,
+    body.dark,
+    html.dark,
+    html[data-theme="dark"],
+    body[data-theme="dark"],
+    html[data-bs-theme="dark"],
+    body[data-bs-theme="dark"]
+) .rp-dashboard .rp-copy-box {
     background: #0f172a;
     border-color: #334155;
 }
 
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard .rp-copy-btn {
+:is(
+    body.dark-mode,
+    body.dark,
+    html.dark,
+    html[data-theme="dark"],
+    body[data-theme="dark"],
+    html[data-bs-theme="dark"],
+    body[data-bs-theme="dark"]
+) .rp-dashboard .rp-copy-btn {
     background: #111827;
     color: #e5e7eb;
     border-color: #334155;
 }
 
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard .rp-readiness-ring {
+:is(
+    body.dark-mode,
+    body.dark,
+    html.dark,
+    html[data-theme="dark"],
+    body[data-theme="dark"],
+    html[data-bs-theme="dark"],
+    body[data-bs-theme="dark"]
+) .rp-dashboard .rp-readiness-ring {
     background:
-        radial-gradient(circle at center, #111827 54%, transparent 55%),
-        conic-gradient(var(--rp-red) var(--rp-progress), #273244 0);
+        radial-gradient(
+            circle at center,
+            #111827 54%,
+            transparent 55%
+        ),
+        conic-gradient(
+            var(--rp-red) var(--rp-progress),
+            #273244 0
+        );
 }
 
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard .rp-readiness-ring .ring-label,
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard .rp-readiness-text strong {
+:is(
+    body.dark-mode,
+    body.dark,
+    html.dark,
+    html[data-theme="dark"],
+    body[data-theme="dark"],
+    html[data-bs-theme="dark"],
+    body[data-bs-theme="dark"]
+) .rp-dashboard .ring-label,
+:is(
+    body.dark-mode,
+    body.dark,
+    html.dark,
+    html[data-theme="dark"],
+    body[data-theme="dark"],
+    html[data-bs-theme="dark"],
+    body[data-bs-theme="dark"]
+) .rp-dashboard .rp-readiness-text strong {
     color: #f8fafc;
 }
 
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard .modal-content {
+:is(
+    body.dark-mode,
+    body.dark,
+    html.dark,
+    html[data-theme="dark"],
+    body[data-theme="dark"],
+    html[data-bs-theme="dark"],
+    body[data-bs-theme="dark"]
+) .rp-dashboard .modal-content {
     background: #111827;
     color: #e5e7eb;
     border-color: #293548;
 }
 
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard .modal-header,
-:is(body.dark-mode, body.dark, html.dark, html[data-theme="dark"], body[data-theme="dark"], html[data-bs-theme="dark"], body[data-bs-theme="dark"]) .rp-dashboard .modal-footer {
+:is(
+    body.dark-mode,
+    body.dark,
+    html.dark,
+    html[data-theme="dark"],
+    body[data-theme="dark"],
+    html[data-bs-theme="dark"],
+    body[data-bs-theme="dark"]
+) .rp-dashboard .modal-header,
+:is(
+    body.dark-mode,
+    body.dark,
+    html.dark,
+    html[data-theme="dark"],
+    body[data-theme="dark"],
+    html[data-bs-theme="dark"],
+    body[data-bs-theme="dark"]
+) .rp-dashboard .modal-footer {
     border-color: #293548;
 }
 
-@media (max-width: 767.98px) {
-    .rp-dashboard .rp-hero-inner {
-        padding: 1.1rem;
-    }
+:is(
+    body.dark-mode,
+    body.dark,
+    html.dark,
+    html[data-theme="dark"],
+    body[data-theme="dark"],
+    html[data-bs-theme="dark"],
+    body[data-bs-theme="dark"]
+) .rp-dashboard .rp-empty-icon {
+    background: #172033;
+    color: #64748b;
+}
+
+:is(
+    body.dark-mode,
+    body.dark,
+    html.dark,
+    html[data-theme="dark"],
+    body[data-theme="dark"],
+    html[data-bs-theme="dark"],
+    body[data-bs-theme="dark"]
+) .rp-dashboard .table-light > *,
+:is(
+    body.dark-mode,
+    body.dark,
+    html.dark,
+    html[data-theme="dark"],
+    body[data-theme="dark"],
+    html[data-bs-theme="dark"],
+    body[data-bs-theme="dark"]
+) .rp-dashboard .table-light {
+    --bs-table-bg: #172033;
+    --bs-table-color: #f8fafc;
+    color: #f8fafc;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 991.98px) {
 
     .rp-dashboard .rp-emergency-strip {
         align-items: flex-start;
         flex-direction: column;
     }
 
-    .rp-dashboard .rp-history-search {
-        max-width: 100%;
-        flex: 1 1 180px;
+    .rp-dashboard .rp-emergency-actions {
+        width: 100%;
     }
+
+    .rp-dashboard .rp-emergency-actions .btn {
+        flex: 1 1 auto;
+    }
+
+}
+
+@media (max-width: 767.98px) {
+
+    .rp-dashboard .rp-hero-inner {
+        padding: 1.15rem;
+    }
+
+    .rp-dashboard .rp-hero h2 {
+        font-size: clamp(1.3rem,6vw,1.75rem);
+    }
+
+    .rp-dashboard .rp-live-pill {
+        width: auto;
+        max-width: 100%;
+    }
+
+    .rp-dashboard .rp-emergency-strip {
+        padding: .8rem;
+    }
+
+    .rp-dashboard .rp-emergency-actions {
+        flex-direction: column;
+    }
+
+    .rp-dashboard .rp-emergency-actions .btn {
+        width: 100%;
+    }
+
+    .rp-dashboard .rp-readiness {
+        align-items: flex-start;
+    }
+
+    .rp-dashboard .rp-history-tools {
+        width: 100%;
+    }
+
+    .rp-dashboard .rp-history-search {
+        width: 100%;
+        flex: 1 1 100%;
+    }
+
+    .rp-dashboard .rp-copy-box {
+        align-items: flex-start;
+    }
+
+    .rp-dashboard .rp-copy-btn {
+        align-self: stretch;
+    }
+
+    .rp-dashboard .rp-qr-box {
+        margin-top: .5rem;
+    }
+
+    .rp-dashboard .rp-modal-blood {
+        font-size: 3rem;
+    }
+
 }
 
 @media (max-width: 575.98px) {
+
     .rp-dashboard .rp-profile {
         padding-top: 2.5rem !important;
     }
@@ -768,12 +1224,77 @@
         grid-template-columns: 1fr;
     }
 
-    .rp-dashboard .rp-footer-actions {
+    .rp-dashboard .rp-action-tile {
+        min-height: 62px;
+    }
+
+    .rp-dashboard .rp-copy-box {
         flex-direction: column;
     }
+
+    .rp-dashboard .rp-copy-text {
+        width: 100%;
+        white-space: normal;
+        word-break: break-word;
+        overflow: visible;
+    }
+
+    .rp-dashboard .rp-copy-btn {
+        width: 100%;
+    }
+
+    .rp-dashboard .table-responsive {
+        border-radius: 0;
+    }
+
+    .rp-dashboard .table {
+        min-width: 650px;
+    }
+
+    .rp-dashboard .rp-card-header {
+        padding: .85rem;
+    }
+
+    .rp-dashboard .card-body {
+        padding: .9rem;
+    }
+
+    .rp-dashboard .rp-stat-card {
+        padding: .85rem;
+    }
+
+    .rp-dashboard .modal-dialog {
+        margin: .5rem;
+    }
+
+    .rp-dashboard .modal-content {
+        border-radius: 18px !important;
+    }
+
 }
 
+@media (max-width: 390px) {
+
+    .rp-dashboard .rp-hero-inner {
+        padding: 1rem;
+    }
+
+    .rp-dashboard .rp-live-pill {
+        font-size: .67rem;
+    }
+
+    .rp-dashboard .rp-blood-big {
+        font-size: 3rem;
+    }
+
+}
+
+/* =========================================================
+   PRINT
+   ========================================================= */
+
 @media print {
+
     .rp-dashboard .no-print,
     .rp-dashboard .rp-hero,
     .rp-dashboard .rp-profile-topline {
@@ -784,64 +1305,106 @@
         box-shadow: none !important;
         break-inside: avoid;
     }
+
 }
 </style>
+
 
 <div id="rpDashboard" class="rp-dashboard">
 
     <!-- =====================================================
-         2026 HERO / SMART ACTION HEADER
+         HERO
          ===================================================== -->
+
     <div class="rp-hero mb-4 rp-fade-up">
 
         <div class="rp-hero-inner">
 
             <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
 
-                <div>
+                <div class="min-width-0">
+
                     <div class="rp-eyebrow">
-                        Patiya RedPulse • Donor Command Center
+
+                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                            পটিয়া রেডপালস • ডোনার কন্ট্রোল সেন্টার
+                        {% else %}
+                            Patiya RedPulse • Donor Command Center
+                        {% endif %}
+
                     </div>
 
                     <h2>
-                        {% trans "Welcome back" %}, {{ donor.full_name }}
+
+                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                            আবার স্বাগতম, {{ donor.full_name }}
+                        {% else %}
+                            Welcome back, {{ donor.full_name }}
+                        {% endif %}
+
                     </h2>
 
                     <p>
-                        {% trans "Your donor profile, donation history and emergency tools — in one place." %}
+
+                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                            আপনার ডোনার প্রোফাইল, রক্তদানের ইতিহাস এবং জরুরি টুল—সবকিছু এক জায়গায়।
+                        {% else %}
+                            Your donor profile, donation history and emergency tools — all in one place.
+                        {% endif %}
+
                     </p>
+
                 </div>
 
-                <div class="rp-top-actions no-print">
+                <div class="rp-live-pill no-print">
 
-                    <span class="rp-live-pill">
-                        <span class="rp-live-dot"></span>
-                        {% trans "System Ready" %}
-                    </span>
+                    <span class="rp-live-dot"></span>
 
+                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                        সিস্টেম প্রস্তুত
+                    {% else %}
+                        System Ready
+                    {% endif %}
 
                 </div>
 
             </div>
 
         </div>
+
     </div>
 
+
     <!-- =====================================================
-         EMERGENCY ACTION STRIP
+         EMERGENCY STRIP
          ===================================================== -->
+
     <div class="rp-emergency-strip no-print rp-fade-up rp-delay-1">
 
-        <div class="d-flex align-items-center gap-2">
-            <div>
-                <div class="fw-bold">
-                    <i class="fas fa-bolt text-warning"></i>
-                    {% trans "Emergency Mode" %}
-                </div>
-                <small>
-                    {% trans "Show your blood group and contact details instantly." %}
-                </small>
+        <div>
+
+            <div class="fw-bold">
+
+                <i class="fas fa-bolt text-warning me-1"></i>
+
+                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                    জরুরি মোড
+                {% else %}
+                    Emergency Mode
+                {% endif %}
+
             </div>
+
+            <small>
+
+                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                    আপনার রক্তের গ্রুপ ও যোগাযোগের তথ্য তাৎক্ষণিকভাবে দেখুন।
+                {% else %}
+                    Show your blood group and contact details instantly.
+                {% endif %}
+
+            </small>
+
         </div>
 
         <div class="rp-emergency-actions">
@@ -852,30 +1415,47 @@
                 data-bs-toggle="modal"
                 data-bs-target="#emergencyModal"
             >
-                <i class="fas fa-exclamation-triangle"></i>
-                {% trans "Open Emergency View" %}
+
+                <i class="fas fa-exclamation-triangle me-1"></i>
+
+                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                    জরুরি ভিউ খুলুন
+                {% else %}
+                    Open Emergency View
+                {% endif %}
+
             </button>
 
             <a
                 href="{% url 'emergency_card' %}"
                 class="btn btn-outline-light btn-sm"
             >
-                <i class="fas fa-id-card"></i>
-                {% trans "Full Card" %}
+
+                <i class="fas fa-id-card me-1"></i>
+
+                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                    পূর্ণ কার্ড
+                {% else %}
+                    Full Card
+                {% endif %}
+
             </a>
 
         </div>
 
     </div>
 
+
     <div class="row g-4">
 
         <!-- =================================================
-             LEFT SIDEBAR
+             LEFT
              ================================================= -->
+
         <div class="col-md-4">
 
-            <!-- ================= PROFILE ================= -->
+            <!-- PROFILE -->
+
             <div class="card mb-3 rp-fade-up rp-delay-1">
 
                 <div class="card-body text-center rp-profile">
@@ -902,64 +1482,100 @@
 
                     </div>
 
+
                     <div>
-                        <span class="blood-group-badge px-3 py-2 mb-3">
+
+                        <span class="blood-group-badge mb-3">
+
                             <i class="fas fa-droplet me-1"></i>
+
                             {{ donor.blood_group }}
+
                         </span>
+
                     </div>
+
 
                     <h4 class="mb-1">
                         {{ donor.full_name }}
                     </h4>
 
+
                     <p class="text-muted small mb-3">
 
-                        <i class="fas fa-map-marker-alt text-danger"></i>
+                        <i class="fas fa-map-marker-alt text-danger me-1"></i>
 
                         {{ donor.district }}, {{ donor.upazila }}
 
                     </p>
 
-                    <span class="lifesaver-badge tier-{{ donor.lifesaver_tier }}">
+
+                    <span class="lifesaver-badge tier-{{ donor.lifesaver_tier|default:'none' }}">
 
                         <i class="fas fa-award"></i>
 
                         {% if donor.lifesaver_tier == 'gold' %}
-                            {% trans "Gold Life-Saver" %}
+
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                গোল্ড লাইফ-সেভার
+                            {% else %}
+                                Gold Life-Saver
+                            {% endif %}
+
                         {% elif donor.lifesaver_tier == 'silver' %}
-                            {% trans "Silver Life-Saver" %}
+
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                সিলভার লাইফ-সেভার
+                            {% else %}
+                                Silver Life-Saver
+                            {% endif %}
+
                         {% elif donor.lifesaver_tier == 'bronze' %}
-                            {% trans "Bronze Life-Saver" %}
+
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                ব্রোঞ্জ লাইফ-সেভার
+                            {% else %}
+                                Bronze Life-Saver
+                            {% endif %}
+
                         {% else %}
-                            {% trans "New Donor" %}
+
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                নতুন রক্তদাতা
+                            {% else %}
+                                New Donor
+                            {% endif %}
+
                         {% endif %}
 
                     </span>
 
+
                     <p class="text-muted small mt-2 mb-0">
 
-                        <i class="fas fa-droplet text-danger"></i>
+                        <i class="fas fa-droplet text-danger me-1"></i>
 
-                        {% blocktrans count counter=donor.donation_count %}
-                            {{ counter }} recorded donation
-                        {% plural %}
-                            {{ counter }} recorded donations
-                        {% endblocktrans %}
+                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+
+                            {{ donor.donation_count|default:"0" }}
+                            টি রেকর্ডকৃত রক্তদান
+
+                        {% else %}
+
+                            {{ donor.donation_count|default:"0" }}
+                            recorded donation{{ donor.donation_count|pluralize:"s" }}
+
+                        {% endif %}
 
                     </p>
 
+
                     <hr>
 
-                    <!-- ================= READINESS ================= -->
 
-                    <div class="rp-status-box mb-3
-                        {% if donor.is_eligible %}
-                            rp-status-success
-                        {% else %}
-                            rp-status-warning
-                        {% endif %}
-                    ">
+                    <!-- READINESS -->
+
+                    <div class="rp-status-box mb-3 {% if donor.is_eligible %}rp-status-success{% else %}rp-status-warning{% endif %}">
 
                         {% if donor.is_eligible %}
 
@@ -967,20 +1583,35 @@
 
                                 <div
                                     class="rp-readiness-ring"
-                                    style="--rp-progress: 100%;"
+                                    style="--rp-progress:100%;"
                                 >
-                                    <div class="ring-label">100%</div>
+                                    <div class="ring-label">
+                                        100%
+                                    </div>
                                 </div>
 
                                 <div class="rp-readiness-text text-start">
 
                                     <strong>
-                                        <i class="fas fa-check-circle text-success"></i>
-                                        {% trans "Eligible to Donate" %}
+
+                                        <i class="fas fa-check-circle text-success me-1"></i>
+
+                                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                            রক্তদানের জন্য যোগ্য
+                                        {% else %}
+                                            Eligible to Donate
+                                        {% endif %}
+
                                     </strong>
 
                                     <span>
-                                        {% trans "You are currently shown as eligible." %}
+
+                                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                            আপনি বর্তমানে রক্ত দিতে পারবেন।
+                                        {% else %}
+                                            You are currently eligible to donate.
+                                        {% endif %}
+
                                     </span>
 
                                 </div>
@@ -996,25 +1627,50 @@
                                     id="readinessRing"
                                     data-days="{{ donor.days_until_eligible|default:0 }}"
                                 >
+
                                     <div
                                         class="ring-label"
                                         id="readinessPercent"
-                                    >0%</div>
+                                    >
+                                        0%
+                                    </div>
+
                                 </div>
 
                                 <div class="rp-readiness-text text-start">
 
                                     <strong>
-                                        <i class="fas fa-clock text-warning"></i>
-                                        {% trans "Not Yet Eligible" %}
+
+                                        <i class="fas fa-clock text-warning me-1"></i>
+
+                                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                            এখনও যোগ্য নন
+                                        {% else %}
+                                            Not Yet Eligible
+                                        {% endif %}
+
                                     </strong>
 
                                     <span>
-                                        {% trans "Next donation in" %}
+
+                                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                            পরবর্তী রক্তদান:
+                                        {% else %}
+                                            Next donation in
+                                        {% endif %}
+
                                         <strong class="d-inline text-dark">
+
                                             {{ donor.days_until_eligible|default:"—" }}
+
                                         </strong>
-                                        {% trans "days" %}
+
+                                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                            দিন
+                                        {% else %}
+                                            day{{ donor.days_until_eligible|pluralize }}
+                                        {% endif %}
+
                                     </span>
 
                                 </div>
@@ -1025,7 +1681,8 @@
 
                     </div>
 
-                    <!-- ================= ACTIONS ================= -->
+
+                    <!-- QUICK ACTIONS -->
 
                     <div class="rp-quick-grid no-print">
 
@@ -1033,44 +1690,81 @@
                             href="{% url 'emergency_card' %}"
                             class="rp-action-tile"
                         >
+
                             <span class="rp-action-icon rp-icon-red">
                                 <i class="fas fa-id-card"></i>
                             </span>
 
-                            <span>
+                            <span class="min-width-0">
+
                                 <strong class="d-block small">
-                                    {% trans "Emergency Card" %}
+
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        জরুরি কার্ড
+                                    {% else %}
+                                        Emergency Card
+                                    {% endif %}
+
                                 </strong>
+
                                 <small class="text-muted">
-                                    {% trans "Open & print" %}
+
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        খুলুন ও প্রিন্ট করুন
+                                    {% else %}
+                                        Open & print
+                                    {% endif %}
+
                                 </small>
+
                             </span>
+
                         </a>
+
 
                         <a
                             href="/accounts/donors/"
                             class="rp-action-tile"
                         >
+
                             <span class="rp-action-icon rp-icon-blue">
                                 <i class="fas fa-users"></i>
                             </span>
 
-                            <span>
+                            <span class="min-width-0">
+
                                 <strong class="d-block small">
-                                    {% trans "Find Donors" %}
+
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        রক্তদাতা খুঁজুন
+                                    {% else %}
+                                        Find Donors
+                                    {% endif %}
+
                                 </strong>
+
                                 <small class="text-muted">
-                                    {% trans "Search directory" %}
+
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        ডিরেক্টরি খুঁজুন
+                                    {% else %}
+                                        Search directory
+                                    {% endif %}
+
                                 </small>
+
                             </span>
+
                         </a>
 
                     </div>
 
                 </div>
+
             </div>
 
-            <!-- ================= BLOOD COMPATIBILITY ================= -->
+
+            <!-- BLOOD COMPATIBILITY -->
 
             <div class="card mb-3 rp-fade-up rp-delay-2">
 
@@ -1079,8 +1773,15 @@
                     <div class="rp-section-title">
 
                         <span>
-                            <i class="fas fa-exchange-alt text-danger"></i>
-                            {% trans "Blood Compatibility" %}
+
+                            <i class="fas fa-exchange-alt text-danger me-1"></i>
+
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                রক্তের সামঞ্জস্য
+                            {% else %}
+                                Blood Compatibility
+                            {% endif %}
+
                         </span>
 
                         <span class="badge bg-danger rounded-pill">
@@ -1091,27 +1792,47 @@
 
                 </div>
 
+
                 <div class="card-body">
 
                     {% if donor.blood_group == "O-" %}
 
                         <div class="alert alert-danger py-2 small text-center mb-3">
-                            <i class="fas fa-globe"></i>
+
+                            <i class="fas fa-globe me-1"></i>
+
                             <strong>
-                                {% trans "Universal Donor" %}
+
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                    সার্বজনীন রক্তদাতা
+                                {% else %}
+                                    Universal Donor
+                                {% endif %}
+
                             </strong>
+
                         </div>
 
                     {% elif donor.blood_group == "AB+" %}
 
                         <div class="alert alert-dark py-2 small text-center mb-3">
-                            <i class="fas fa-globe"></i>
+
+                            <i class="fas fa-globe me-1"></i>
+
                             <strong>
-                                {% trans "Universal Recipient" %}
+
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                    সার্বজনীন রক্তগ্রহীতা
+                                {% else %}
+                                    Universal Recipient
+                                {% endif %}
+
                             </strong>
+
                         </div>
 
                     {% endif %}
+
 
                     <div class="row g-3">
 
@@ -1123,57 +1844,78 @@
 
                                 <small class="text-success d-block mb-2 fw-bold">
 
-                                    <i class="fas fa-hand-holding-heart"></i>
+                                    <i class="fas fa-hand-holding-heart me-1"></i>
 
-                                    {% trans "Donate To" %}
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        দিতে পারবেন
+                                    {% else %}
+                                        Donate To
+                                    {% endif %}
 
                                 </small>
 
                                 <div class="d-flex flex-wrap gap-1 justify-content-center">
 
                                     {% if donor.blood_group == "A+" %}
+
                                         <span class="badge bg-success">A+</span>
                                         <span class="badge bg-success">AB+</span>
 
                                     {% elif donor.blood_group == "A-" %}
+
                                         <span class="badge bg-success">A+</span>
                                         <span class="badge bg-success">A-</span>
                                         <span class="badge bg-success">AB+</span>
                                         <span class="badge bg-success">AB-</span>
 
                                     {% elif donor.blood_group == "B+" %}
+
                                         <span class="badge bg-success">B+</span>
                                         <span class="badge bg-success">AB+</span>
 
                                     {% elif donor.blood_group == "B-" %}
+
                                         <span class="badge bg-success">B+</span>
                                         <span class="badge bg-success">B-</span>
                                         <span class="badge bg-success">AB+</span>
                                         <span class="badge bg-success">AB-</span>
 
                                     {% elif donor.blood_group == "AB+" %}
+
                                         <span class="badge bg-success">AB+</span>
 
                                     {% elif donor.blood_group == "AB-" %}
+
                                         <span class="badge bg-success">AB+</span>
                                         <span class="badge bg-success">AB-</span>
 
                                     {% elif donor.blood_group == "O+" %}
+
                                         <span class="badge bg-success">O+</span>
                                         <span class="badge bg-success">A+</span>
                                         <span class="badge bg-success">B+</span>
                                         <span class="badge bg-success">AB+</span>
 
                                     {% elif donor.blood_group == "O-" %}
+
                                         <span class="badge bg-success">
-                                            {% trans "All" %}
+
+                                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                                সবাই
+                                            {% else %}
+                                                All
+                                            {% endif %}
+
                                         </span>
+
                                     {% endif %}
 
                                 </div>
+
                             </div>
 
                         </div>
+
 
                         <!-- RECEIVE -->
 
@@ -1183,51 +1925,70 @@
 
                                 <small class="text-primary d-block mb-2 fw-bold">
 
-                                    <i class="fas fa-hand-holding-medical"></i>
+                                    <i class="fas fa-hand-holding-medical me-1"></i>
 
-                                    {% trans "Receive From" %}
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        নিতে পারবেন
+                                    {% else %}
+                                        Receive From
+                                    {% endif %}
 
                                 </small>
 
                                 <div class="d-flex flex-wrap gap-1 justify-content-center">
 
                                     {% if donor.blood_group == "A+" %}
+
                                         <span class="badge bg-primary">A+</span>
                                         <span class="badge bg-primary">A-</span>
                                         <span class="badge bg-primary">O+</span>
                                         <span class="badge bg-primary">O-</span>
 
                                     {% elif donor.blood_group == "A-" %}
+
                                         <span class="badge bg-primary">A-</span>
                                         <span class="badge bg-primary">O-</span>
 
                                     {% elif donor.blood_group == "B+" %}
+
                                         <span class="badge bg-primary">B+</span>
                                         <span class="badge bg-primary">B-</span>
                                         <span class="badge bg-primary">O+</span>
                                         <span class="badge bg-primary">O-</span>
 
                                     {% elif donor.blood_group == "B-" %}
+
                                         <span class="badge bg-primary">B-</span>
                                         <span class="badge bg-primary">O-</span>
 
                                     {% elif donor.blood_group == "AB+" %}
+
                                         <span class="badge bg-primary">
-                                            {% trans "All" %}
+
+                                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                                সবাই
+                                            {% else %}
+                                                All
+                                            {% endif %}
+
                                         </span>
 
                                     {% elif donor.blood_group == "AB-" %}
+
                                         <span class="badge bg-primary">A-</span>
                                         <span class="badge bg-primary">B-</span>
                                         <span class="badge bg-primary">AB-</span>
                                         <span class="badge bg-primary">O-</span>
 
                                     {% elif donor.blood_group == "O+" %}
+
                                         <span class="badge bg-primary">O+</span>
                                         <span class="badge bg-primary">O-</span>
 
                                     {% elif donor.blood_group == "O-" %}
+
                                         <span class="badge bg-primary">O-</span>
+
                                     {% endif %}
 
                                 </div>
@@ -1242,22 +2003,35 @@
 
             </div>
 
-            <!-- ================= QUICK LINKS ================= -->
+
+            <!-- QUICK ACCESS -->
 
             <div class="card mb-3 no-print rp-fade-up rp-delay-3">
 
                 <div class="rp-card-header soft">
 
                     <div class="rp-section-title">
+
                         <span>
-                            <i class="fas fa-bolt text-danger"></i>
-                            {% trans "Quick Access" %}
+
+                            <i class="fas fa-bolt text-danger me-1"></i>
+
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                দ্রুত অ্যাক্সেস
+                            {% else %}
+                                Quick Access
+                            {% endif %}
+
                         </span>
 
-                        <span class="rp-shortcut">E / C / S</span>
+                        <span class="badge bg-light text-secondary border">
+                            E / C / S
+                        </span>
+
                     </div>
 
                 </div>
+
 
                 <div class="list-group list-group-flush">
 
@@ -1266,39 +2040,73 @@
                         class="list-group-item list-group-item-action py-3"
                     >
                         <i class="fas fa-home text-danger me-2"></i>
-                        {% trans "Dashboard" %}
+
+                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                            ড্যাশবোর্ড
+                        {% else %}
+                            Dashboard
+                        {% endif %}
+
                     </a>
+
 
                     <a
                         href="/accounts/donors/"
                         class="list-group-item list-group-item-action py-3"
                     >
                         <i class="fas fa-users text-danger me-2"></i>
-                        {% trans "Donor Directory" %}
+
+                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                            রক্তদাতা ডিরেক্টরি
+                        {% else %}
+                            Donor Directory
+                        {% endif %}
+
                     </a>
+
 
                     <a
                         href="{% url 'emergency_card' %}"
                         class="list-group-item list-group-item-action py-3"
                     >
                         <i class="fas fa-id-card text-danger me-2"></i>
-                        {% trans "Emergency Card" %}
+
+                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                            জরুরি কার্ড
+                        {% else %}
+                            Emergency Card
+                        {% endif %}
+
                     </a>
+
 
                     <a
                         href="/"
                         class="list-group-item list-group-item-action py-3"
                     >
                         <i class="fas fa-globe text-danger me-2"></i>
-                        {% trans "Home" %}
+
+                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                            হোম
+                        {% else %}
+                            Home
+                        {% endif %}
+
                     </a>
+
 
                     <a
                         href="/accounts/logout/"
                         class="list-group-item list-group-item-action py-3 text-danger"
                     >
                         <i class="fas fa-sign-out-alt me-2"></i>
-                        {% trans "Logout" %}
+
+                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                            লগআউট
+                        {% else %}
+                            Logout
+                        {% endif %}
+
                     </a>
 
                 </div>
@@ -1307,12 +2115,14 @@
 
         </div>
 
+
         <!-- =================================================
-             MAIN CONTENT
+             RIGHT / MAIN
              ================================================= -->
+
         <div class="col-md-8">
 
-            <!-- ================= MESSAGES ================= -->
+            <!-- MESSAGES -->
 
             {% if messages %}
 
@@ -1329,6 +2139,7 @@
                             type="button"
                             class="btn-close"
                             data-bs-dismiss="alert"
+                            aria-label="{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}বন্ধ করুন{% else %}Close{% endif %}"
                         ></button>
 
                     </div>
@@ -1337,7 +2148,10 @@
 
             {% endif %}
 
-            <!-- ================= MINI EMERGENCY CARD ================= -->
+
+            <!-- =================================================
+                 EMERGENCY CARD
+                 ================================================= -->
 
             <div class="card mb-4 rp-mini-emergency rp-fade-up rp-delay-1">
 
@@ -1346,29 +2160,54 @@
                     <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap">
 
                         <div class="fw-bold">
-                            <i class="fas fa-id-card text-danger"></i>
-                            {% trans "My Emergency Card" %}
+
+                            <i class="fas fa-id-card text-danger me-1"></i>
+
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                আমার জরুরি কার্ড
+                            {% else %}
+                                My Emergency Card
+                            {% endif %}
+
                         </div>
 
-                        <div class="d-flex gap-2 no-print">
+
+                        <div class="d-flex gap-2 no-print flex-wrap">
 
                             <button
                                 type="button"
                                 id="shareEmergencyBtn"
                                 class="btn btn-outline-secondary btn-sm"
                             >
-                                <i class="fas fa-share-alt"></i>
+
+                                <i class="fas fa-share-alt me-1"></i>
+
                                 <span class="d-none d-sm-inline">
-                                    {% trans "Share" %}
+
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        শেয়ার
+                                    {% else %}
+                                        Share
+                                    {% endif %}
+
                                 </span>
+
                             </button>
+
 
                             <a
                                 href="{% url 'emergency_card' %}"
                                 class="btn btn-sm btn-danger"
                             >
-                                {% trans "Full Card" %}
-                                <i class="fas fa-arrow-right"></i>
+
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                    পূর্ণ কার্ড
+                                {% else %}
+                                    Full Card
+                                {% endif %}
+
+                                <i class="fas fa-arrow-right ms-1"></i>
+
                             </a>
 
                         </div>
@@ -1377,16 +2216,23 @@
 
                 </div>
 
+
                 <div class="card-body">
 
                     <div class="row g-3 align-items-center">
 
-                        <!-- BLOOD GROUP -->
+                        <!-- BLOOD -->
 
                         <div class="col-sm-4 text-center border-end">
 
                             <small class="text-muted d-block fw-bold">
-                                {% trans "BLOOD GROUP" %}
+
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                    রক্তের গ্রুপ
+                                {% else %}
+                                    BLOOD GROUP
+                                {% endif %}
+
                             </small>
 
                             <div class="rp-blood-big">
@@ -1396,19 +2242,30 @@
                             {% if donor.is_eligible %}
 
                                 <span class="badge bg-success">
-                                    <i class="fas fa-check-circle"></i>
-                                    {% trans "Eligible" %}
+
+                                    <i class="fas fa-check-circle me-1"></i>
+
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        যোগ্য
+                                    {% else %}
+                                        Eligible
+                                    {% endif %}
+
                                 </span>
 
                             {% else %}
 
                                 <span class="badge bg-warning text-dark">
 
-                                    <i class="fas fa-clock"></i>
+                                    <i class="fas fa-clock me-1"></i>
 
                                     {{ donor.days_until_eligible|default:"—" }}
 
-                                    {% trans "days left" %}
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        দিন বাকি
+                                    {% else %}
+                                        day{{ donor.days_until_eligible|pluralize }} left
+                                    {% endif %}
 
                                 </span>
 
@@ -1416,7 +2273,8 @@
 
                         </div>
 
-                        <!-- DONOR DETAILS -->
+
+                        <!-- DETAILS -->
 
                         <div class="col-sm-5">
 
@@ -1424,22 +2282,20 @@
                                 {{ donor.full_name }}
                             </h5>
 
-                            {% with donor_phone=donor.mobile_number %}
 
-                                <p class="mb-2 small">
+                            <p class="mb-2 small">
 
-                                    <i class="fas fa-phone text-danger me-1"></i>
+                                <i class="fas fa-phone text-danger me-1"></i>
 
-                                    <a
-                                        href="tel:{{ donor_phone }}"
-                                        class="text-decoration-none"
-                                    >
-                                        {{ donor_phone }}
-                                    </a>
+                                <a
+                                    href="tel:{{ donor.mobile_number }}"
+                                    class="text-decoration-none"
+                                >
+                                    {{ donor.mobile_number }}
+                                </a>
 
-                                </p>
+                            </p>
 
-                            {% endwith %}
 
                             <p class="mb-2 small">
 
@@ -1449,13 +2305,18 @@
 
                             </p>
 
+
                             {% if donor.emergency_contact_phone %}
 
                                 <p class="mb-0 small">
 
                                     <i class="fas fa-bell text-danger me-1"></i>
 
-                                    {% trans "Emergency:" %}
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        জরুরি:
+                                    {% else %}
+                                        Emergency:
+                                    {% endif %}
 
                                     {{ donor.emergency_contact_name|default:"—" }}
 
@@ -1474,6 +2335,7 @@
 
                         </div>
 
+
                         <!-- QR -->
 
                         <div class="col-sm-3 text-center">
@@ -1490,34 +2352,57 @@
                             ></div>
 
                             <small class="d-block text-muted mt-2">
-                                {% trans "Scan for donor info" %}
+
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                    রক্তদাতার তথ্য দেখতে স্ক্যান করুন
+                                {% else %}
+                                    Scan for donor information
+                                {% endif %}
+
                             </small>
 
                         </div>
 
                     </div>
 
-                    <!-- COPY EMERGENCY INFO -->
+
+                    <!-- COPY -->
 
                     <div class="rp-copy-box mt-3">
 
                         <div class="rp-copy-text flex-grow-1 small">
+
                             <i class="fas fa-file-alt text-danger me-1"></i>
+
                             <span id="emergencyInfoText">
                                 {{ donor.full_name }} •
                                 {{ donor.blood_group }} •
                                 {{ donor.mobile_number }} •
                                 {{ donor.upazila }}, {{ donor.district }}
                             </span>
+
                         </div>
+
 
                         <button
                             type="button"
                             class="rp-copy-btn copy-emergency-btn"
                             data-copy-target="emergencyInfoText"
+                            data-copied-label="{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}কপি হয়েছে{% else %}Copied{% endif %}"
                         >
-                            <i class="far fa-copy"></i>
-                            <span>{% trans "Copy" %}</span>
+
+                            <i class="far fa-copy me-1"></i>
+
+                            <span>
+
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                    কপি
+                                {% else %}
+                                    Copy
+                                {% endif %}
+
+                            </span>
+
                         </button>
 
                     </div>
@@ -1526,7 +2411,10 @@
 
             </div>
 
-            <!-- ================= STATS ================= -->
+
+            <!-- =================================================
+                 STATS
+                 ================================================= -->
 
             <div class="row g-3 mb-4">
 
@@ -1543,12 +2431,19 @@
                         </div>
 
                         <div class="rp-stat-label">
-                            {% trans "Total Donations" %}
+
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                মোট রক্তদান
+                            {% else %}
+                                Total Donations
+                            {% endif %}
+
                         </div>
 
                     </div>
 
                 </div>
+
 
                 <div class="col-6 col-lg-3">
 
@@ -1563,12 +2458,19 @@
                         </div>
 
                         <div class="rp-stat-label">
-                            {% trans "Donation Records" %}
+
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                রক্তদানের রেকর্ড
+                            {% else %}
+                                Donation Records
+                            {% endif %}
+
                         </div>
 
                     </div>
 
                 </div>
+
 
                 <div class="col-6 col-lg-3">
 
@@ -1583,12 +2485,19 @@
                         </div>
 
                         <div class="rp-stat-label">
-                            {% trans "Friends Referred" %}
+
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                আমন্ত্রিত বন্ধু
+                            {% else %}
+                                Friends Referred
+                            {% endif %}
+
                         </div>
 
                     </div>
 
                 </div>
+
 
                 <div class="col-6 col-lg-3">
 
@@ -1601,19 +2510,49 @@
                         <div class="rp-stat-number text-warning">
 
                             {% if donor.lifesaver_tier == 'gold' %}
-                                {% trans "Gold" %}
+
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                    গোল্ড
+                                {% else %}
+                                    Gold
+                                {% endif %}
+
                             {% elif donor.lifesaver_tier == 'silver' %}
-                                {% trans "Silver" %}
+
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                    সিলভার
+                                {% else %}
+                                    Silver
+                                {% endif %}
+
                             {% elif donor.lifesaver_tier == 'bronze' %}
-                                {% trans "Bronze" %}
+
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                    ব্রোঞ্জ
+                                {% else %}
+                                    Bronze
+                                {% endif %}
+
                             {% else %}
-                                {% trans "New" %}
+
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                    নতুন
+                                {% else %}
+                                    New
+                                {% endif %}
+
                             {% endif %}
 
                         </div>
 
                         <div class="rp-stat-label">
-                            {% trans "Life-Saver Tier" %}
+
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                লাইফ-সেভার স্তর
+                            {% else %}
+                                Life-Saver Tier
+                            {% endif %}
+
                         </div>
 
                     </div>
@@ -1622,29 +2561,52 @@
 
             </div>
 
-            <!-- ================= REFERRAL ================= -->
 
-            <div class="card mb-4 rp-referral rp-fade-up">
+            <!-- =================================================
+                 REFERRAL
+                 ================================================= -->
+
+            <div class="card mb-4 rp-fade-up">
 
                 <div class="rp-card-header soft">
 
                     <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap">
 
                         <div class="fw-bold">
-                            <i class="fas fa-user-plus text-primary"></i>
-                            {% trans "Refer a Friend" %}
+
+                            <i class="fas fa-user-plus text-primary me-1"></i>
+
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                বন্ধুকে আমন্ত্রণ করুন
+                            {% else %}
+                                Refer a Friend
+                            {% endif %}
+
                         </div>
 
-                        {% if donor.referral_tier != 'none' %}
 
-                            <span class="rp-referral-badge badge bg-primary">
+                        {% if donor.referral_tier != 'none' and donor.referral_tier %}
 
-                                <i class="fas fa-users"></i>
+                            <span class="badge bg-primary rounded-pill">
+
+                                <i class="fas fa-users me-1"></i>
 
                                 {% if donor.referral_tier == 'champion' %}
-                                    {% trans "Community Champion" %}
+
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        কমিউনিটি চ্যাম্পিয়ন
+                                    {% else %}
+                                        Community Champion
+                                    {% endif %}
+
                                 {% else %}
-                                    {% trans "Community Builder" %}
+
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        কমিউনিটি বিল্ডার
+                                    {% else %}
+                                        Community Builder
+                                    {% endif %}
+
                                 {% endif %}
 
                             </span>
@@ -1655,17 +2617,26 @@
 
                 </div>
 
+
                 <div class="card-body">
 
                     <p class="small mb-3 text-muted">
 
-                        {% trans "Share your registration link to help grow the verified donor network." %}
+                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                            আপনার নিবন্ধন লিংক শেয়ার করে যাচাইকৃত রক্তদাতা নেটওয়ার্ক বড় করতে সাহায্য করুন।
+                        {% else %}
+                            Share your registration link to help grow the verified donor network.
+                        {% endif %}
 
                     </p>
 
+
                     <div class="rp-copy-box mb-3">
 
-                        <div class="rp-copy-text flex-grow-1 small">
+                        <div
+                            class="rp-copy-text flex-grow-1 small"
+                            id="shareLinkText"
+                        >
                             {{ referral_link }}
                         </div>
 
@@ -1673,13 +2644,25 @@
                             type="button"
                             class="rp-copy-btn copy-btn"
                             data-copy="{{ referral_link }}"
-                            data-copied-label="{% trans 'Copied' %}"
+                            data-copied-label="{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}কপি হয়েছে{% else %}Copied{% endif %}"
                         >
-                            <i class="far fa-copy"></i>
-                            <span>{% trans "Copy" %}</span>
+
+                            <i class="far fa-copy me-1"></i>
+
+                            <span>
+
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                    কপি
+                                {% else %}
+                                    Copy
+                                {% endif %}
+
+                            </span>
+
                         </button>
 
                     </div>
+
 
                     <div class="d-flex gap-2 flex-wrap">
 
@@ -1687,21 +2670,33 @@
                             href="#"
                             id="whatsappReferral"
                             target="_blank"
-                            rel="noopener"
+                            rel="noopener noreferrer"
                             class="btn btn-success btn-sm"
                         >
-                            <i class="fab fa-whatsapp"></i>
-                            {% trans "WhatsApp" %}
+
+                            <i class="fab fa-whatsapp me-1"></i>
+
+                            WhatsApp
+
                         </a>
+
 
                         <button
                             type="button"
                             id="nativeShareReferral"
                             class="btn btn-outline-primary btn-sm"
                         >
-                            <i class="fas fa-share-alt"></i>
-                            {% trans "Share" %}
+
+                            <i class="fas fa-share-alt me-1"></i>
+
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                শেয়ার
+                            {% else %}
+                                Share
+                            {% endif %}
+
                         </button>
+
 
                         <button
                             type="button"
@@ -1709,17 +2704,29 @@
                             data-bs-toggle="modal"
                             data-bs-target="#shareModal"
                         >
-                            <i class="fas fa-ellipsis-h"></i>
-                            {% trans "More" %}
+
+                            <i class="fas fa-ellipsis-h me-1"></i>
+
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                আরও
+                            {% else %}
+                                More
+                            {% endif %}
+
                         </button>
 
                     </div>
 
-                    <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+
+                    <div class="d-flex justify-content-between align-items-center gap-2 mt-3 pt-3 border-top flex-wrap">
 
                         <span class="small text-muted">
 
-                            {% trans "Friends referred:" %}
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                আমন্ত্রিত বন্ধু:
+                            {% else %}
+                                Friends referred:
+                            {% endif %}
 
                             <strong>
                                 {{ donor.referral_count|default:"0" }}
@@ -1729,7 +2736,11 @@
 
                         <span class="small text-muted">
 
-                            {% trans "Share once. Help someone twice." %}
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                একবার শেয়ার করুন। দু’বার সাহায্য করুন।
+                            {% else %}
+                                Share once. Help someone twice.
+                            {% endif %}
 
                         </span>
 
@@ -1739,18 +2750,29 @@
 
             </div>
 
-            <!-- ================= LOG DONATION ================= -->
+
+            <!-- =================================================
+                 LOG DONATION
+                 ================================================= -->
 
             <div class="card mb-4 rp-fade-up">
 
                 <div class="rp-card-header soft">
 
                     <div class="fw-bold">
-                        <i class="fas fa-plus-circle text-danger"></i>
-                        {% trans "Log a Donation" %}
+
+                        <i class="fas fa-plus-circle text-danger me-1"></i>
+
+                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                            রক্তদানের তথ্য যোগ করুন
+                        {% else %}
+                            Log a Donation
+                        {% endif %}
+
                     </div>
 
                 </div>
+
 
                 <div class="card-body">
 
@@ -1764,49 +2786,77 @@
 
                             {% csrf_token %}
 
+
                             <div class="col-md-4">
 
                                 <label class="form-label">
-                                    {% trans "Date" %}
+
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        তারিখ
+                                    {% else %}
+                                        Date
+                                    {% endif %}
+
                                     <span class="text-danger">*</span>
+
                                 </label>
 
                                 {{ log_form.donation_date }}
 
                                 {% if log_form.donation_date.errors %}
+
                                     <div class="text-danger small">
                                         {{ log_form.donation_date.errors }}
                                     </div>
+
                                 {% endif %}
 
                             </div>
 
+
                             <div class="col-md-4">
 
                                 <label class="form-label">
-                                    {% trans "Hospital" %}
+
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        হাসপাতাল
+                                    {% else %}
+                                        Hospital
+                                    {% endif %}
+
                                     <span class="text-danger">*</span>
+
                                 </label>
 
                                 {{ log_form.hospital_name }}
 
                                 {% if log_form.hospital_name.errors %}
+
                                     <div class="text-danger small">
                                         {{ log_form.hospital_name.errors }}
                                     </div>
+
                                 {% endif %}
 
                             </div>
 
+
                             <div class="col-md-4">
 
                                 <label class="form-label">
-                                    {% trans "Note" %}
+
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        নোট
+                                    {% else %}
+                                        Note
+                                    {% endif %}
+
                                 </label>
 
                                 {{ log_form.note }}
 
                             </div>
+
 
                             <div class="col-12">
 
@@ -1814,16 +2864,31 @@
                                     type="submit"
                                     class="btn btn-danger"
                                 >
-                                    <i class="fas fa-check"></i>
-                                    {% trans "Log This Donation" %}
+
+                                    <i class="fas fa-check me-1"></i>
+
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        এই রক্তদান যোগ করুন
+                                    {% else %}
+                                        Log This Donation
+                                    {% endif %}
+
                                 </button>
+
 
                                 <button
                                     type="reset"
                                     class="btn btn-outline-secondary"
                                 >
-                                    <i class="fas fa-times"></i>
-                                    {% trans "Clear" %}
+
+                                    <i class="fas fa-times me-1"></i>
+
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        পরিষ্কার
+                                    {% else %}
+                                        Clear
+                                    {% endif %}
+
                                 </button>
 
                             </div>
@@ -1843,14 +2908,26 @@
                                 <div>
 
                                     <strong class="d-block">
-                                        {% trans "Donation logging is paused" %}
+
+                                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                            রক্তদান যোগ করা সাময়িকভাবে বন্ধ
+                                        {% else %}
+                                            Donation logging is paused
+                                        {% endif %}
+
                                     </strong>
 
                                     <span class="small text-muted">
 
-                                        {% blocktrans with days=donor.days_until_eligible %}
-                                            You can log your next donation in {{ days }} days.
-                                        {% endblocktrans %}
+                                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+
+                                            আপনি {{ donor.days_until_eligible }} দিন পর পরবর্তী রক্তদান যোগ করতে পারবেন।
+
+                                        {% else %}
+
+                                            You can log your next donation in {{ donor.days_until_eligible }} days.
+
+                                        {% endif %}
 
                                     </span>
 
@@ -1866,7 +2943,10 @@
 
             </div>
 
-            <!-- ================= DONATION HISTORY ================= -->
+
+            <!-- =================================================
+                 DONATION HISTORY
+                 ================================================= -->
 
             <div class="card mb-4 rp-fade-up">
 
@@ -1875,34 +2955,48 @@
                     <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap">
 
                         <div class="fw-bold">
-                            <i class="fas fa-history text-danger"></i>
-                            {% trans "Donation History" %}
+
+                            <i class="fas fa-history text-danger me-1"></i>
+
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                রক্তদানের ইতিহাস
+                            {% else %}
+                                Donation History
+                            {% endif %}
+
                         </div>
 
-                        <div class="rp-history-tools no-print">
 
-                            {% if donations %}
+                        {% if donations %}
+
+                            <div class="rp-history-tools no-print">
 
                                 <input
                                     type="search"
                                     id="donationSearch"
                                     class="form-control form-control-sm rp-history-search"
-                                    placeholder="{% trans 'Search hospital or note...' %}"
-                                    aria-label="{% trans 'Search donation history' %}"
+                                    placeholder="{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}হাসপাতাল বা নোট খুঁজুন...{% else %}Search hospital or note...{% endif %}"
+                                    aria-label="{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রক্তদানের ইতিহাস খুঁজুন{% else %}Search donation history{% endif %}"
                                 >
 
                                 <span class="badge bg-danger">
-                                    <i class="fas fa-droplet"></i>
-                                    <span id="donationCountBadge">{{ donations|length }}</span>
+
+                                    <i class="fas fa-droplet me-1"></i>
+
+                                    <span id="donationCountBadge">
+                                        {{ donations|length }}
+                                    </span>
+
                                 </span>
 
-                            {% endif %}
+                            </div>
 
-                        </div>
+                        {% endif %}
 
                     </div>
 
                 </div>
+
 
                 <div class="card-body p-0">
 
@@ -1918,24 +3012,51 @@
                                 <thead class="table-light">
 
                                     <tr>
+
                                         <th class="ps-3">
-                                            {% trans "Date" %}
+
+                                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                                তারিখ
+                                            {% else %}
+                                                Date
+                                            {% endif %}
+
                                         </th>
 
                                         <th>
-                                            {% trans "Hospital" %}
+
+                                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                                হাসপাতাল
+                                            {% else %}
+                                                Hospital
+                                            {% endif %}
+
                                         </th>
 
                                         <th>
-                                            {% trans "Note" %}
+
+                                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                                নোট
+                                            {% else %}
+                                                Note
+                                            {% endif %}
+
                                         </th>
 
                                         <th class="text-end pe-3">
-                                            {% trans "Status" %}
+
+                                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                                অবস্থা
+                                            {% else %}
+                                                Status
+                                            {% endif %}
+
                                         </th>
+
                                     </tr>
 
                                 </thead>
+
 
                                 <tbody>
 
@@ -1947,11 +3068,10 @@
 
                                                 <i class="fas fa-calendar-alt text-danger me-1"></i>
 
-                                                <span class="donation-date">
-                                                    {{ donation.donation_date|date:"d M, Y" }}
-                                                </span>
+                                                {{ donation.donation_date|date:"d M, Y" }}
 
                                             </td>
+
 
                                             <td>
 
@@ -1961,11 +3081,12 @@
 
                                             </td>
 
+
                                             <td>
 
                                                 {% if donation.note %}
 
-                                                    <small class="text-muted donation-note">
+                                                    <small class="text-muted">
                                                         {{ donation.note|truncatewords:7 }}
                                                     </small>
 
@@ -1979,10 +3100,17 @@
 
                                             </td>
 
+
                                             <td class="text-end pe-3">
 
                                                 <span class="badge bg-success-subtle text-success border border-success-subtle">
-                                                    {% trans "Recorded" %}
+
+                                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                                        রেকর্ড করা হয়েছে
+                                                    {% else %}
+                                                        Recorded
+                                                    {% endif %}
+
                                                 </span>
 
                                             </td>
@@ -1997,6 +3125,7 @@
 
                         </div>
 
+
                         <div
                             id="donationNoMatch"
                             class="rp-empty rp-hidden"
@@ -2007,11 +3136,23 @@
                             </div>
 
                             <p class="fw-bold mb-1">
-                                {% trans "No matching donation found" %}
+
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                    মিলে এমন কোনো রক্তদানের রেকর্ড পাওয়া যায়নি
+                                {% else %}
+                                    No matching donation found
+                                {% endif %}
+
                             </p>
 
                             <p class="small text-muted mb-0">
-                                {% trans "Try a different hospital name or note." %}
+
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                    অন্য হাসপাতালের নাম বা নোট দিয়ে চেষ্টা করুন।
+                                {% else %}
+                                    Try a different hospital name or note.
+                                {% endif %}
+
                             </p>
 
                         </div>
@@ -2025,11 +3166,23 @@
                             </div>
 
                             <p class="fw-bold mb-1">
-                                {% trans "No donation records found." %}
+
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                    কোনো রক্তদানের রেকর্ড পাওয়া যায়নি।
+                                {% else %}
+                                    No donation records found.
+                                {% endif %}
+
                             </p>
 
                             <p class="small text-muted mb-0">
-                                {% trans "Your donation history will appear here after your first recorded donation." %}
+
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                    প্রথম রক্তদান রেকর্ড করার পর আপনার ইতিহাস এখানে দেখা যাবে।
+                                {% else %}
+                                    Your donation history will appear here after your first recorded donation.
+                                {% endif %}
+
                             </p>
 
                         </div>
@@ -2040,18 +3193,29 @@
 
             </div>
 
-            <!-- ================= DONATION ANALYTICS ================= -->
+
+            <!-- =================================================
+                 DONATION SNAPSHOT
+                 ================================================= -->
 
             <div class="card mb-4 rp-fade-up">
 
                 <div class="rp-card-header soft">
 
                     <div class="fw-bold">
-                        <i class="fas fa-chart-bar text-primary"></i>
-                        {% trans "Donation Snapshot" %}
+
+                        <i class="fas fa-chart-bar text-primary me-1"></i>
+
+                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                            রক্তদান সারাংশ
+                        {% else %}
+                            Donation Snapshot
+                        {% endif %}
+
                     </div>
 
                 </div>
+
 
                 <div class="card-body">
 
@@ -2061,66 +3225,109 @@
 
                             <div class="rp-status-box h-100">
 
-                                <div class="d-flex justify-content-between mb-2">
+                                <div class="d-flex justify-content-between mb-2 gap-2">
 
                                     <span class="small fw-bold">
-                                        {% trans "Donation activity" %}
+
+                                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                            রক্তদানের কার্যক্রম
+                                        {% else %}
+                                            Donation activity
+                                        {% endif %}
+
                                     </span>
 
                                     <span class="small text-muted">
+
                                         {{ donor.donation_count|default:"0" }}
-                                        {% trans "records" %}
+
+                                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                            টি রেকর্ড
+                                        {% else %}
+                                            records
+                                        {% endif %}
+
                                     </span>
 
                                 </div>
 
+
+                                {% widthratio donor.donation_count|default:0 10 100 as donation_bar %}
+
                                 <div class="rp-progress">
 
-                                    {% widthratio donor.donation_count|default:0 10 100 as donation_bar %}
-
                                     <div
-                                        style="width: {{ donation_bar }}%;"
+                                        style="width:{{ donation_bar }}%;"
                                     ></div>
 
                                 </div>
 
+
                                 <small class="text-muted d-block mt-2">
-                                    {% trans "Visual scale for your recorded donation count." %}
+
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        আপনার রেকর্ডকৃত রক্তদানের সংখ্যার ভিজ্যুয়াল স্কেল।
+                                    {% else %}
+                                        Visual scale for your recorded donation count.
+                                    {% endif %}
+
                                 </small>
 
                             </div>
 
                         </div>
 
+
                         <div class="col-md-6">
 
                             <div class="rp-status-box h-100">
 
-                                <div class="d-flex justify-content-between mb-2">
+                                <div class="d-flex justify-content-between mb-2 gap-2">
 
                                     <span class="small fw-bold">
-                                        {% trans "Referral activity" %}
+
+                                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                            রেফারেল কার্যক্রম
+                                        {% else %}
+                                            Referral activity
+                                        {% endif %}
+
                                     </span>
 
                                     <span class="small text-muted">
+
                                         {{ donor.referral_count|default:"0" }}
-                                        {% trans "referrals" %}
+
+                                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                            টি রেফারেল
+                                        {% else %}
+                                            referrals
+                                        {% endif %}
+
                                     </span>
 
                                 </div>
 
+
+                                {% widthratio donor.referral_count|default:0 10 100 as referral_bar %}
+
                                 <div class="rp-progress">
 
-                                    {% widthratio donor.referral_count|default:0 10 100 as referral_bar %}
-
                                     <div
-                                        style="width: {{ referral_bar }}%; background: linear-gradient(90deg, #2563eb, #60a5fa);"
+                                        style="width:{{ referral_bar }}%;background:linear-gradient(90deg,#2563eb,#60a5fa);"
                                     ></div>
 
                                 </div>
 
+
                                 <small class="text-muted d-block mt-2">
-                                    {% trans "Visual scale for your referral activity." %}
+
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        আপনার রেফারেল কার্যক্রমের ভিজ্যুয়াল স্কেল।
+                                    {% else %}
+                                        Visual scale for your referral activity.
+                                    {% endif %}
+
                                 </small>
 
                             </div>
@@ -2136,6 +3343,7 @@
         </div>
 
     </div>
+
 
     <!-- =====================================================
          SHARE MODAL
@@ -2155,22 +3363,27 @@
 
                 <div class="modal-header">
 
-                    <h5
-                        class="modal-title"
-                        id="shareModalLabel"
-                    >
-                        <i class="fas fa-share-alt text-danger"></i>
-                        {% trans "Share Your Referral Link" %}
+                    <h5 class="modal-title" id="shareModalLabel">
+
+                        <i class="fas fa-share-alt text-danger me-1"></i>
+
+                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                            আপনার রেফারেল লিংক শেয়ার করুন
+                        {% else %}
+                            Share Your Referral Link
+                        {% endif %}
+
                     </h5>
 
                     <button
                         type="button"
                         class="btn-close"
                         data-bs-dismiss="modal"
-                        aria-label="{% trans 'Close' %}"
+                        aria-label="{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}বন্ধ করুন{% else %}Close{% endif %}"
                     ></button>
 
                 </div>
+
 
                 <div class="modal-body">
 
@@ -2178,7 +3391,7 @@
 
                         <div
                             class="rp-copy-text flex-grow-1 small"
-                            id="shareLinkText"
+                            id="modalReferralText"
                         >
                             {{ referral_link }}
                         </div>
@@ -2187,13 +3400,21 @@
                             type="button"
                             class="rp-copy-btn copy-btn"
                             data-copy="{{ referral_link }}"
-                            data-copied-label="{% trans 'Copied' %}"
+                            data-copied-label="{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}কপি হয়েছে{% else %}Copied{% endif %}"
                         >
-                            <i class="far fa-copy"></i>
-                            <span>{% trans "Copy" %}</span>
+
+                            <i class="far fa-copy me-1"></i>
+
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                কপি
+                            {% else %}
+                                Copy
+                            {% endif %}
+
                         </button>
 
                     </div>
+
 
                     <div class="d-grid gap-2">
 
@@ -2201,28 +3422,46 @@
                             href="#"
                             id="modalWhatsapp"
                             target="_blank"
-                            rel="noopener"
+                            rel="noopener noreferrer"
                             class="btn btn-success"
                         >
-                            <i class="fab fa-whatsapp"></i>
-                            {% trans "WhatsApp" %}
+
+                            <i class="fab fa-whatsapp me-1"></i>
+
+                            WhatsApp
+
                         </a>
+
 
                         <button
                             type="button"
                             id="modalNativeShare"
                             class="btn btn-outline-primary"
                         >
-                            <i class="fas fa-share-alt"></i>
-                            {% trans "Use Device Share" %}
+
+                            <i class="fas fa-share-alt me-1"></i>
+
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                ডিভাইস দিয়ে শেয়ার করুন
+                            {% else %}
+                                Use Device Share
+                            {% endif %}
+
                         </button>
+
 
                         <button
                             type="button"
                             class="btn btn-outline-secondary"
                             data-bs-dismiss="modal"
                         >
-                            {% trans "Close" %}
+
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                বন্ধ করুন
+                            {% else %}
+                                Close
+                            {% endif %}
+
                         </button>
 
                     </div>
@@ -2234,6 +3473,7 @@
         </div>
 
     </div>
+
 
     <!-- =====================================================
          EMERGENCY MODAL
@@ -2257,18 +3497,26 @@
                         class="modal-title fw-bold"
                         id="emergencyModalLabel"
                     >
-                        <i class="fas fa-bolt text-danger"></i>
-                        {% trans "Emergency Donor View" %}
+
+                        <i class="fas fa-bolt text-danger me-1"></i>
+
+                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                            জরুরি ডোনার ভিউ
+                        {% else %}
+                            Emergency Donor View
+                        {% endif %}
+
                     </h5>
 
                     <button
                         type="button"
                         class="btn-close"
                         data-bs-dismiss="modal"
-                        aria-label="{% trans 'Close' %}"
+                        aria-label="{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}বন্ধ করুন{% else %}Close{% endif %}"
                     ></button>
 
                 </div>
+
 
                 <div class="modal-body pt-0">
 
@@ -2284,7 +3532,7 @@
                         data-emergency-phone="{{ donor.emergency_contact_phone|default:'' }}"
                     >
 
-                        <div class="rp-eyebrow text-white-50">
+                        <div class="rp-eyebrow">
                             Patiya RedPulse
                         </div>
 
@@ -2295,6 +3543,7 @@
                         <div class="fw-bold fs-5">
                             {{ donor.full_name }}
                         </div>
+
 
                         <div class="rp-modal-info">
 
@@ -2311,6 +3560,7 @@
 
                             </div>
 
+
                             <div class="rp-modal-row">
 
                                 <i class="fas fa-map-marker-alt"></i>
@@ -2321,6 +3571,7 @@
 
                             </div>
 
+
                             {% if donor.emergency_contact_phone %}
 
                                 <div class="rp-modal-row">
@@ -2329,7 +3580,11 @@
 
                                     <span>
 
-                                        {% trans "Emergency contact:" %}
+                                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                            জরুরি যোগাযোগ:
+                                        {% else %}
+                                            Emergency contact:
+                                        {% endif %}
 
                                         {{ donor.emergency_contact_name|default:"—" }}
 
@@ -2352,6 +3607,7 @@
 
                     </div>
 
+
                     <div class="row g-2 mt-3">
 
                         <div class="col-6">
@@ -2360,11 +3616,19 @@
                                 href="tel:{{ donor.mobile_number }}"
                                 class="btn btn-danger w-100"
                             >
-                                <i class="fas fa-phone"></i>
-                                {% trans "Call Donor" %}
+
+                                <i class="fas fa-phone me-1"></i>
+
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                    ডোনারকে কল করুন
+                                {% else %}
+                                    Call Donor
+                                {% endif %}
+
                             </a>
 
                         </div>
+
 
                         <div class="col-6">
 
@@ -2373,11 +3637,19 @@
                                 id="shareEmergencyModalBtn"
                                 class="btn btn-outline-primary w-100"
                             >
-                                <i class="fas fa-share-alt"></i>
-                                {% trans "Share" %}
+
+                                <i class="fas fa-share-alt me-1"></i>
+
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                    শেয়ার
+                                {% else %}
+                                    Share
+                                {% endif %}
+
                             </button>
 
                         </div>
+
 
                         {% if donor.emergency_contact_phone %}
 
@@ -2387,8 +3659,15 @@
                                     href="tel:{{ donor.emergency_contact_phone }}"
                                     class="btn btn-outline-secondary w-100"
                                 >
-                                    <i class="fas fa-user-shield"></i>
-                                    {% trans "Call Emergency Contact" %}
+
+                                    <i class="fas fa-user-shield me-1"></i>
+
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                                        জরুরি যোগাযোগে কল করুন
+                                    {% else %}
+                                        Call Emergency Contact
+                                    {% endif %}
+
                                 </a>
 
                             </div>
@@ -2397,9 +3676,17 @@
 
                     </div>
 
+
                     <div class="small text-muted mt-3 text-center">
-                        <i class="fas fa-info-circle"></i>
-                        {% trans "For blood transfusion decisions, always follow qualified medical professionals and hospital blood-bank compatibility procedures." %}
+
+                        <i class="fas fa-info-circle me-1"></i>
+
+                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}
+                            রক্ত সঞ্চালনের সিদ্ধান্তের জন্য সবসময় যোগ্য চিকিৎসা পেশাজীবী এবং হাসপাতালের ব্লাড-ব্যাংকের সামঞ্জস্যতা প্রক্রিয়া অনুসরণ করুন।
+                        {% else %}
+                            For blood transfusion decisions, always follow qualified medical professionals and hospital blood-bank compatibility procedures.
+                        {% endif %}
+
                     </div>
 
                 </div>
@@ -2412,72 +3699,181 @@
 
 </div>
 
+
 <!-- =========================================================
-     QR + INTERACTION JAVASCRIPT
-     No Django template tags are placed inside executable logic.
-     Data comes through data-* attributes.
+     QR LIBRARY
      ========================================================= -->
 
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
     "use strict";
 
-    /* =======================================================
-       HELPERS
-       ======================================================= */
 
-    function getTextFromElement(id) {
-        var el = document.getElementById(id);
-        return el ? el.textContent.trim() : "";
+    /* =====================================================
+       LANGUAGE-AWARE JS STRINGS
+       ===================================================== */
+
+    var IS_BN =
+        "{{ CURRENT_LANGUAGE|slice:':2' }}" === "bn";
+
+
+    var RP_TEXT = {
+
+        copied:
+            IS_BN
+                ? "কপি হয়েছে"
+                : "Copied",
+
+        copyFailed:
+            IS_BN
+                ? "কপি করা যায়নি। অনুগ্রহ করে ম্যানুয়ালি কপি করুন।"
+                : "Copy failed. Please copy the text manually.",
+
+        referralCopied:
+            IS_BN
+                ? "রেফারেল লিংক কপি হয়েছে।"
+                : "Referral link copied.",
+
+        emergencyCopied:
+            IS_BN
+                ? "জরুরি ডোনারের তথ্য কপি হয়েছে।"
+                : "Emergency donor information copied.",
+
+        sharingUnavailable:
+            IS_BN
+                ? "এই ডিভাইসে শেয়ার ফিচার পাওয়া যাচ্ছে না।"
+                : "Sharing is not available on this device.",
+
+        saving:
+            IS_BN
+                ? "সংরক্ষণ করা হচ্ছে..."
+                : "Saving...",
+
+        whatsappMessage:
+            IS_BN
+                ? "Patiya RedPulse-এ রক্তদাতা হিসেবে যোগ দিন। আপনার নিবন্ধন প্রয়োজনে কাউকে একজন রক্তদাতা খুঁজে পেতে সাহায্য করতে পারে।"
+                : "Join Patiya RedPulse as a blood donor. Your registration can help someone find a donor when needed."
+
+    };
+
+
+    /* =====================================================
+       HELPERS
+       ===================================================== */
+
+    function getElement(id) {
+
+        return document.getElementById(id);
+
     }
 
+
+    function getText(id) {
+
+        var element =
+            getElement(id);
+
+        return element
+            ? element.textContent.trim()
+            : "";
+
+    }
+
+
     function showButtonFeedback(button, label) {
+
         if (!button) {
             return;
         }
 
-        var original = button.innerHTML;
+        var original =
+            button.innerHTML;
 
         button.innerHTML =
-            '<i class="fas fa-check"></i> ' + label;
+            '<i class="fas fa-check me-1"></i>' +
+            label;
 
-        setTimeout(function () {
-            button.innerHTML = original;
-        }, 1800);
+        button.disabled = true;
+
+        window.setTimeout(
+            function () {
+
+                button.innerHTML =
+                    original;
+
+                button.disabled =
+                    false;
+
+            },
+            1800
+        );
+
     }
 
+
     function fallbackCopy(text) {
+
+        if (!text) {
+            return false;
+        }
 
         var textarea =
             document.createElement("textarea");
 
-        textarea.value = text;
+        textarea.value =
+            text;
 
-        textarea.setAttribute("readonly", "");
+        textarea.setAttribute(
+            "readonly",
+            ""
+        );
 
-        textarea.style.position = "fixed";
-        textarea.style.opacity = "0";
+        textarea.style.position =
+            "fixed";
 
-        document.body.appendChild(textarea);
+        textarea.style.left =
+            "-9999px";
 
+        textarea.style.top =
+            "0";
+
+        textarea.style.opacity =
+            "0";
+
+        document.body.appendChild(
+            textarea
+        );
+
+        textarea.focus();
         textarea.select();
 
-        var copied = false;
+        var success = false;
 
         try {
-            copied =
-                document.execCommand("copy");
+
+            success =
+                document.execCommand(
+                    "copy"
+                );
+
         } catch (error) {
-            copied = false;
+
+            success = false;
+
         }
 
-        document.body.removeChild(textarea);
+        document.body.removeChild(
+            textarea
+        );
 
-        return copied;
+        return success;
+
     }
+
 
     async function copyText(text) {
 
@@ -2489,28 +3885,67 @@ document.addEventListener("DOMContentLoaded", function () {
             navigator.clipboard &&
             window.isSecureContext
         ) {
+
             try {
-                await navigator.clipboard.writeText(text);
+
+                await navigator.clipboard.writeText(
+                    text
+                );
+
                 return true;
+
             } catch (error) {
-                return fallbackCopy(text);
+
+                return fallbackCopy(
+                    text
+                );
+
             }
+
         }
 
-        return fallbackCopy(text);
+        return fallbackCopy(
+            text
+        );
+
     }
 
-    /* =======================================================
+
+    /* =====================================================
        QR CODE
-       ======================================================= */
+       ===================================================== */
 
     var qrEl =
-        document.getElementById("miniQr");
+        getElement("miniQr");
 
     if (
         qrEl &&
         typeof QRCode !== "undefined"
     ) {
+
+        var cardUrl =
+            qrEl.getAttribute(
+                "data-card-url"
+            ) || "";
+
+
+        if (
+            cardUrl &&
+            !/^https?:\/\//i.test(
+                cardUrl
+            )
+        ) {
+
+            cardUrl =
+                window.location.origin +
+                (
+                    cardUrl.charAt(0) === "/"
+                        ? cardUrl
+                        : "/" + cardUrl
+                );
+
+        }
+
 
         var qrData = {
 
@@ -2540,37 +3975,44 @@ document.addEventListener("DOMContentLoaded", function () {
                 ) || "",
 
             emergency_card:
-                qrEl.getAttribute(
-                    "data-card-url"
-                ) || ""
+                cardUrl
 
         };
 
+
         qrEl.innerHTML = "";
+
 
         try {
 
-            new QRCode(qrEl, {
+            new QRCode(
+                qrEl,
+                {
 
-                text: JSON.stringify(qrData),
+                    text:
+                        JSON.stringify(
+                            qrData
+                        ),
 
-                width: 100,
+                    width: 100,
+                    height: 100,
 
-                height: 100,
+                    colorDark:
+                        "#0b132b",
 
-                colorDark: "#0b132b",
+                    colorLight:
+                        "#ffffff",
 
-                colorLight: "#ffffff",
+                    correctLevel:
+                        QRCode.CorrectLevel.M
 
-                correctLevel:
-                    QRCode.CorrectLevel.M
-
-            });
+                }
+            );
 
         } catch (error) {
 
             console.error(
-                "QR generation failed:",
+                "Patiya RedPulse QR generation failed:",
                 error
             );
 
@@ -2578,107 +4020,130 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
-    /* =======================================================
+
+    /* =====================================================
        COPY BUTTONS
-       ======================================================= */
+       ===================================================== */
 
     document
-        .querySelectorAll(".copy-btn")
-        .forEach(function (button) {
+        .querySelectorAll(
+            ".copy-btn"
+        )
+        .forEach(
+            function (button) {
 
-            button.addEventListener(
-                "click",
-                async function () {
+                button.addEventListener(
+                    "click",
+                    async function () {
 
-                    var text =
-                        this.getAttribute(
-                            "data-copy"
-                        ) || "";
-
-                    var success =
-                        await copyText(text);
-
-                    if (success) {
-
-                        showButtonFeedback(
-                            this,
+                        var text =
                             this.getAttribute(
-                                "data-copied-label"
-                            ) || "Copied"
-                        );
+                                "data-copy"
+                            ) || "";
 
-                    } else {
+                        var success =
+                            await copyText(
+                                text
+                            );
 
-                        alert(
-                            "Copy failed. Please copy the text manually."
-                        );
+
+                        if (success) {
+
+                            showButtonFeedback(
+                                this,
+                                this.getAttribute(
+                                    "data-copied-label"
+                                ) ||
+                                RP_TEXT.copied
+                            );
+
+                        } else {
+
+                            alert(
+                                RP_TEXT.copyFailed
+                            );
+
+                        }
 
                     }
+                );
 
-                }
-            );
+            }
+        );
 
-        });
 
     document
-        .querySelectorAll(".copy-emergency-btn")
-        .forEach(function (button) {
+        .querySelectorAll(
+            ".copy-emergency-btn"
+        )
+        .forEach(
+            function (button) {
 
-            button.addEventListener(
-                "click",
-                async function () {
+                button.addEventListener(
+                    "click",
+                    async function () {
 
-                    var targetId =
-                        this.getAttribute(
-                            "data-copy-target"
-                        );
+                        var targetId =
+                            this.getAttribute(
+                                "data-copy-target"
+                            );
 
-                    var text =
-                        getTextFromElement(
-                            targetId
-                        );
+                        var text =
+                            getText(
+                                targetId
+                            );
 
-                    var success =
-                        await copyText(text);
+                        var success =
+                            await copyText(
+                                text
+                            );
 
-                    if (success) {
 
-                        showButtonFeedback(
-                            this,
-                            "Copied"
-                        );
+                        if (success) {
 
-                    } else {
+                            showButtonFeedback(
+                                this,
+                                this.getAttribute(
+                                    "data-copied-label"
+                                ) ||
+                                RP_TEXT.copied
+                            );
 
-                        alert(
-                            "Copy failed. Please copy the emergency information manually."
-                        );
+                        } else {
+
+                            alert(
+                                RP_TEXT.copyFailed
+                            );
+
+                        }
 
                     }
+                );
 
-                }
-            );
+            }
+        );
 
-        });
 
-    /* =======================================================
+    /* =====================================================
        REFERRAL SHARING
-       ======================================================= */
+       ===================================================== */
 
-    var referralLink =
-        document.getElementById(
+    var referralElement =
+        getElement(
             "shareLinkText"
         );
 
     var referralUrl =
-        referralLink
-            ? referralLink.textContent.trim()
+        referralElement
+            ? referralElement.textContent.trim()
             : "";
 
+
     var shareMessage =
-        "Join Patiya RedPulse as a blood donor. " +
-        "Your registration can help someone find a donor when needed.\n\n" +
+        RP_TEXT.whatsappMessage +
+        "\n\n" +
         referralUrl;
+
 
     function openWhatsApp() {
 
@@ -2686,60 +4151,95 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        var url =
+        var whatsappUrl =
             "https://wa.me/?text=" +
             encodeURIComponent(
                 shareMessage
             );
 
+
         window.open(
-            url,
+            whatsappUrl,
             "_blank",
             "noopener,noreferrer"
         );
+
     }
 
-    function nativeShareReferral() {
 
-        if (
-            navigator.share &&
-            referralUrl
-        ) {
+    async function nativeShareReferral() {
 
-            navigator.share({
-
-                title:
-                    "Patiya RedPulse",
-
-                text:
-                    "Join Patiya RedPulse as a blood donor.",
-
-                url:
-                    referralUrl
-
-            }).catch(function () {});
-
+        if (!referralUrl) {
             return;
         }
 
-        copyText(referralUrl).then(
-            function (success) {
 
-                if (success) {
-                    alert("Referral link copied.");
-                } else {
-                    openWhatsApp();
+        if (
+            navigator.share &&
+            typeof navigator.share === "function"
+        ) {
+
+            try {
+
+                await navigator.share(
+                    {
+
+                        title:
+                            "Patiya RedPulse",
+
+                        text:
+                            RP_TEXT.whatsappMessage,
+
+                        url:
+                            referralUrl
+
+                    }
+                );
+
+                return;
+
+            } catch (error) {
+
+                if (
+                    error &&
+                    error.name === "AbortError"
+                ) {
+
+                    return;
+
                 }
 
             }
-        );
+
+        }
+
+
+        var success =
+            await copyText(
+                referralUrl
+            );
+
+
+        if (success) {
+
+            alert(
+                RP_TEXT.referralCopied
+            );
+
+        } else {
+
+            openWhatsApp();
+
+        }
 
     }
 
+
     var whatsappReferral =
-        document.getElementById(
+        getElement(
             "whatsappReferral"
         );
+
 
     if (whatsappReferral) {
 
@@ -2756,10 +4256,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
+
     var modalWhatsapp =
-        document.getElementById(
+        getElement(
             "modalWhatsapp"
         );
+
 
     if (modalWhatsapp) {
 
@@ -2776,10 +4278,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
+
     var nativeShareReferralButton =
-        document.getElementById(
+        getElement(
             "nativeShareReferral"
         );
+
 
     if (nativeShareReferralButton) {
 
@@ -2790,10 +4294,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
+
     var modalNativeShare =
-        document.getElementById(
+        getElement(
             "modalNativeShare"
         );
+
 
     if (modalNativeShare) {
 
@@ -2804,14 +4310,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
-    /* =======================================================
+
+    /* =====================================================
        EMERGENCY SHARE
-       ======================================================= */
+       ===================================================== */
 
     var emergencyData =
-        document.getElementById(
+        getElement(
             "emergencyData"
         );
+
 
     function getEmergencyText() {
 
@@ -2819,63 +4327,127 @@ document.addEventListener("DOMContentLoaded", function () {
             return "";
         }
 
+
         var name =
             emergencyData.getAttribute(
                 "data-name"
             ) || "";
+
 
         var blood =
             emergencyData.getAttribute(
                 "data-blood-group"
             ) || "";
 
+
         var phone =
             emergencyData.getAttribute(
                 "data-phone"
             ) || "";
+
 
         var district =
             emergencyData.getAttribute(
                 "data-district"
             ) || "";
 
+
         var upazila =
             emergencyData.getAttribute(
                 "data-upazila"
             ) || "";
 
+
+        var emergencyTitle =
+            IS_BN
+                ? "জরুরি ডোনার"
+                : "Emergency Donor";
+
+
+        var nameLabel =
+            IS_BN
+                ? "নাম"
+                : "Name";
+
+
+        var bloodLabel =
+            IS_BN
+                ? "রক্তের গ্রুপ"
+                : "Blood Group";
+
+
+        var phoneLabel =
+            IS_BN
+                ? "ফোন"
+                : "Phone";
+
+
+        var locationLabel =
+            IS_BN
+                ? "অবস্থান"
+                : "Location";
+
+
         return (
-            "Patiya RedPulse Emergency Donor\n" +
-            "Name: " + name + "\n" +
-            "Blood Group: " + blood + "\n" +
-            "Phone: " + phone + "\n" +
-            "Location: " + upazila + ", " + district
+            "Patiya RedPulse — " +
+            emergencyTitle +
+            "\n" +
+            nameLabel +
+            ": " +
+            name +
+            "\n" +
+            bloodLabel +
+            ": " +
+            blood +
+            "\n" +
+            phoneLabel +
+            ": " +
+            phone +
+            "\n" +
+            locationLabel +
+            ": " +
+            upazila +
+            ", " +
+            district
         );
 
     }
+
 
     async function shareEmergency() {
 
         var emergencyText =
             getEmergencyText();
 
+
         if (!emergencyText) {
             return;
         }
 
-        if (navigator.share) {
+
+        if (
+            navigator.share &&
+            typeof navigator.share === "function"
+        ) {
 
             try {
 
-                await navigator.share({
+                await navigator.share(
+                    {
 
-                    title:
-                        "Patiya RedPulse — Emergency Donor",
+                        title:
+                            "Patiya RedPulse — " +
+                            (
+                                IS_BN
+                                    ? "জরুরি ডোনার"
+                                    : "Emergency Donor"
+                            ),
 
-                    text:
-                        emergencyText
+                        text:
+                            emergencyText
 
-                });
+                    }
+                );
 
                 return;
 
@@ -2885,34 +4457,44 @@ document.addEventListener("DOMContentLoaded", function () {
                     error &&
                     error.name === "AbortError"
                 ) {
+
                     return;
+
                 }
 
             }
 
         }
 
+
         var success =
             await copyText(
                 emergencyText
             );
 
+
         if (success) {
+
             alert(
-                "Emergency donor information copied."
+                RP_TEXT.emergencyCopied
             );
+
         } else {
+
             alert(
-                "Sharing is not available on this device."
+                RP_TEXT.sharingUnavailable
             );
+
         }
 
     }
 
+
     var shareEmergencyBtn =
-        document.getElementById(
+        getElement(
             "shareEmergencyBtn"
         );
+
 
     if (shareEmergencyBtn) {
 
@@ -2923,10 +4505,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
+
     var shareEmergencyModalBtn =
-        document.getElementById(
+        getElement(
             "shareEmergencyModalBtn"
         );
+
 
     if (shareEmergencyModalBtn) {
 
@@ -2937,19 +4521,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
-    /* =======================================================
-       SMART READINESS RING
-       ======================================================= */
+
+    /* =====================================================
+       READINESS RING
+       ===================================================== */
 
     var readinessRing =
-        document.getElementById(
+        getElement(
             "readinessRing"
         );
 
     var readinessPercent =
-        document.getElementById(
+        getElement(
             "readinessPercent"
         );
+
 
     if (
         readinessRing &&
@@ -2964,40 +4550,51 @@ document.addEventListener("DOMContentLoaded", function () {
                 10
             );
 
+
         if (
-            isNaN(days) ||
+            Number.isNaN(days) ||
             days < 0
         ) {
+
             days = 0;
+
         }
 
+
         var percentage =
+            Math.round(
+                ((90 - days) / 90) * 100
+            );
+
+
+        percentage =
             Math.max(
                 0,
                 Math.min(
                     100,
-                    Math.round(
-                        ((90 - days) / 90) * 100
-                    )
+                    percentage
                 )
             );
+
 
         readinessRing.style.setProperty(
             "--rp-progress",
             percentage + "%"
         );
 
+
         readinessPercent.textContent =
             percentage + "%";
 
     }
 
-    /* =======================================================
-       DONATION HISTORY SEARCH
-       ======================================================= */
+
+    /* =====================================================
+       DONATION SEARCH
+       ===================================================== */
 
     var searchInput =
-        document.getElementById(
+        getElement(
             "donationSearch"
         );
 
@@ -3007,14 +4604,15 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
     var noMatch =
-        document.getElementById(
+        getElement(
             "donationNoMatch"
         );
 
     var donationCountBadge =
-        document.getElementById(
+        getElement(
             "donationCountBadge"
         );
+
 
     if (searchInput) {
 
@@ -3025,42 +4623,41 @@ document.addEventListener("DOMContentLoaded", function () {
                 var query =
                     this.value
                         .trim()
-                        .toLowerCase();
+                        .toLocaleLowerCase();
 
-                var visible =
-                    0;
+
+                var visible = 0;
+
 
                 donationRows.forEach(
                     function (row) {
 
                         var text =
                             row.textContent
-                                .toLowerCase();
+                                .trim()
+                                .toLocaleLowerCase();
+
 
                         var matched =
                             !query ||
-                            text.indexOf(
+                            text.includes(
                                 query
-                            ) !== -1;
+                            );
+
+
+                        row.classList.toggle(
+                            "rp-hidden",
+                            !matched
+                        );
+
 
                         if (matched) {
-
-                            row.classList.remove(
-                                "rp-hidden"
-                            );
-
                             visible++;
-
-                        } else {
-
-                            row.classList.add(
-                                "rp-hidden"
-                            );
-
                         }
 
                     }
                 );
+
 
                 if (donationCountBadge) {
 
@@ -3068,6 +4665,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         visible;
 
                 }
+
 
                 if (noMatch) {
 
@@ -3083,14 +4681,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
-    /* =======================================================
-       FORM UX
-       ======================================================= */
+
+    /* =====================================================
+       DONATION FORM
+       ===================================================== */
 
     var donationForm =
-        document.getElementById(
+        getElement(
             "donationForm"
         );
+
 
     if (donationForm) {
 
@@ -3103,13 +4703,15 @@ document.addEventListener("DOMContentLoaded", function () {
                         'button[type="submit"]'
                     );
 
+
                 if (submitBtn) {
 
                     submitBtn.disabled =
                         true;
 
                     submitBtn.innerHTML =
-                        '<span class="spinner-border spinner-border-sm me-1" role="status"></span> Saving...';
+                        '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>' +
+                        RP_TEXT.saving;
 
                 }
 
@@ -3118,37 +4720,49 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
-    /* =======================================================
+
+    /* =====================================================
        KEYBOARD SHORTCUTS
        E = Emergency
-       C = Copy Emergency Info
-       S = Share Emergency Info
-       ======================================================= */
+       C = Copy
+       S = Share
+       ===================================================== */
 
     document.addEventListener(
         "keydown",
         function (event) {
 
+            var target =
+                event.target;
+
+
             var tag =
-                event.target &&
-                event.target.tagName
-                    ? event.target.tagName
-                        .toLowerCase()
+                target &&
+                target.tagName
+                    ? target.tagName.toLowerCase()
                     : "";
+
 
             if (
                 tag === "input" ||
                 tag === "textarea" ||
                 tag === "select" ||
+                target.isContentEditable ||
                 event.ctrlKey ||
                 event.metaKey ||
                 event.altKey
             ) {
+
                 return;
+
             }
 
+
             var key =
-                event.key.toLowerCase();
+                String(
+                    event.key || ""
+                ).toLowerCase();
+
 
             if (key === "c") {
 
@@ -3157,15 +4771,20 @@ document.addEventListener("DOMContentLoaded", function () {
                         ".copy-emergency-btn"
                     );
 
+
                 if (copyBtn) {
                     copyBtn.click();
                 }
 
             }
 
+
             if (key === "s") {
+
                 shareEmergency();
+
             }
+
 
             if (key === "e") {
 
@@ -3173,6 +4792,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     document.querySelector(
                         '[data-bs-target="#emergencyModal"]'
                     );
+
 
                 if (
                     emergencyButton &&
@@ -3188,23 +4808,73 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     );
 
-    /* =======================================================
-       SAFE BOOTSTRAP TOOLTIP INIT
-       ======================================================= */
+
+    /* =====================================================
+       BOOTSTRAP TOOLTIP
+       ===================================================== */
 
     if (
-        typeof bootstrap !== "undefined"
+        typeof bootstrap !== "undefined" &&
+        bootstrap.Tooltip
     ) {
 
         document
             .querySelectorAll(
                 '[data-bs-toggle="tooltip"]'
             )
-            .forEach(function (el) {
+            .forEach(
+                function (element) {
 
-                new bootstrap.Tooltip(el);
+                    new bootstrap.Tooltip(
+                        element
+                    );
 
-            });
+                }
+            );
+
+    }
+
+
+    /* =====================================================
+       EMPTY REFERRAL SAFETY
+       ===================================================== */
+
+    if (!referralUrl) {
+
+        [
+            whatsappReferral,
+            modalWhatsapp
+        ].forEach(
+            function (element) {
+
+                if (element) {
+
+                    element.setAttribute(
+                        "aria-disabled",
+                        "true"
+                    );
+
+                    element.classList.add(
+                        "disabled"
+                    );
+
+                }
+
+            }
+        );
+
+        [
+            nativeShareReferralButton,
+            modalNativeShare
+        ].forEach(
+            function (element) {
+
+                if (element) {
+                    element.disabled = true;
+                }
+
+            }
+        );
 
     }
 
