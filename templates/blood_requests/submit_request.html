@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 {% load i18n %}
+{% get_current_language as CURRENT_LANGUAGE %}
 
-{% block title %}{% trans "Submit Blood Request" %} — Patiya RedPulse{% endblock %}
+{% block title %}{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রক্তের অনুরোধ পাঠান{% else %}Submit Blood Request{% endif %} — Patiya RedPulse{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -674,6 +675,279 @@
         }
     }
 
+    /* ------------------------------------------------------------------
+       FINAL RESPONSIVE HARDENING
+       Mobile-first fixes for Bengali/English text wrapping, form rows,
+       hero badge, buttons and narrow-screen overflow.
+       ------------------------------------------------------------------ */
+    .request-page,
+    .request-page * {
+        min-width: 0;
+    }
+
+    .request-hero-title,
+    .request-hero-text,
+    .request-card-title,
+    .request-card-subtitle,
+    .form-section-heading h3,
+    .form-section-heading p,
+    .side-card-heading h2,
+    .side-feature strong,
+    .side-feature span,
+    .side-emergency-box,
+    .request-label {
+        overflow-wrap: anywhere;
+        word-break: normal;
+    }
+
+    .request-hero-badge {
+        max-width: min(100%, 360px);
+    }
+
+    .request-actions {
+        width: 100%;
+    }
+
+    .request-submit-btn,
+    .request-secondary-btn {
+        flex: 0 1 auto;
+    }
+
+    .request-form input:not([type="hidden"]),
+    .request-form select,
+    .request-form textarea {
+        max-width: 100%;
+    }
+
+    @media (max-width: 767.98px) {
+        .request-page {
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .request-hero {
+            width: 100%;
+            padding: 1.2rem 1rem;
+            border-radius: 22px;
+        }
+
+        .request-hero-content {
+            width: 100%;
+        }
+
+        .request-eyebrow {
+            max-width: 100%;
+            white-space: normal;
+            line-height: 1.35;
+        }
+
+        .request-hero-title {
+            font-size: clamp(1.65rem, 8vw, 2.3rem);
+            line-height: 1.18;
+            letter-spacing: -.035em;
+        }
+
+        .request-hero-text {
+            font-size: .88rem;
+            line-height: 1.7;
+        }
+
+        .request-hero-badge {
+            width: 100%;
+            max-width: 100%;
+            margin-top: 1rem;
+            padding: .7rem .75rem;
+            border-radius: 15px;
+        }
+
+        .request-hero-badge-icon {
+            width: 38px;
+            height: 38px;
+            flex: 0 0 38px;
+        }
+
+        .request-hero-badge strong {
+            font-size: .76rem;
+        }
+
+        .request-hero-badge small {
+            font-size: .64rem;
+            line-height: 1.4;
+        }
+
+        .request-layout {
+            margin-top: -18px;
+            --bs-gutter-x: .75rem;
+            --bs-gutter-y: .9rem;
+        }
+
+        .request-form-card,
+        .request-side-card {
+            width: 100%;
+            border-radius: 20px;
+        }
+
+        .request-card-header,
+        .request-form-body {
+            padding: .9rem;
+        }
+
+        .request-card-icon {
+            width: 40px;
+            height: 40px;
+            flex-basis: 40px;
+            border-radius: 12px;
+        }
+
+        .request-card-title {
+            font-size: .98rem;
+            line-height: 1.35;
+        }
+
+        .request-card-subtitle {
+            font-size: .68rem;
+            line-height: 1.45;
+        }
+
+        .form-section {
+            margin-bottom: .85rem;
+            padding: .78rem;
+            border-radius: 16px;
+        }
+
+        .form-section-heading {
+            align-items: flex-start;
+            gap: .55rem;
+            margin-bottom: .8rem;
+            padding-bottom: .65rem;
+        }
+
+        .form-section-heading-icon {
+            width: 30px;
+            height: 30px;
+            flex: 0 0 30px;
+            border-radius: 9px;
+        }
+
+        .form-section-heading h3 {
+            font-size: .82rem;
+            line-height: 1.35;
+        }
+
+        .form-section-heading p {
+            font-size: .64rem;
+            line-height: 1.45;
+        }
+
+        .request-label {
+            font-size: .74rem;
+            line-height: 1.4;
+        }
+
+        .request-form input:not([type="hidden"]),
+        .request-form select,
+        .request-form textarea {
+            min-height: 48px;
+            padding: .68rem .78rem;
+            font-size: .82rem;
+            border-radius: 12px;
+        }
+
+        .request-form textarea {
+            min-height: 110px;
+        }
+
+        .emergency-notice {
+            margin: .9rem 0;
+            padding: .9rem .85rem;
+            border-radius: 16px;
+        }
+
+        .emergency-notice ul {
+            padding-left: 1.1rem;
+            font-size: .68rem;
+            line-height: 1.65;
+        }
+
+        .request-actions {
+            flex-direction: column;
+            align-items: stretch;
+            gap: .55rem;
+            margin-top: 1rem;
+        }
+
+        .request-submit-btn,
+        .request-secondary-btn {
+            width: 100%;
+            min-height: 48px;
+            padding: .68rem 1rem;
+            font-size: .78rem;
+            white-space: normal;
+            text-align: center;
+        }
+
+        .side-card-heading {
+            padding: .9rem;
+        }
+
+        .side-card-heading-icon {
+            width: 34px;
+            height: 34px;
+            flex: 0 0 34px;
+        }
+
+        .side-card-heading h2 {
+            font-size: .82rem;
+            line-height: 1.35;
+        }
+
+        .side-card-body {
+            padding: .85rem;
+        }
+
+        .side-feature {
+            gap: .6rem;
+            padding: .72rem 0;
+        }
+
+        .side-feature-icon {
+            width: 31px;
+            height: 31px;
+            flex: 0 0 31px;
+        }
+
+        .side-feature strong {
+            font-size: .71rem;
+            line-height: 1.4;
+        }
+
+        .side-feature span,
+        .side-emergency-box {
+            font-size: .66rem;
+            line-height: 1.55;
+        }
+    }
+
+    @media (max-width: 374.98px) {
+        .request-hero {
+            padding-left: .82rem;
+            padding-right: .82rem;
+        }
+
+        .request-form-body,
+        .request-card-header {
+            padding: .75rem;
+        }
+
+        .form-section {
+            padding: .68rem;
+        }
+
+        .request-hero-title {
+            font-size: 1.55rem;
+        }
+    }
+
     @media (prefers-reduced-motion: reduce) {
         .request-hero::before,
         .request-live-dot {
@@ -693,15 +967,15 @@
         <div class="request-hero-content">
             <div class="request-eyebrow">
                 <span class="request-live-dot"></span>
-                {% trans "Emergency Blood Support" %}
+                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}জরুরি রক্ত সহায়তা{% else %}Emergency Blood Support{% endif %}
             </div>
 
             <h1 class="request-hero-title" id="requestPageTitle">
-                {% trans "Request blood. Reach the right donors faster." %}
+                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রক্তের অনুরোধ করুন। সঠিক রক্তদাতার কাছে আরও দ্রুত পৌঁছান।{% else %}Request blood. Reach the right donors faster.{% endif %}
             </h1>
 
             <p class="request-hero-text">
-                {% trans "Share accurate patient and hospital details so eligible donors can respond quickly and help when it matters most." %}
+                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রোগী ও হাসপাতালের সঠিক তথ্য দিন, যাতে যোগ্য রক্তদাতারা দ্রুত সাড়া দিতে পারেন এবং জরুরি সময়ে সহায়তা করতে পারেন।{% else %}Share accurate patient and hospital details so eligible donors can respond quickly and help when it matters most.{% endif %}
             </p>
         </div>
 
@@ -710,8 +984,8 @@
                 <i class="fas fa-heart-pulse"></i>
             </span>
             <div>
-                <strong>{% trans "Every request matters" %}</strong>
-                <small>{% trans "Your information helps save lives" %}</small>
+                <strong>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}প্রতিটি অনুরোধ গুরুত্বপূর্ণ{% else %}Every request matters{% endif %}</strong>
+                <small>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}আপনার তথ্য জীবন বাঁচাতে সহায়তা করে{% else %}Your information helps save lives{% endif %}</small>
             </div>
         </div>
     </section>
@@ -727,10 +1001,10 @@
                     </span>
                     <div>
                         <h2 class="request-card-title">
-                            {% trans "Submit Blood Request" %}
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রক্তের অনুরোধ পাঠান{% else %}Submit Blood Request{% endif %}
                         </h2>
                         <p class="request-card-subtitle">
-                            {% trans "Complete the form with clear and accurate information" %}
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}স্পষ্ট ও সঠিক তথ্য দিয়ে ফর্মটি পূরণ করুন{% else %}Complete the form with clear and accurate information{% endif %}
                         </p>
                     </div>
                 </div>
@@ -752,8 +1026,8 @@
                                     <i class="fas fa-user-injured"></i>
                                 </span>
                                 <div>
-                                    <h3>{% trans "Patient Information" %}</h3>
-                                    <p>{% trans "Tell us about the patient and blood requirement" %}</p>
+                                    <h3>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রোগীর তথ্য{% else %}Patient Information{% endif %}</h3>
+                                    <p>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রোগী ও প্রয়োজনীয় রক্তের তথ্য দিন{% else %}Tell us about the patient and blood requirement{% endif %}</p>
                                 </div>
                             </div>
 
@@ -762,7 +1036,7 @@
                                     <div class="request-field">
                                         <label for="{{ form.patient_name.id_for_label }}" class="request-label">
                                             <i class="fas fa-user"></i>
-                                            {% trans "Patient Name" %}
+                                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রোগীর নাম{% else %}Patient Name{% endif %}
                                             <span class="required-mark">*</span>
                                         </label>
 
@@ -778,7 +1052,7 @@
                                     <div class="request-field">
                                         <label for="{{ form.required_blood_group.id_for_label }}" class="request-label">
                                             <i class="fas fa-droplet"></i>
-                                            {% trans "Required Blood Group" %}
+                                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}প্রয়োজনীয় রক্তের গ্রুপ{% else %}Required Blood Group{% endif %}
                                             <span class="required-mark">*</span>
                                         </label>
 
@@ -794,7 +1068,7 @@
                                     <div class="request-field">
                                         <label for="{{ form.number_of_bags.id_for_label }}" class="request-label">
                                             <i class="fas fa-layer-group"></i>
-                                            {% trans "Number of Bags" %}
+                                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রক্তের ব্যাগের সংখ্যা{% else %}Number of Bags{% endif %}
                                             <span class="required-mark">*</span>
                                         </label>
 
@@ -810,7 +1084,7 @@
                                     <div class="request-field">
                                         <label for="{{ form.patient_condition.id_for_label }}" class="request-label">
                                             <i class="fas fa-heart-circle-exclamation"></i>
-                                            {% trans "Patient Condition" %}
+                                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রোগীর অবস্থা{% else %}Patient Condition{% endif %}
                                             <span class="required-mark">*</span>
                                         </label>
 
@@ -831,15 +1105,15 @@
                                     <i class="fas fa-triangle-exclamation"></i>
                                 </span>
                                 <div>
-                                    <h3>{% trans "Emergency Details" %}</h3>
-                                    <p>{% trans "Help donors understand how urgent this request is" %}</p>
+                                    <h3>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}জরুরি বিবরণ{% else %}Emergency Details{% endif %}</h3>
+                                    <p>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}অনুরোধটি কতটা জরুরি তা রক্তদাতাদের বুঝতে সহায়তা করুন{% else %}Help donors understand how urgent this request is{% endif %}</p>
                                 </div>
                             </div>
 
                             <div class="request-field">
                                 <label for="{{ form.emergency_level.id_for_label }}" class="request-label">
                                     <i class="fas fa-bolt"></i>
-                                    {% trans "Emergency Level" %}
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}জরুরি অবস্থার মাত্রা{% else %}Emergency Level{% endif %}
                                     <span class="required-mark">*</span>
                                 </label>
 
@@ -853,7 +1127,7 @@
                             <div class="request-field">
                                 <label for="{{ form.required_date.id_for_label }}" class="request-label">
                                     <i class="fas fa-calendar-days"></i>
-                                    {% trans "Required Date" %}
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}প্রয়োজনের তারিখ{% else %}Required Date{% endif %}
                                     <span class="required-mark">*</span>
                                 </label>
 
@@ -872,15 +1146,15 @@
                                     <i class="fas fa-hospital"></i>
                                 </span>
                                 <div>
-                                    <h3>{% trans "Hospital Information" %}</h3>
-                                    <p>{% trans "Provide the location where blood is needed" %}</p>
+                                    <h3>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}হাসপাতালের তথ্য{% else %}Hospital Information{% endif %}</h3>
+                                    <p>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}যেখানে রক্ত প্রয়োজন সেই স্থানের তথ্য দিন{% else %}Provide the location where blood is needed{% endif %}</p>
                                 </div>
                             </div>
 
                             <div class="request-field">
                                 <label for="{{ form.hospital_name.id_for_label }}" class="request-label">
                                     <i class="fas fa-hospital-user"></i>
-                                    {% trans "Hospital Name" %}
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}হাসপাতালের নাম{% else %}Hospital Name{% endif %}
                                     <span class="required-mark">*</span>
                                 </label>
 
@@ -894,7 +1168,7 @@
                             <div class="request-field">
                                 <label for="{{ form.hospital_address.id_for_label }}" class="request-label">
                                     <i class="fas fa-location-dot"></i>
-                                    {% trans "Hospital Address" %}
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}হাসপাতালের ঠিকানা{% else %}Hospital Address{% endif %}
                                     <span class="required-mark">*</span>
                                 </label>
 
@@ -913,15 +1187,15 @@
                                     <i class="fas fa-phone-volume"></i>
                                 </span>
                                 <div>
-                                    <h3>{% trans "Contact Information" %}</h3>
-                                    <p>{% trans "Donors may use this number to contact you" %}</p>
+                                    <h3>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}যোগাযোগের তথ্য{% else %}Contact Information{% endif %}</h3>
+                                    <p>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রক্তদাতারা এই নম্বরে আপনার সঙ্গে যোগাযোগ করতে পারেন{% else %}Donors may use this number to contact you{% endif %}</p>
                                 </div>
                             </div>
 
                             <div class="request-field">
                                 <label for="{{ form.contact_phone.id_for_label }}" class="request-label">
                                     <i class="fas fa-phone"></i>
-                                    {% trans "Contact Phone" %}
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}যোগাযোগের ফোন নম্বর{% else %}Contact Phone{% endif %}
                                     <span class="required-mark">*</span>
                                 </label>
 
@@ -935,8 +1209,8 @@
                             <div class="request-field">
                                 <label for="{{ form.additional_info.id_for_label }}" class="request-label">
                                     <i class="fas fa-message"></i>
-                                    {% trans "Additional Information" %}
-                                    <span class="text-muted fw-normal">({% trans "Optional" %})</span>
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}অতিরিক্ত তথ্য{% else %}Additional Information{% endif %}
+                                    <span class="text-muted fw-normal">({% if CURRENT_LANGUAGE|slice:":2" == "bn" %}ঐচ্ছিক{% else %}Optional{% endif %})</span>
                                 </label>
 
                                 {{ form.additional_info }}
@@ -951,14 +1225,14 @@
                         <div class="emergency-notice">
                             <div class="emergency-notice-heading">
                                 <i class="fas fa-shield-heart"></i>
-                                {% trans "Important Notice" %}
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}গুরুত্বপূর্ণ নোটিশ{% else %}Important Notice{% endif %}
                             </div>
 
                             <ul>
-                                <li>{% trans "This request will be visible to the public." %}</li>
-                                <li>{% trans "Emergency requests will be highlighted for faster attention." %}</li>
-                                <li>{% trans "Please provide accurate patient, hospital and contact information." %}</li>
-                                <li>{% trans "For immediate life-threatening emergencies, contact the hospital directly." %}</li>
+                                <li>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}এই অনুরোধটি সবার জন্য দৃশ্যমান হবে।{% else %}This request will be visible to the public.{% endif %}</li>
+                                <li>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}জরুরি অনুরোধগুলো দ্রুত নজরে আসার জন্য বিশেষভাবে প্রদর্শিত হবে।{% else %}Emergency requests will be highlighted for faster attention.{% endif %}</li>
+                                <li>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রোগী, হাসপাতাল এবং যোগাযোগের সঠিক তথ্য প্রদান করুন।{% else %}Please provide accurate patient, hospital and contact information.{% endif %}</li>
+                                <li>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}তাৎক্ষণিক জীবন-ঝুঁকিপূর্ণ জরুরি অবস্থায় সরাসরি হাসপাতালের সঙ্গে যোগাযোগ করুন।{% else %}For immediate life-threatening emergencies, contact the hospital directly.{% endif %}</li>
                             </ul>
                         </div>
 
@@ -966,12 +1240,12 @@
                         <div class="request-actions">
                             <button type="submit" class="request-submit-btn" id="submitRequestButton">
                                 <i class="fas fa-paper-plane"></i>
-                                <span>{% trans "Submit Request" %}</span>
+                                <span>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}অনুরোধ পাঠান{% else %}Submit Request{% endif %}</span>
                             </button>
 
                             <a href="{% url 'blood_requests_list' %}" class="request-secondary-btn">
                                 <i class="fas fa-list-check"></i>
-                                {% trans "View Requests" %}
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}অনুরোধগুলো দেখুন{% else %}View Requests{% endif %}
                             </a>
                         </div>
                     </form>
@@ -986,7 +1260,7 @@
                     <span class="side-card-heading-icon">
                         <i class="fas fa-circle-info"></i>
                     </span>
-                    <h2>{% trans "How It Works" %}</h2>
+                    <h2>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}যেভাবে কাজ করে{% else %}How It Works{% endif %}</h2>
                 </div>
 
                 <div class="side-card-body">
@@ -995,8 +1269,8 @@
                             <i class="fas fa-pen-to-square"></i>
                         </span>
                         <div>
-                            <strong>{% trans "1. Submit details" %}</strong>
-                            <span>{% trans "Fill in the patient, blood group and hospital information." %}</span>
+                            <strong>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}১. তথ্য জমা দিন{% else %}1. Submit details{% endif %}</strong>
+                            <span>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রোগী, রক্তের গ্রুপ এবং হাসপাতালের তথ্য পূরণ করুন।{% else %}Fill in the patient, blood group and hospital information.{% endif %}</span>
                         </div>
                     </div>
 
@@ -1005,8 +1279,8 @@
                             <i class="fas fa-users-viewfinder"></i>
                         </span>
                         <div>
-                            <strong>{% trans "2. Donors can see it" %}</strong>
-                            <span>{% trans "Your request becomes visible to eligible donors in the network." %}</span>
+                            <strong>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}২. রক্তদাতারা এটি দেখতে পারবেন{% else %}2. Donors can see it{% endif %}</strong>
+                            <span>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}আপনার অনুরোধ নেটওয়ার্কের যোগ্য রক্তদাতাদের কাছে দৃশ্যমান হবে।{% else %}Your request becomes visible to eligible donors in the network.{% endif %}</span>
                         </div>
                     </div>
 
@@ -1015,8 +1289,8 @@
                             <i class="fas fa-phone-volume"></i>
                         </span>
                         <div>
-                            <strong>{% trans "3. Connect directly" %}</strong>
-                            <span>{% trans "Available donors can contact you using the provided phone number." %}</span>
+                            <strong>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}৩. সরাসরি যোগাযোগ করুন{% else %}3. Connect directly{% endif %}</strong>
+                            <span>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}উপলভ্য রক্তদাতারা দেওয়া ফোন নম্বর ব্যবহার করে আপনার সঙ্গে যোগাযোগ করতে পারবেন।{% else %}Available donors can contact you using the provided phone number.{% endif %}</span>
                         </div>
                     </div>
 
@@ -1025,17 +1299,17 @@
                             <i class="fas fa-heart-pulse"></i>
                         </span>
                         <div>
-                            <strong>{% trans "4. Save a life" %}</strong>
-                            <span>{% trans "Coordinate safely with the donor and hospital to complete the donation." %}</span>
+                            <strong>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}৪. একটি জীবন বাঁচান{% else %}4. Save a life{% endif %}</strong>
+                            <span>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রক্তদান সম্পন্ন করতে রক্তদাতা ও হাসপাতালের সঙ্গে নিরাপদভাবে সমন্বয় করুন।{% else %}Coordinate safely with the donor and hospital to complete the donation.{% endif %}</span>
                         </div>
                     </div>
 
                     <div class="side-emergency-box">
                         <strong>
                             <i class="fas fa-triangle-exclamation me-1"></i>
-                            {% trans "Emergency reminder:" %}
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}জরুরি স্মরণিকা:{% else %}Emergency reminder:{% endif %}
                         </strong>
-                        {% trans "RedPulse helps connect people, but it does not replace emergency medical services." %}
+                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}RedPulse মানুষের মধ্যে যোগাযোগ তৈরি করতে সহায়তা করে, তবে এটি জরুরি চিকিৎসা সেবার বিকল্প নয়।{% else %}RedPulse helps connect people, but it does not replace emergency medical services.{% endif %}
                     </div>
                 </div>
             </aside>
@@ -1057,9 +1331,14 @@
         form.addEventListener('submit', function () {
             submitButton.disabled = true;
             submitButton.setAttribute('aria-busy', 'true');
-            submitButton.innerHTML =
-                '<i class="fas fa-spinner fa-spin"></i>' +
-                '<span>{% trans "Submitting…" %}</span>';
+            var submitText = submitButton.querySelector('span');
+            if (submitText) {
+                submitText.textContent = '{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}পাঠানো হচ্ছে…{% else %}Submitting…{% endif %}';
+            }
+            var submitIcon = submitButton.querySelector('i');
+            if (submitIcon) {
+                submitIcon.className = 'fas fa-spinner fa-spin';
+            }
         });
 
         /* Add useful browser attributes without changing Django form logic */
@@ -1071,8 +1350,11 @@
 
         var dateInput = form.querySelector('[name="required_date"]');
         if (dateInput && dateInput.type === 'date') {
-            var today = new Date().toISOString().split('T')[0];
-            dateInput.setAttribute('min', today);
+            var now = new Date();
+            var yyyy = now.getFullYear();
+            var mm = String(now.getMonth() + 1).padStart(2, '0');
+            var dd = String(now.getDate()).padStart(2, '0');
+            dateInput.setAttribute('min', yyyy + '-' + mm + '-' + dd);
         }
 
         var patientInput = form.querySelector('[name="patient_name"]');
