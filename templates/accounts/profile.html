@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 {% load i18n %}
+{% get_current_language as CURRENT_LANGUAGE %}
 
-{% block title %}{% trans "Profile" %} — Patiya RedPulse{% endblock %}
+{% block title %}{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}প্রোফাইল{% else %}Profile{% endif %} — Patiya RedPulse{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -801,11 +802,76 @@
             animation: none !important;
         }
     }
+
+
+    /* ----------------------- 2026 micro-interactions --------------------- */
+    .profile-card,
+    .profile-edit-card,
+    .form-section,
+    .profile-info-item,
+    .profile-status-box {
+        transform-style: preserve-3d;
+    }
+
+    .profile-card,
+    .profile-edit-card {
+        transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease;
+    }
+
+    .profile-card:hover,
+    .profile-edit-card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(217,4,41,.16);
+        box-shadow:
+            0 32px 80px -38px rgba(15,23,42,.52),
+            inset 0 1px 0 rgba(255,255,255,.72);
+    }
+
+    .profile-info-item,
+    .profile-status-box,
+    .form-section {
+        transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+    }
+
+    .profile-info-item:hover,
+    .profile-status-box:hover,
+    .form-section:hover {
+        transform: translateY(-2px);
+        border-color: rgba(217,4,41,.16);
+        box-shadow: 0 14px 28px -24px rgba(15,23,42,.65);
+    }
+
+    .profile-submit-btn::before,
+    .profile-back-btn::before,
+    .location-action::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        pointer-events: none;
+        background: linear-gradient(115deg, transparent 20%, rgba(255,255,255,.26) 45%, transparent 65%);
+        transform: translateX(-120%);
+        transition: transform .65s ease;
+    }
+
+    .profile-submit-btn,
+    .profile-back-btn,
+    .location-action {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .profile-submit-btn:hover::before,
+    .profile-back-btn:hover::before,
+    .location-action:hover::before {
+        transform: translateX(120%);
+    }
+
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="profile-page">
+<div class="profile-page" data-language="{{ CURRENT_LANGUAGE|slice:":2" }}">
 
     <datalist id="patiyaUnions">
         <option value="Kolagaon">
@@ -831,15 +897,15 @@
     <section class="profile-hero reveal" aria-labelledby="profilePageTitle">
         <div class="profile-eyebrow">
             <span class="profile-pulse-dot"></span>
-            {% trans "Your Donor Profile" %}
+            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}আপনার রক্তদাতা প্রোফাইল{% else %}Your Donor Profile{% endif %}
         </div>
 
         <h1 class="profile-hero-title" id="profilePageTitle">
-            {% trans "Manage your life-saving profile." %}
+            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}আপনার রক্তদাতা প্রোফাইল পরিচালনা করুন।{% else %}Manage your life-saving profile.{% endif %}
         </h1>
 
         <p class="profile-hero-text">
-            {% trans "Keep your contact, location and availability information updated so people can reach you when your blood group is needed." %}
+            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}আপনার যোগাযোগের তথ্য, অবস্থান ও উপলভ্যতা সবসময় হালনাগাদ রাখুন, যাতে আপনার রক্তের গ্রুপ প্রয়োজন হলে সহজেই আপনার সঙ্গে যোগাযোগ করা যায়।{% else %}Keep your contact, location and availability information updated so people can reach you when your blood group is needed.{% endif %}
         </p>
 
         <div class="profile-hero-badge">
@@ -847,8 +913,8 @@
                 <i class="fas fa-shield-heart"></i>
             </span>
             <div>
-                <strong>{% trans "Every update matters" %}</strong>
-                <small>{% trans "Accurate information saves time" %}</small>
+                <strong>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}প্রতিটি হালনাগাদ গুরুত্বপূর্ণ{% else %}Every update matters{% endif %}</strong>
+                <small>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}সঠিক তথ্য সময় বাঁচায়{% else %}Accurate information saves time{% endif %}</small>
             </div>
         </div>
     </section>
@@ -863,8 +929,8 @@
                         <i class="fas fa-user"></i>
                     </span>
                     <div>
-                        <h2 class="profile-card-title">{% trans "Profile Summary" %}</h2>
-                        <p class="profile-card-subtitle">{% trans "Your donor information at a glance" %}</p>
+                        <h2 class="profile-card-title">{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}প্রোফাইলের সারসংক্ষেপ{% else %}Profile Summary{% endif %}</h2>
+                        <p class="profile-card-subtitle">{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}এক নজরে আপনার রক্তদাতা তথ্য{% else %}Your donor information at a glance{% endif %}</p>
                     </div>
                 </div>
 
@@ -903,7 +969,7 @@
                                 <i class="fas fa-genderless"></i>
                             {% endif %}
 
-                            {{ donor.age }} {% trans "years old" %}
+                            {{ donor.age }} {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}বছর বয়স{% else %}years old{% endif %}
                         </div>
 
                         <div class="mt-3">
@@ -911,13 +977,13 @@
                                 <i class="fas fa-award"></i>
 
                                 {% if donor.lifesaver_tier == 'gold' %}
-                                    {% trans "Gold Life-Saver" %}
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}গোল্ড লাইফ-সেভার{% else %}Gold Life-Saver{% endif %}
                                 {% elif donor.lifesaver_tier == 'silver' %}
-                                    {% trans "Silver Life-Saver" %}
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}সিলভার লাইফ-সেভার{% else %}Silver Life-Saver{% endif %}
                                 {% elif donor.lifesaver_tier == 'bronze' %}
-                                    {% trans "Bronze Life-Saver" %}
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}ব্রোঞ্জ লাইফ-সেভার{% else %}Bronze Life-Saver{% endif %}
                                 {% else %}
-                                    {% trans "New Donor" %}
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}নতুন রক্তদাতা{% else %}New Donor{% endif %}
                                 {% endif %}
                             </span>
                         </div>
@@ -929,7 +995,7 @@
                                 <i class="fas fa-location-dot"></i>
                             </span>
                             <div>
-                                <span class="profile-info-label">{% trans "Location" %}</span>
+                                <span class="profile-info-label">{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}অবস্থান{% else %}Location{% endif %}</span>
                                 <span class="profile-info-value">
                                     {{ donor.district }}, {{ donor.upazila }}
                                 </span>
@@ -941,7 +1007,7 @@
                                 <i class="fas fa-phone"></i>
                             </span>
                             <div>
-                                <span class="profile-info-label">{% trans "Mobile" %}</span>
+                                <span class="profile-info-label">{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}মোবাইল{% else %}Mobile{% endif %}</span>
                                 <span class="profile-info-value">{{ donor.mobile_number }}</span>
                             </div>
                         </div>
@@ -952,7 +1018,7 @@
                                     <i class="fas fa-envelope"></i>
                                 </span>
                                 <div>
-                                    <span class="profile-info-label">{% trans "Email" %}</span>
+                                    <span class="profile-info-label">{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}ইমেইল{% else %}Email{% endif %}</span>
                                     <span class="profile-info-value">{{ donor.email }}</span>
                                 </div>
                             </div>
@@ -962,12 +1028,12 @@
                     <div class="profile-status-grid">
                         <div class="profile-status-box">
                             <strong>{{ donor.last_donation_date|date:"M d, Y" }}</strong>
-                            <small>{% trans "Last Donation" %}</small>
+                            <small>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}সর্বশেষ রক্তদান{% else %}Last Donation{% endif %}</small>
                         </div>
 
                         <div class="profile-status-box">
                             <strong>{{ donor.days_since_last_donation }}</strong>
-                            <small>{% trans "Days Since Donation" %}</small>
+                            <small>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রক্তদানের পর দিন{% else %}Days Since Donation{% endif %}</small>
                         </div>
                     </div>
 
@@ -975,12 +1041,12 @@
                         {% if donor.is_eligible %}
                             <span class="eligible-badge">
                                 <i class="fas fa-circle-check"></i>
-                                {% trans "Eligible to Donate" %}
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রক্তদানে উপযুক্ত{% else %}Eligible to Donate{% endif %}
                             </span>
                         {% else %}
                             <span class="not-eligible-badge">
                                 <i class="fas fa-clock"></i>
-                                {{ donor.days_until_eligible }} {% trans "days remaining" %}
+                                {{ donor.days_until_eligible }} {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}দিন বাকি{% else %}days remaining{% endif %}
                             </span>
                         {% endif %}
                     </div>
@@ -989,12 +1055,12 @@
                         {% if donor.availability_status == 'Available' %}
                             <span class="availability-badge available">
                                 <i class="fas fa-toggle-on"></i>
-                                {% trans "Available" %}
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}উপলভ্য{% else %}Available{% endif %}
                             </span>
                         {% else %}
                             <span class="availability-badge unavailable">
                                 <i class="fas fa-toggle-off"></i>
-                                {% trans "Not Available" %}
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}উপলভ্য নয়{% else %}Not Available{% endif %}
                             </span>
                         {% endif %}
                     </div>
@@ -1010,9 +1076,9 @@
                         <i class="fas fa-user-pen"></i>
                     </span>
                     <div>
-                        <h2 class="profile-card-title">{% trans "Edit Profile" %}</h2>
+                        <h2 class="profile-card-title">{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}প্রোফাইল সম্পাদনা{% else %}Edit Profile{% endif %}</h2>
                         <p class="profile-card-subtitle">
-                            {% trans "Update your information and donor availability" %}
+                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}আপনার তথ্য ও রক্তদাতা উপলভ্যতা হালনাগাদ করুন{% else %}Update your information and donor availability{% endif %}
                         </p>
                     </div>
                 </div>
@@ -1037,8 +1103,8 @@
                                     <i class="fas fa-id-card"></i>
                                 </span>
                                 <div>
-                                    <h3>{% trans "Personal Information" %}</h3>
-                                    <p>{% trans "Basic information shown on your donor profile" %}</p>
+                                    <h3>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}ব্যক্তিগত তথ্য{% else %}Personal Information{% endif %}</h3>
+                                    <p>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}আপনার রক্তদাতা প্রোফাইলে প্রদর্শিত মৌলিক তথ্য{% else %}Basic information shown on your donor profile{% endif %}</p>
                                 </div>
                             </div>
 
@@ -1047,7 +1113,7 @@
                                     <div class="profile-form-field">
                                         <label for="{{ form.full_name.id_for_label }}" class="profile-label">
                                             <i class="fas fa-user"></i>
-                                            {% trans "Full Name" %}
+                                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}পূর্ণ নাম{% else %}Full Name{% endif %}
                                         </label>
 
                                         {{ form.full_name }}
@@ -1062,7 +1128,7 @@
                                     <div class="profile-form-field">
                                         <label for="{{ form.blood_group.id_for_label }}" class="profile-label">
                                             <i class="fas fa-droplet"></i>
-                                            {% trans "Blood Group" %}
+                                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রক্তের গ্রুপ{% else %}Blood Group{% endif %}
                                         </label>
 
                                         {{ form.blood_group }}
@@ -1077,7 +1143,7 @@
                                     <div class="profile-form-field">
                                         <label for="{{ form.gender.id_for_label }}" class="profile-label">
                                             <i class="fas fa-venus-mars"></i>
-                                            {% trans "Gender" %}
+                                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}লিঙ্গ{% else %}Gender{% endif %}
                                         </label>
 
                                         {{ form.gender }}
@@ -1092,7 +1158,7 @@
                                     <div class="profile-form-field">
                                         <label for="{{ form.age.id_for_label }}" class="profile-label">
                                             <i class="fas fa-cake-candles"></i>
-                                            {% trans "Age" %}
+                                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}বয়স{% else %}Age{% endif %}
                                         </label>
 
                                         {{ form.age }}
@@ -1112,15 +1178,15 @@
                                     <i class="fas fa-address-book"></i>
                                 </span>
                                 <div>
-                                    <h3>{% trans "Contact Information" %}</h3>
-                                    <p>{% trans "How people can reach you during an emergency" %}</p>
+                                    <h3>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}যোগাযোগের তথ্য{% else %}Contact Information{% endif %}</h3>
+                                    <p>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}জরুরি প্রয়োজনে কীভাবে আপনার সঙ্গে যোগাযোগ করা যাবে{% else %}How people can reach you during an emergency{% endif %}</p>
                                 </div>
                             </div>
 
                             <div class="profile-form-field">
                                 <label for="{{ form.mobile_number.id_for_label }}" class="profile-label">
                                     <i class="fas fa-phone"></i>
-                                    {% trans "Mobile Number" %}
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}মোবাইল নম্বর{% else %}Mobile Number{% endif %}
                                 </label>
 
                                 {{ form.mobile_number }}
@@ -1133,8 +1199,8 @@
                             <div class="profile-form-field">
                                 <label for="{{ form.email.id_for_label }}" class="profile-label">
                                     <i class="fas fa-envelope"></i>
-                                    {% trans "Email" %}
-                                    <span class="text-muted fw-normal">({% trans "Optional" %})</span>
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}ইমেইল{% else %}Email{% endif %}
+                                    <span class="text-muted fw-normal">({% if CURRENT_LANGUAGE|slice:":2" == "bn" %}ঐচ্ছিক{% else %}Optional{% endif %})</span>
                                 </label>
 
                                 {{ form.email }}
@@ -1145,15 +1211,15 @@
                             </div>
                         </div>
 
-                        <!-- Photo and Location -->
+                        <!--  Location -->
                         <div class="form-section">
                             <div class="form-section-heading">
                                 <span class="form-section-icon">
-                                    <i class="fas fa-image"></i>
+                                    <i class="fas fa-location-dot"></i>
                                 </span>
                                 <div>
-                                    <h3>{% trans "Location" %}</h3>
-                                    <p>{% trans "A precise location helps nearby seekers find you" %}</p>
+                                    <h3>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}অবস্থান{% else %}Location{% endif %}</h3>
+                                    <p>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}সঠিক অবস্থান কাছাকাছি রক্তপ্রার্থীদের আপনাকে খুঁজে পেতে সহায়তা করে{% else %}A precise location helps nearby seekers find you{% endif %}</p>
                                 </div>
                             </div>
 
@@ -1161,7 +1227,7 @@
                             <div class="profile-form-field">
                                 <label class="profile-label">
                                     <i class="fas fa-location-crosshairs"></i>
-                                    {% trans "Current Location" %}
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}বর্তমান অবস্থান{% else %}Current Location{% endif %}
                                 </label>
 
                                 <button
@@ -1169,21 +1235,21 @@
                                     class="locate-btn location-action {% if donor.latitude %}is-set{% endif %}"
                                     data-lat-target="id_latitude"
                                     data-lng-target="id_longitude"
-                                    data-success-label="{% trans 'Location updated' %}"
-                                    data-error-label="{% trans 'Could not get your location. Please allow location access and try again.' %}">
+                                    data-success-label="{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}অবস্থান হালনাগাদ হয়েছে{% else %}Location updated{% endif %}"
+                                    data-error-label="{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}আপনার অবস্থান পাওয়া যায়নি। অনুগ্রহ করে লোকেশন অনুমতি দিয়ে আবার চেষ্টা করুন।{% else %}Could not get your location. Please allow location access and try again.{% endif %}">
 
                                     <i class="fas {% if donor.latitude %}fa-location-dot{% else %}fa-location-crosshairs{% endif %}"></i>
 
                                     {% if donor.latitude %}
-                                        {% trans "Location is set — update it" %}
+                                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}অবস্থান সেট করা আছে — হালনাগাদ করুন{% else %}Location is set — update it{% endif %}
                                     {% else %}
-                                        {% trans "Use my location for nearby search" %}
+                                        {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}কাছাকাছি রক্তদাতা খোঁজার জন্য আমার অবস্থান ব্যবহার করুন{% else %}Use my location for nearby search{% endif %}
                                     {% endif %}
                                 </button>
 
                                 <small class="form-help-text">
                                     <i class="fas fa-circle-info me-1"></i>
-                                    {% trans "Your location helps seekers find nearby donors. It will not be displayed as an exact private address." %}
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}আপনার অবস্থান রক্তপ্রার্থীদের কাছাকাছি রক্তদাতা খুঁজে পেতে সহায়তা করবে। আপনার সঠিক ব্যক্তিগত ঠিকানা প্রদর্শিত হবে না।{% else %}Your location helps seekers find nearby donors. It will not be displayed as an exact private address.{% endif %}
                                 </small>
                             </div>
 
@@ -1192,7 +1258,7 @@
                                     <div class="profile-form-field">
                                         <label for="{{ form.district.id_for_label }}" class="profile-label">
                                             <i class="fas fa-map"></i>
-                                            {% trans "District" %}
+                                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}জেলা{% else %}District{% endif %}
                                         </label>
 
                                         {{ form.district }}
@@ -1207,7 +1273,7 @@
                                     <div class="profile-form-field">
                                         <label for="{{ form.upazila.id_for_label }}" class="profile-label">
                                             <i class="fas fa-map-location-dot"></i>
-                                            {% trans "Upazila / Union" %}
+                                            {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}উপজেলা / ইউনিয়ন{% else %}Upazila / Union{% endif %}
                                         </label>
 
                                         {{ form.upazila }}
@@ -1227,15 +1293,15 @@
                                     <i class="fas fa-heart-pulse"></i>
                                 </span>
                                 <div>
-                                    <h3>{% trans "Donation Status" %}</h3>
-                                    <p>{% trans "This information controls your donor eligibility" %}</p>
+                                    <h3>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রক্তদানের অবস্থা{% else %}Donation Status{% endif %}</h3>
+                                    <p>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}এই তথ্য আপনার রক্তদানের উপযুক্ততা নির্ধারণে ব্যবহৃত হয়{% else %}This information controls your donor eligibility{% endif %}</p>
                                 </div>
                             </div>
 
                             <div class="profile-form-field">
                                 <label for="{{ form.last_donation_date.id_for_label }}" class="profile-label">
                                     <i class="fas fa-calendar-check"></i>
-                                    {% trans "Last Blood Donation Date" %}
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}সর্বশেষ রক্তদানের তারিখ{% else %}Last Blood Donation Date{% endif %}
                                 </label>
 
                                 {{ form.last_donation_date }}
@@ -1246,14 +1312,14 @@
 
                                 <small class="form-help-text">
                                     <i class="fas fa-circle-info me-1"></i>
-                                    {% trans "Eligibility is calculated using 90 days for men and 120 days for women." %}
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}পুরুষদের জন্য ৯০ দিন এবং নারীদের জন্য ১২০ দিন ধরে রক্তদানের উপযুক্ততা হিসাব করা হয়।{% else %}Eligibility is calculated using 90 days for men and 120 days for women.{% endif %}
                                 </small>
                             </div>
 
                             <div class="profile-form-field">
                                 <label for="{{ form.availability_status.id_for_label }}" class="profile-label">
                                     <i class="fas fa-toggle-on"></i>
-                                    {% trans "Availability Status" %}
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}উপলভ্যতার অবস্থা{% else %}Availability Status{% endif %}
                                 </label>
 
                                 {{ form.availability_status }}
@@ -1264,7 +1330,7 @@
 
                                 <small class="form-help-text">
                                     <i class="fas fa-circle-info me-1"></i>
-                                    {% trans 'Set to "Not Available" if you cannot donate currently.' %}
+                                    {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}বর্তমানে রক্ত দিতে না পারলে "উপলভ্য নয়" নির্বাচন করুন।{% else %}Set to "Not Available" if you cannot donate currently.{% endif %}
                                 </small>
                             </div>
                         </div>
@@ -1273,12 +1339,12 @@
                         <div class="profile-actions">
                             <button type="submit" class="profile-submit-btn" id="updateProfileButton">
                                 <i class="fas fa-floppy-disk"></i>
-                                <span>{% trans "Update Profile" %}</span>
+                                <span>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}প্রোফাইল হালনাগাদ করুন{% else %}Update Profile{% endif %}</span>
                             </button>
 
                             <a href="{% url 'donor_list' %}" class="profile-back-btn">
                                 <i class="fas fa-arrow-left"></i>
-                                {% trans "Back to Donor List" %}
+                                {% if CURRENT_LANGUAGE|slice:":2" == "bn" %}রক্তদাতার তালিকায় ফিরে যান{% else %}Back to Donor List{% endif %}
                             </a>
                         </div>
                     </form>
@@ -1304,7 +1370,7 @@
             submitButton.setAttribute('aria-busy', 'true');
             submitButton.innerHTML =
                 '<i class="fas fa-spinner fa-spin"></i>' +
-                '<span>{% trans "Updating…" %}</span>';
+                '<span>{% if CURRENT_LANGUAGE|slice:":2" == "bn" %}হালনাগাদ করা হচ্ছে…{% else %}Updating…{% endif %}</span>';
         });
 
         var phoneInput = form.querySelector('[name="mobile_number"]');
@@ -1331,6 +1397,48 @@
         var donationDate = form.querySelector('[name="last_donation_date"]');
         if (donationDate && donationDate.type === 'date') {
             donationDate.setAttribute('max', new Date().toISOString().split('T')[0]);
+        }
+
+
+        /*
+         * Django form choices normally keep their original English labels.
+         * This page normalizes the visible labels in Bangla mode without
+         * changing the submitted values, so backend choices remain intact.
+         */
+        var isBangla = document.documentElement.lang.toLowerCase().indexOf('bn') === 0 ||
+                       '{{ CURRENT_LANGUAGE|slice:":2"|escapejs }}' === 'bn';
+
+        if (isBangla) {
+            var optionMap = {
+                'Male': 'পুরুষ',
+                'Female': 'নারী',
+                'Other': 'অন্যান্য',
+                'Available': 'উপলভ্য',
+                'Not Available': 'উপলভ্য নয়'
+            };
+
+            form.querySelectorAll('select option').forEach(function (option) {
+                var key = option.textContent.trim();
+                if (optionMap[key]) option.textContent = optionMap[key];
+            });
+
+            /* Translate common browser-visible validation messages. */
+            var invalidInputs = form.querySelectorAll('input, select, textarea');
+            invalidInputs.forEach(function (field) {
+                field.addEventListener('invalid', function () {
+                    if (field.validity.valueMissing) {
+                        field.setCustomValidity('এই ঘরটি পূরণ করুন।');
+                    } else {
+                        field.setCustomValidity('অনুগ্রহ করে সঠিক তথ্য দিন।');
+                    }
+                });
+                field.addEventListener('input', function () {
+                    field.setCustomValidity('');
+                });
+                field.addEventListener('change', function () {
+                    field.setCustomValidity('');
+                });
+            });
         }
     })();
 </script>
