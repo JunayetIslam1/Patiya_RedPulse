@@ -2268,6 +2268,495 @@
         }
     }
 
+
+    /* ================================================================
+       PATIYA REDPULSE — CINEMATIC HERO BACKGROUND MOTION LAYER
+       Added only: animation/decorative background effects.
+       Existing HTML structure, navigation, content, theme logic and
+       ECG/pulse divider remain untouched.
+       ================================================================ */
+
+    /* Deep cinematic red/black atmosphere inspired by the supplied
+       reference image. The light theme stays subtle; dark mode gets
+       the full red-black treatment. */
+    .rp-3d-bg{
+        background:
+            radial-gradient(780px 520px at 86% 35%, rgba(217,4,41,.15), transparent 66%),
+            radial-gradient(720px 520px at 3% 38%, rgba(139,0,24,.15), transparent 68%),
+            radial-gradient(900px 470px at 50% 92%, rgba(217,4,41,.08), transparent 70%),
+            linear-gradient(180deg,rgba(3,8,14,.12),rgba(3,8,14,.02));
+    }
+
+    [data-theme="dark"] .rp-3d-bg{
+        background:
+            radial-gradient(820px 540px at 86% 35%, rgba(255,18,51,.24), transparent 64%),
+            radial-gradient(760px 560px at 4% 38%, rgba(160,0,28,.28), transparent 68%),
+            radial-gradient(980px 500px at 50% 96%, rgba(217,4,41,.20), transparent 70%),
+            linear-gradient(180deg,#02070d 0%,#030b12 46%,#04060b 100%);
+        background-size:112% 112%,116% 116%,118% 118%,100% 100%;
+        background-position:50% 48%,50% 52%,50% 60%,50% 50%;
+        animation:rpCinematicAtmosphere 18s ease-in-out infinite alternate;
+    }
+
+    @keyframes rpCinematicAtmosphere{
+        0%{
+            background-position:48% 46%,52% 54%,48% 58%,50% 50%;
+        }
+        50%{
+            background-position:51% 49%,49% 51%,52% 61%,50% 50%;
+        }
+        100%{
+            background-position:54% 52%,46% 48%,56% 64%,50% 50%;
+        }
+    }
+
+    /* Floating red illumination — opacity-only animation so the
+       existing pointer-parallax transform keeps working. */
+    .rp-ambient-light.l1{
+        background:radial-gradient(circle,
+            rgba(255,31,66,.34) 0%,
+            rgba(217,4,41,.16) 28%,
+            transparent 69%);
+        opacity:.48;
+        animation:rpAmbientLeft 11s ease-in-out infinite alternate;
+    }
+
+    .rp-ambient-light.l2{
+        background:radial-gradient(circle,
+            rgba(255,25,52,.40) 0%,
+            rgba(166,0,30,.18) 32%,
+            transparent 70%);
+        opacity:.50;
+        animation:rpAmbientRight 15s ease-in-out infinite alternate;
+    }
+
+    .rp-ambient-light.l3{
+        background:radial-gradient(circle,
+            rgba(255,54,79,.16) 0%,
+            rgba(217,4,41,.06) 36%,
+            transparent 72%);
+        opacity:.32;
+        animation:rpAmbientCenter 9s ease-in-out infinite alternate;
+    }
+
+    @keyframes rpAmbientLeft{
+        from{opacity:.34; filter:blur(36px);}
+        to{opacity:.57; filter:blur(44px);}
+    }
+    @keyframes rpAmbientRight{
+        from{opacity:.36; filter:blur(38px);}
+        to{opacity:.64; filter:blur(48px);}
+    }
+    @keyframes rpAmbientCenter{
+        from{opacity:.22; filter:blur(30px);}
+        to{opacity:.40; filter:blur(38px);}
+    }
+
+    /* Red elliptical depth rings: slow breathing keeps the background
+       alive without touching the existing 3D transform/parallax. */
+    .rp-depth-plane::before{
+        animation:rpDepthRingA 13s ease-in-out infinite;
+    }
+    .rp-depth-plane::after{
+        animation:rpDepthRingB 17s ease-in-out infinite reverse;
+    }
+
+    @keyframes rpDepthRingA{
+        0%,100%{opacity:.38;}
+        50%{opacity:.68;}
+    }
+    @keyframes rpDepthRingB{
+        0%,100%{opacity:.24;}
+        50%{opacity:.56;}
+    }
+
+    /* Subtle orbit breathing; opacity only so mouse tilt/orbit
+       transforms remain controlled by the original code. */
+    .rp-3d-orbit.o1{ animation:rpOrbitFadeA 8s ease-in-out infinite; }
+    .rp-3d-orbit.o2{ animation:rpOrbitFadeB 11s ease-in-out infinite reverse; }
+    .rp-3d-orbit.o3{ animation:rpOrbitFadeC 14s ease-in-out infinite; }
+
+    @keyframes rpOrbitFadeA{
+        0%,100%{opacity:.48;}
+        50%{opacity:.88;}
+    }
+    @keyframes rpOrbitFadeB{
+        0%,100%{opacity:.34;}
+        50%{opacity:.68;}
+    }
+    @keyframes rpOrbitFadeC{
+        0%,100%{opacity:.22;}
+        50%{opacity:.46;}
+    }
+
+    /* Pulsing halo around each orbit node. This uses a new pseudo-element
+       so the original node's transform/orbit animation is untouched. */
+    .rp-orbit-node{
+        isolation:isolate;
+    }
+    .rp-orbit-node::after{
+        content:'';
+        position:absolute;
+        inset:-9px;
+        border-radius:50%;
+        border:1px solid rgba(255,60,86,.22);
+        box-shadow:0 0 0 0 rgba(217,4,41,.16);
+        animation:rpNodeHalo 2.8s ease-out infinite;
+        pointer-events:none;
+    }
+
+    @keyframes rpNodeHalo{
+        0%{transform:scale(.55);opacity:.85;box-shadow:0 0 0 0 rgba(217,4,41,.16);}
+        75%{transform:scale(1.7);opacity:0;box-shadow:0 0 0 11px rgba(217,4,41,0);}
+        100%{transform:scale(1.7);opacity:0;}
+    }
+
+    /* Existing depth shards become slow cinematic light streaks.
+       Background-position is animated instead of transform, preserving
+       their existing depth/parallax behavior. */
+    .rp-depth-shard{
+        background-size:260% 100%;
+        background-position:-120% 50%;
+        animation:rpShardSweep 8s ease-in-out infinite;
+    }
+    .rp-depth-shard.s2{ animation-delay:-2.2s; animation-duration:10s; }
+    .rp-depth-shard.s3{ animation-delay:-4.1s; animation-duration:9s; }
+    .rp-depth-shard.s4{ animation-delay:-6.0s; animation-duration:12s; }
+
+    @keyframes rpShardSweep{
+        0%,18%{background-position:-120% 50%;opacity:var(--o);}
+        50%{background-position:120% 50%;opacity:calc(var(--o) * 1.45);}
+        82%,100%{background-position:240% 50%;opacity:var(--o);}
+    }
+
+    /* ================================================================
+       Signature bottom red waves — matches the reference image's
+       sweeping red lower edge while keeping the page/content untouched.
+       ================================================================ */
+    .rp-vignette{
+        overflow:hidden;
+    }
+
+    .rp-vignette::before{
+        content:'';
+        position:absolute;
+        left:-16%;
+        bottom:-58%;
+        width:132%;
+        height:86%;
+        border-radius:50%;
+        border:clamp(18px,2.6vw,34px) solid rgba(217,4,41,.18);
+        border-top-color:rgba(239,35,60,.28);
+        border-left-color:rgba(255,46,85,.18);
+        border-right-color:rgba(145,0,26,.12);
+        filter:blur(.15px);
+        box-shadow:
+            0 -18px 62px rgba(217,4,41,.10),
+            0 -3px 0 rgba(255,255,255,.015) inset;
+        transform:rotate(-3deg) translate3d(0,0,0) scale(1.02);
+        animation:rpHeroWaveA 12s cubic-bezier(.4,0,.2,1) infinite;
+        pointer-events:none;
+    }
+
+    .rp-vignette::after{
+        content:'';
+        position:absolute;
+        left:-25%;
+        bottom:-69%;
+        width:150%;
+        height:94%;
+        border-radius:50%;
+        border:clamp(9px,1.2vw,18px) solid rgba(217,4,41,.10);
+        border-top-color:rgba(255,46,85,.25);
+        border-left-color:rgba(171,0,28,.14);
+        filter:blur(.35px);
+        transform:rotate(-2deg) translate3d(0,0,0) scale(1.04);
+        animation:rpHeroWaveB 15s cubic-bezier(.45,0,.2,1) infinite reverse;
+        pointer-events:none;
+    }
+
+    @keyframes rpHeroWaveA{
+        0%,100%{
+            transform:rotate(-3.2deg) translate3d(-1.5%,1%,0) scale(1.02);
+            opacity:.70;
+        }
+        50%{
+            transform:rotate(-1.8deg) translate3d(1.8%,-1.2%,0) scale(1.055);
+            opacity:1;
+        }
+    }
+
+    @keyframes rpHeroWaveB{
+        0%,100%{
+            transform:rotate(-2.2deg) translate3d(1%,0,0) scale(1.035);
+            opacity:.62;
+        }
+        50%{
+            transform:rotate(-4deg) translate3d(-2%,1.2%,0) scale(1.07);
+            opacity:.92;
+        }
+    }
+
+    /* In dark mode the lower waves become the strong red-black
+       cinematic edge visible in the reference. */
+    [data-theme="dark"] .rp-vignette::before{
+        border-color:rgba(139,0,24,.58);
+        border-top-color:rgba(255,31,65,.80);
+        border-left-color:rgba(217,4,41,.68);
+        border-right-color:rgba(92,0,18,.42);
+        box-shadow:
+            0 -22px 78px rgba(217,4,41,.25),
+            0 -3px 0 rgba(255,255,255,.02) inset;
+    }
+
+    [data-theme="dark"] .rp-vignette::after{
+        border-color:rgba(104,0,21,.34);
+        border-top-color:rgba(239,35,60,.62);
+        border-left-color:rgba(185,0,31,.46);
+        box-shadow:0 -14px 50px rgba(217,4,41,.18);
+    }
+
+    /* A soft red sweep passes through the far-right background,
+       keeping the reference's illuminated/red atmospheric zone alive. */
+    [data-theme="dark"] .rp-3d-bg::after{
+        background:
+            linear-gradient(180deg,rgba(255,255,255,.025),transparent 17%,transparent 76%,rgba(0,0,0,.16)),
+            radial-gradient(ellipse at 86% 38%,rgba(255,26,52,.09),transparent 26%),
+            radial-gradient(ellipse at 14% 42%,rgba(170,0,30,.07),transparent 24%),
+            radial-gradient(ellipse at center,transparent 48%,rgba(0,0,0,.54) 100%);
+        opacity:.78;
+    }
+
+    /* Keep the signature pulse divider exactly as authored; only its
+       surrounding background receives the new cinematic motion. */
+    .pulse-divider-container,
+    .pulse-svg,
+    .pulse-line,
+    .pulse-dot{
+        /* intentionally unchanged */
+    }
+
+    /* Reduced-effects and reduced-motion accessibility remain in force. */
+    html.rp-lowfx .rp-vignette::before,
+    html.rp-lowfx .rp-vignette::after{
+        animation:none!important;
+        opacity:.24!important;
+    }
+
+    html.rp-nomotion .rp-vignette::before,
+    html.rp-nomotion .rp-vignette::after,
+    html.rp-nomotion .rp-orbit-node::after{
+        animation:none!important;
+    }
+
+    @media (prefers-reduced-motion: reduce){
+        .rp-vignette::before,
+        .rp-vignette::after,
+        .rp-orbit-node::after{
+            animation:none!important;
+        }
+    }
+
+    @media (max-width:575.98px){
+        .rp-vignette::before{
+            left:-32%;
+            bottom:-60%;
+            width:164%;
+            height:82%;
+            border-width:18px;
+        }
+        .rp-vignette::after{
+            left:-40%;
+            bottom:-72%;
+            width:180%;
+            height:92%;
+            border-width:10px;
+        }
+    }
+
+
+    /* ================================================================
+       REFERENCE IMAGE — HAND + BLOOD DROP HERO ART
+       The supplied reference has a cinematic red blood-drop-in-hands
+       visual on the far right. This layer recreates that composition
+       while leaving the existing page/content untouched.
+       ================================================================ */
+    .rp-hand-blood-art{
+        position:absolute;
+        z-index:3;
+        right:-1.8vw;
+        top:18%;
+        width:min(43vw,720px);
+        aspect-ratio:426/472;
+        pointer-events:none;
+        opacity:.82;
+        transform:
+            translate3d(calc(var(--mx) * -10px), calc(var(--my) * -6px), 70px)
+            rotateY(calc(var(--mx) * -1.8deg))
+            rotateX(calc(var(--my) * 1deg));
+        transform-style:preserve-3d;
+        will-change:transform,opacity;
+        filter:
+            saturate(1.08)
+            contrast(1.06)
+            brightness(.94)
+            drop-shadow(0 26px 42px rgba(0,0,0,.42))
+            drop-shadow(0 0 34px rgba(217,4,41,.24));
+        mix-blend-mode:screen;
+        -webkit-mask-image:radial-gradient(ellipse 78% 78% at 58% 52%, #000 48%, rgba(0,0,0,.92) 62%, transparent 93%);
+        mask-image:radial-gradient(ellipse 78% 78% at 58% 52%, #000 48%, rgba(0,0,0,.92) 62%, transparent 93%);
+        animation:rpHandFloat 8.5s ease-in-out infinite;
+    }
+
+    .rp-hand-blood-art::before{
+        content:'';
+        position:absolute;
+        inset:12% 4% 10% 14%;
+        border-radius:50%;
+        background:radial-gradient(circle at 56% 46%, rgba(255,25,55,.22), rgba(217,4,41,.12) 35%, transparent 70%);
+        filter:blur(24px);
+        transform:translateZ(-30px) scale(1.08);
+        opacity:.75;
+        animation:rpBloodAura 5.8s ease-in-out infinite;
+    }
+
+    .rp-hand-blood-art::after{
+        content:'';
+        position:absolute;
+        left:28%;
+        top:13%;
+        width:56%;
+        height:72%;
+        border-radius:50%;
+        background:linear-gradient(115deg, transparent 34%, rgba(255,255,255,.22) 44%, transparent 53%);
+        filter:blur(2px);
+        opacity:0;
+        transform:translateX(-130%) skewX(-8deg);
+        animation:rpBloodSheen 6.8s ease-in-out infinite 1.2s;
+        mix-blend-mode:screen;
+    }
+
+    .rp-hand-blood-art img{
+        display:block;
+        width:100%;
+        height:100%;
+        object-fit:cover;
+        object-position:center;
+        border:0;
+        user-select:none;
+        -webkit-user-drag:none;
+    }
+
+    @keyframes rpHandFloat{
+        0%,100%{
+            transform:
+                translate3d(calc(var(--mx) * -10px), calc(var(--my) * -6px), 70px)
+                rotateY(calc(var(--mx) * -1.8deg))
+                rotateX(calc(var(--my) * 1deg))
+                translateY(0) scale(1);
+        }
+        50%{
+            transform:
+                translate3d(calc(var(--mx) * -10px), calc(var(--my) * -6px), 70px)
+                rotateY(calc(var(--mx) * -1.8deg))
+                rotateX(calc(var(--my) * 1deg))
+                translateY(-10px) scale(1.012);
+        }
+    }
+
+    @keyframes rpBloodAura{
+        0%,100%{opacity:.54;transform:translateZ(-30px) scale(.98);}
+        50%{opacity:.92;transform:translateZ(-30px) scale(1.08);}
+    }
+
+    @keyframes rpBloodSheen{
+        0%,58%{opacity:0;transform:translateX(-130%) skewX(-8deg);}
+        66%{opacity:.52;}
+        82%{opacity:0;transform:translateX(125%) skewX(-8deg);}
+        100%{opacity:0;transform:translateX(125%) skewX(-8deg);}
+    }
+
+    /* Reference-like dark red atmospheric bloom behind the artwork. */
+    .rp-hand-blood-bloom{
+        position:absolute;
+        z-index:2;
+        right:-12%;
+        top:11%;
+        width:min(58vw,980px);
+        height:70%;
+        border-radius:50%;
+        background:
+            radial-gradient(ellipse at 58% 46%, rgba(255,28,55,.30), transparent 38%),
+            radial-gradient(ellipse at 74% 42%, rgba(217,4,41,.23), transparent 58%),
+            radial-gradient(ellipse at 42% 54%, rgba(120,0,24,.20), transparent 72%);
+        filter:blur(20px);
+        opacity:.82;
+        transform:translate3d(calc(var(--mx) * -12px), calc(var(--my) * -7px), 20px) scale(1.03);
+        animation:rpBloomBreath 7.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes rpBloomBreath{
+        from{opacity:.60;transform:translate3d(calc(var(--mx) * -12px), calc(var(--my) * -7px), 20px) scale(1.00);}
+        to{opacity:.95;transform:translate3d(calc(var(--mx) * -12px), calc(var(--my) * -7px), 20px) scale(1.07);}
+    }
+
+    [data-theme="dark"] .rp-hand-blood-art{ opacity:.95; }
+    [data-theme="dark"] .rp-hand-blood-bloom{ opacity:.92; }
+
+    /* The right-side artwork is deliberately softened on smaller screens
+       so it never fights the page content. */
+    @media (max-width:1199.98px){
+        .rp-hand-blood-art{
+            right:-8vw;
+            top:22%;
+            width:min(52vw,560px);
+            opacity:.54;
+        }
+        .rp-hand-blood-bloom{
+            right:-22%;
+            width:72vw;
+            opacity:.55;
+        }
+    }
+
+    @media (max-width:767.98px){
+        .rp-hand-blood-art{
+            right:-18vw;
+            top:10%;
+            width:88vw;
+            max-width:520px;
+            opacity:.20;
+            transform:translate3d(0,0,0) !important;
+            animation:rpHandFloatMobile 9s ease-in-out infinite;
+        }
+        .rp-hand-blood-bloom{
+            right:-36%;
+            top:8%;
+            width:118vw;
+            height:60%;
+            opacity:.28;
+            transform:none;
+        }
+    }
+
+    @keyframes rpHandFloatMobile{
+        0%,100%{transform:translate3d(0,0,0) scale(1);}
+        50%{transform:translate3d(0,-6px,0) scale(1.01);}
+    }
+
+    html.rp-lowfx .rp-hand-blood-art,
+    html.rp-lowfx .rp-hand-blood-bloom{
+        animation:none!important;
+    }
+    html.rp-nomotion .rp-hand-blood-art,
+    html.rp-nomotion .rp-hand-blood-bloom{
+        animation:none!important;
+    }
+    @media (prefers-reduced-motion: reduce){
+        .rp-hand-blood-art,
+        .rp-hand-blood-bloom{ animation:none!important; }
+    }
+
     </style>
 </head>
 <body>
@@ -2280,6 +2769,11 @@
         <div class="rp-ambient-light l1"></div>
         <div class="rp-ambient-light l2"></div>
         <div class="rp-ambient-light l3"></div>
+
+        <div class="rp-hand-blood-bloom" aria-hidden="true"></div>
+        <div class="rp-hand-blood-art" aria-hidden="true">
+            <img src="data:image/webp;base64,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" alt="">
+        </div>
 
         <div class="rp-depth-plane"></div>
 
